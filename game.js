@@ -652,9 +652,14 @@ $("#therm-calm-btn").addEventListener("click", function() { state.calmUsed = tru
 
 
 // ===== Daily Check-In =====
+var pendingCheckinMood = null;
+
 function renderCheckin() {
     $$(".ci-face").forEach(function(f) { f.classList.remove("selected"); });
     $("#ci-response").classList.add("hidden");
+    var noteInput = $("#ci-note-input");
+    if (noteInput) noteInput.value = "";
+    pendingCheckinMood = null;
     renderCheckinHistory();
 }
 
@@ -663,15 +668,43 @@ $$(".ci-face").forEach(function(face) {
         var mood = face.getAttribute("data-mood");
         $$(".ci-face").forEach(function(f) { f.classList.remove("selected"); });
         face.classList.add("selected");
-        var entry = { mood: mood, date: todayStr(), emoji: face.querySelector(".ci-face-emoji").textContent };
+        pendingCheckinMood = { mood: mood, emoji: face.querySelector(".ci-face-emoji").textContent };
+
+        // Save entry immediately (without note)
+        var entry = { mood: mood, date: todayStr(), emoji: pendingCheckinMood.emoji, note: "" };
         state.checkins = state.checkins.filter(function(c) { return c.date !== todayStr(); });
         state.checkins.push(entry);
         state.totalStars++; saveProfile(); updateStars();
+
         $("#ci-response-text").textContent = CHECKIN_RESPONSES[mood] || "Thanks for sharing!";
         $("#ci-response").classList.remove("hidden");
+        var noteInput = $("#ci-note-input");
+        if (noteInput) { noteInput.value = ""; noteInput.focus(); }
+
         checkBadges(); renderCheckinHistory();
     });
 });
+
+// Save note button
+var saveNoteBtn = $("#ci-save-note");
+if (saveNoteBtn) {
+    saveNoteBtn.addEventListener("click", function() {
+        var noteInput = $("#ci-note-input");
+        var noteText = noteInput ? noteInput.value.trim() : "";
+        if (!noteText) return;
+
+        // Find today's entry and add the note
+        var todayEntry = state.checkins.find(function(c) { return c.date === todayStr(); });
+        if (todayEntry) {
+            todayEntry.note = noteText;
+            saveProfile();
+            renderCheckinHistory();
+            // Visual feedback
+            saveNoteBtn.textContent = "Saved! \u2714";
+            setTimeout(function() { saveNoteBtn.textContent = "Save to Journal \u{1F4DD}"; }, 2000);
+        }
+    });
+}
 
 function renderCheckinHistory() {
     var hist = $("#ci-history"), empty = $("#ci-empty");
@@ -680,9 +713,10 @@ function renderCheckinHistory() {
     empty.style.display = "none";
     state.checkins.slice(-14).reverse().forEach(function(e) {
         var div = document.createElement("div"); div.className = "ci-entry";
+        var noteHtml = e.note ? '<div class="ci-entry-note">"' + escHtml(e.note) + '"</div>' : '';
         div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji||"\u{1F60A}") + '</span>' +
             '<div class="ci-entry-info"><div class="ci-entry-mood">' + capitalize(e.mood) + '</div>' +
-            '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div></div>';
+            '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div>' + noteHtml + '</div>';
         hist.appendChild(div);
     });
 }
@@ -746,9 +780,10 @@ function renderParent() {
     if (state.checkins && state.checkins.length > 0) {
         state.checkins.slice(-7).reverse().forEach(function(e) {
             var div = document.createElement("div"); div.className = "ci-entry";
+            var noteHtml = e.note ? '<div class="ci-entry-note">"' + escHtml(e.note) + '"</div>' : '';
             div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji||"\u{1F60A}") + '</span>' +
                 '<div class="ci-entry-info"><div class="ci-entry-mood">' + capitalize(e.mood) + '</div>' +
-                '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div></div>';
+                '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div>' + noteHtml + '</div>';
             jDiv.appendChild(div);
         });
     } else { jDiv.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No check-ins yet.</p>'; }

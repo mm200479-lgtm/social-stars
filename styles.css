@@ -347,6 +347,16 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     margin-bottom: 20px; animation: slideUp 0.3s ease;
 }
 .ci-response-text { font-size: 1rem; line-height: 1.6; text-align: center; }
+.ci-note-group { margin-top: 14px; width: 100%; }
+.ci-note-group label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; text-align: left; }
+.ci-note-input {
+    width: 100%; padding: 12px 16px; font-size: 1rem; border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm); font-family: var(--font-main); resize: none;
+    outline: none; transition: border-color var(--transition); background: var(--color-card);
+    line-height: 1.5; -webkit-user-select: text; user-select: text;
+}
+.ci-note-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+.ci-note-group .btn { margin-top: 10px; width: 100%; }
 .ci-journal { margin-top: 8px; }
 .ci-journal h3 { font-size: 1.2rem; margin-bottom: 12px; }
 .ci-history { display: flex; flex-direction: column; gap: 8px; }
@@ -359,6 +369,7 @@ input, textarea { -webkit-user-select: text; user-select: text; }
 .ci-entry-info { flex: 1; }
 .ci-entry-mood { font-weight: 600; font-size: 0.95rem; }
 .ci-entry-date { font-size: 0.8rem; color: var(--color-text-light); }
+.ci-entry-note { font-size: 0.85rem; color: var(--color-text); margin-top: 4px; font-style: italic; line-height: 1.4; }
 .ci-empty { color: var(--color-text-light); text-align: center; font-style: italic; }
 
 /* ===== Rewards ===== */
