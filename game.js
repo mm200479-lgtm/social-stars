@@ -1,8 +1,6 @@
 /**
- * Social Stars - Complete Game Engine
- * All 10 features: Scenarios with difficulty, Emotion Match, How Would You Feel,
- * Social Stories, Calm Down Corner (Breathing/Grounding/Squeeze), Emotion Thermometer,
- * Daily Check-In, Rewards/Badges/Themes, Audio Support, Parent Dashboard
+ * Social Stars - Complete Game Engine with Multi-Profile Support
+ * Multiple kids can each have their own saved progress on the same device.
  */
 (function () {
 "use strict";
@@ -24,9 +22,7 @@ function speak(text) {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.85;
-    u.pitch = 1.1;
-    u.lang = "en-US";
+    u.rate = 0.85; u.pitch = 1.1; u.lang = "en-US";
     window.speechSynthesis.speak(u);
 }
 
@@ -37,44 +33,104 @@ function todayStr() {
 
 function friendlyDate(iso) {
     var d = new Date(iso);
-    var opts = { weekday: "short", month: "short", day: "numeric" };
-    try { return d.toLocaleDateString("en-US", opts); } catch(e) { return iso; }
+    try { return d.toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric" }); }
+    catch(e) { return iso; }
 }
 
-// ===== State =====
-var state = {
-    playerName: "",
-    totalStars: 0,
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ===== Default State for a new profile =====
+function freshState(name) {
+    return {
+        playerName: name || "",
+        totalStars: 0,
+        difficulty: 1,
+        categoriesCompleted: [],
+        emotionMatchDone: false,
+        calmUsed: false,
+        storyRead: false,
+        perfectRound: false,
+        earnedBadges: [],
+        activeTheme: "",
+        checkins: [],
+        categoryStats: {}
+    };
+}
+
+// ===== Runtime state (not saved) =====
+var state = freshState("");
+var currentProfileId = null;
+
+// Transient game state
+var game = {
     currentCategory: null,
     currentScenarios: [],
     currentIndex: 0,
     roundStars: 0,
-    answered: false,
-    difficulty: 1,
-    categoriesCompleted: [],
-    emotionMatchDone: false,
-    calmUsed: false,
-    storyRead: false,
-    perfectRound: false,
-    earnedBadges: [],
-    activeTheme: "",
-    checkins: []
+    answered: false
 };
 
-// ===== Persistence =====
-function loadState() {
+// ===== Multi-Profile Persistence =====
+function getAllProfiles() {
     try {
-        var s = localStorage.getItem("socialStars2");
-        if (s) {
-            var d = JSON.parse(s);
-            Object.keys(d).forEach(function(k) { state[k] = d[k]; });
-        }
-    } catch(e) {}
+        var raw = localStorage.getItem("socialStarsProfiles");
+        return raw ? JSON.parse(raw) : {};
+    } catch(e) { return {}; }
 }
 
-function saveState() {
+function saveAllProfiles(profiles) {
+    try { localStorage.setItem("socialStarsProfiles", JSON.stringify(profiles)); } catch(e) {}
+}
+
+function loadProfile(id) {
+    var profiles = getAllProfiles();
+    var p = profiles[id];
+    if (p) {
+        state = freshState("");
+        Object.keys(p).forEach(function(k) { state[k] = p[k]; });
+        currentProfileId = id;
+    }
+}
+
+function saveProfile() {
+    if (!currentProfileId) return;
+    var profiles = getAllProfiles();
+    profiles[currentProfileId] = JSON.parse(JSON.stringify(state));
+    saveAllProfiles(profiles);
+}
+
+function createProfile(name) {
+    var profiles = getAllProfiles();
+    var id = "p_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+    state = freshState(name);
+    currentProfileId = id;
+    profiles[id] = JSON.parse(JSON.stringify(state));
+    saveAllProfiles(profiles);
+    return id;
+}
+
+function deleteProfile(id) {
+    var profiles = getAllProfiles();
+    delete profiles[id];
+    saveAllProfiles(profiles);
+}
+
+// Migrate old single-profile data if it exists
+function migrateOldData() {
     try {
-        localStorage.setItem("socialStars2", JSON.stringify(state));
+        var old = localStorage.getItem("socialStars2");
+        if (old) {
+            var d = JSON.parse(old);
+            if (d.playerName) {
+                var profiles = getAllProfiles();
+                var id = "p_migrated_" + Math.random().toString(36).substr(2, 5);
+                var s = freshState(d.playerName);
+                Object.keys(d).forEach(function(k) { if (k in s) s[k] = d[k]; });
+                profiles[id] = s;
+                saveAllProfiles(profiles);
+                localStorage.removeItem("socialStars2");
+            }
+        }
     } catch(e) {}
 }
 
@@ -82,28 +138,20 @@ function saveState() {
 function showScreen(id) {
     $$(".screen").forEach(function(s) { s.classList.remove("active"); });
     var el = $("#" + id);
-    if (el) {
-        el.classList.add("active");
-        el.scrollTop = 0;
-        window.scrollTo(0, 0);
-    }
+    if (el) { el.classList.add("active"); el.scrollTop = 0; window.scrollTo(0, 0); }
 }
 
 function updateStars() {
     var t = "\u2B50 " + state.totalStars;
     ["#star-count","#cat-star-count","#game-star-count","#em-star-count","#hf-star-count"].forEach(function(s) {
-        var el = $(s);
-        if (el) el.textContent = t;
+        var el = $(s); if (el) el.textContent = t;
     });
     var bc = $("#badge-count");
     if (bc) bc.textContent = "\u{1F3C5} " + state.earnedBadges.length;
 }
 
-function applyTheme() {
-    document.body.className = state.activeTheme || "";
-}
+function applyTheme() { document.body.className = state.activeTheme || ""; }
 
-// ===== Badge Checking =====
 function checkBadges() {
     var newBadge = null;
     BADGES.forEach(function(b) {
@@ -112,38 +160,105 @@ function checkBadges() {
             newBadge = b;
         }
     });
-    saveState();
-    updateStars();
+    saveProfile(); updateStars();
     return newBadge;
 }
 
-// ===== Welcome =====
-function initWelcome() {
-    loadState();
-    applyTheme();
-    updateStars();
+// ===== Profile Picker Screen =====
+function renderProfilePicker() {
+    migrateOldData();
+    var profiles = getAllProfiles();
+    var keys = Object.keys(profiles);
+    var grid = $("#profile-grid");
+    grid.innerHTML = "";
 
+    keys.forEach(function(id) {
+        var p = profiles[id];
+        var card = document.createElement("button");
+        card.className = "profile-card";
+        card.innerHTML =
+            '<span class="profile-avatar">' + getAvatar(p.playerName) + '</span>' +
+            '<span class="profile-name">' + escHtml(p.playerName) + '</span>' +
+            '<span class="profile-stars">\u2B50 ' + (p.totalStars || 0) + '</span>';
+        card.addEventListener("click", function() {
+            loadProfile(id);
+            applyTheme();
+            updateStars();
+            $("#player-greeting").textContent = "Hi, " + state.playerName + "!";
+            showScreen("menu-screen");
+        });
+
+        // Long-press / right-click to delete
+        card.addEventListener("contextmenu", function(e) {
+            e.preventDefault();
+            if (confirm("Remove " + p.playerName + "'s profile? This cannot be undone.")) {
+                deleteProfile(id);
+                renderProfilePicker();
+            }
+        });
+
+        grid.appendChild(card);
+    });
+
+    // "Add new player" card
+    var addCard = document.createElement("button");
+    addCard.className = "profile-card profile-add";
+    addCard.innerHTML =
+        '<span class="profile-avatar">➕</span>' +
+        '<span class="profile-name">New Player</span>' +
+        '<span class="profile-stars">Add a new profile</span>';
+    addCard.addEventListener("click", function() { showScreen("welcome-screen"); });
+    grid.appendChild(addCard);
+
+    // If no profiles exist, go straight to welcome
+    if (keys.length === 0) {
+        showScreen("welcome-screen");
+    } else {
+        showScreen("profile-screen");
+    }
+}
+
+function getAvatar(name) {
+    var avatars = ["\u{1F31F}","\u{1F338}","\u{1F98B}","\u{1F984}","\u{1F308}","\u{1F680}","\u{1F436}","\u{1F431}","\u{1F42C}","\u{1F985}"];
+    var sum = 0;
+    for (var i = 0; i < (name||"").length; i++) sum += name.charCodeAt(i);
+    return avatars[sum % avatars.length];
+}
+
+function escHtml(s) {
+    var d = document.createElement("div"); d.textContent = s; return d.innerHTML;
+}
+
+// ===== Welcome Screen (New Profile) =====
+function initWelcome() {
     var inp = $("#player-name");
     var btn = $("#start-btn");
-
-    if (state.playerName) {
-        inp.value = state.playerName;
-        btn.disabled = false;
-    }
+    inp.value = "";
+    btn.disabled = true;
 
     inp.addEventListener("input", function() {
         btn.disabled = inp.value.trim().length === 0;
     });
     inp.addEventListener("keydown", function(e) {
-        if (e.key === "Enter" && !btn.disabled) goToMenu();
+        if (e.key === "Enter" && !btn.disabled) createAndStart();
     });
-    btn.addEventListener("click", goToMenu);
+    btn.addEventListener("click", createAndStart);
+
+    // Back to profiles button
+    var backBtn = $("#welcome-back-btn");
+    if (backBtn) {
+        backBtn.addEventListener("click", function() {
+            var profiles = getAllProfiles();
+            if (Object.keys(profiles).length > 0) renderProfilePicker();
+        });
+    }
 }
 
-function goToMenu() {
-    state.playerName = $("#player-name").value.trim();
-    if (!state.playerName) return;
-    saveState();
+function createAndStart() {
+    var name = $("#player-name").value.trim();
+    if (!name) return;
+    createProfile(name);
+    applyTheme();
     updateStars();
     $("#player-greeting").textContent = "Hi, " + state.playerName + "!";
     showScreen("menu-screen");
@@ -156,29 +271,30 @@ function initMenu() {
         "menu-emotions": function() { startEmotionMatch(); },
         "menu-howfeel": function() { startHowFeel(); },
         "menu-stories": function() { renderStories(); showScreen("stories-screen"); },
-        "menu-calm": function() { state.calmUsed = true; saveState(); checkBadges(); showScreen("calm-screen"); },
+        "menu-calm": function() { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); },
         "menu-thermometer": function() { initThermometer(); showScreen("thermometer-screen"); },
         "menu-checkin": function() { renderCheckin(); showScreen("checkin-screen"); },
         "menu-rewards": function() { renderRewards(); showScreen("rewards-screen"); },
         "menu-parent": function() { renderParent(); showScreen("parent-screen"); }
     };
     Object.keys(routes).forEach(function(id) {
-        var el = $("#" + id);
-        if (el) el.addEventListener("click", routes[id]);
+        var el = $("#" + id); if (el) el.addEventListener("click", routes[id]);
     });
 
     // Back buttons to menu
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
      "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results"].forEach(function(s) {
-        var el = $(s);
-        if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
+        var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
     });
+
+    // Switch profile button
+    var spBtn = $("#switch-profile-btn");
+    if (spBtn) spBtn.addEventListener("click", function() { renderProfilePicker(); });
 }
 
-// ===== FEATURE 1 & 9: Learn & Play with Difficulty Levels =====
+// ===== Learn & Play with Difficulty =====
 function renderCategories() {
-    var grid = $("#category-grid");
-    grid.innerHTML = "";
+    var grid = $("#category-grid"); grid.innerHTML = "";
     CATEGORIES.forEach(function(cat) {
         var card = document.createElement("button");
         card.className = "category-card";
@@ -194,65 +310,51 @@ function renderCategories() {
 }
 
 function startCategory(catId) {
-    state.currentCategory = catId;
-    state.currentIndex = 0;
-    state.roundStars = 0;
-    state.answered = false;
-
+    game.currentCategory = catId;
+    game.currentIndex = 0;
+    game.roundStars = 0;
+    game.answered = false;
     var all = SCENARIOS[catId] || [];
     var diff = state.difficulty;
-    // Filter by difficulty, fall back to all if none match
     var filtered = all.filter(function(s) { return s.difficulty <= diff; });
     if (filtered.length === 0) filtered = all;
-    state.currentScenarios = shuffleArray(filtered);
-
-    updateStars();
-    showScenario();
-    showScreen("game-screen");
+    game.currentScenarios = shuffleArray(filtered);
+    updateStars(); showScenario(); showScreen("game-screen");
 }
 
 function showScenario() {
-    var sc = state.currentScenarios[state.currentIndex];
-    var total = state.currentScenarios.length;
-    var pct = (state.currentIndex / total) * 100;
-
-    $("#progress-bar").style.width = pct + "%";
+    var sc = game.currentScenarios[game.currentIndex];
+    var total = game.currentScenarios.length;
+    $("#progress-bar").style.width = ((game.currentIndex / total) * 100) + "%";
     $("#scenario-emoji").textContent = sc.emoji;
     $("#scenario-text").textContent = sc.text;
-
-    var area = $("#choices-area");
-    area.innerHTML = "";
+    var area = $("#choices-area"); area.innerHTML = "";
     shuffleArray(sc.choices).forEach(function(ch) {
         var btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.textContent = ch.text;
+        btn.className = "choice-btn"; btn.textContent = ch.text;
         btn.addEventListener("click", function() { handleChoice(ch, btn); });
         area.appendChild(btn);
     });
-
     $("#feedback-area").classList.add("hidden");
-    state.answered = false;
+    game.answered = false;
 }
 
 function handleChoice(choice, selBtn) {
-    if (state.answered) return;
-    state.answered = true;
-
-    var sc = state.currentScenarios[state.currentIndex];
+    if (game.answered) return;
+    game.answered = true;
+    var sc = game.currentScenarios[game.currentIndex];
     $$("#choices-area .choice-btn").forEach(function(btn) {
         btn.disabled = true;
         var correct = sc.choices.find(function(c) { return c.correct; });
         if (btn.textContent === correct.text) btn.classList.add("correct");
     });
-
     if (choice.correct) {
         selBtn.classList.add("correct");
         $("#feedback-icon").textContent = "\u{1F31F}";
         $("#feedback-text").textContent = "Amazing job!";
         $("#feedback-text").className = "feedback-text success";
         $("#feedback-explanation").textContent = sc.correctFeedback;
-        state.roundStars++;
-        state.totalStars++;
+        game.roundStars++; state.totalStars++;
     } else {
         selBtn.classList.add("gentle");
         $("#feedback-icon").textContent = "\u{1F4A1}";
@@ -260,244 +362,166 @@ function handleChoice(choice, selBtn) {
         $("#feedback-text").className = "feedback-text encourage";
         $("#feedback-explanation").textContent = sc.encourageFeedback;
     }
-
-    saveState();
-    updateStars();
+    saveProfile(); updateStars();
     $("#feedback-area").classList.remove("hidden");
     $("#next-btn").focus();
 }
 
 $("#next-btn").addEventListener("click", function() {
-    state.currentIndex++;
-    if (state.currentIndex >= state.currentScenarios.length) {
-        finishRound();
-    } else {
-        showScenario();
-    }
+    game.currentIndex++;
+    if (game.currentIndex >= game.currentScenarios.length) finishRound();
+    else showScenario();
 });
 
-$("#back-btn").addEventListener("click", function() {
-    renderCategories();
-    showScreen("category-screen");
-});
-
-// FEATURE 6: Audio support for scenarios
-$("#audio-btn").addEventListener("click", function() {
-    var text = $("#scenario-text").textContent;
-    speak(text);
-});
+$("#back-btn").addEventListener("click", function() { renderCategories(); showScreen("category-screen"); });
+$("#audio-btn").addEventListener("click", function() { speak($("#scenario-text").textContent); });
 
 function finishRound() {
-    var total = state.currentScenarios.length;
-    var stars = state.roundStars;
+    var total = game.currentScenarios.length;
+    var stars = game.roundStars;
     var ratio = stars / total;
-
-    // Track completion
-    if (state.categoriesCompleted.indexOf(state.currentCategory) === -1) {
-        state.categoriesCompleted.push(state.currentCategory);
-    }
+    if (state.categoriesCompleted.indexOf(game.currentCategory) === -1)
+        state.categoriesCompleted.push(game.currentCategory);
     if (ratio === 1) state.perfectRound = true;
-
-    // Save category stats
     if (!state.categoryStats) state.categoryStats = {};
-    var prev = state.categoryStats[state.currentCategory] || { played: 0, bestScore: 0, totalQ: 0, totalCorrect: 0 };
-    prev.played++;
-    prev.totalQ += total;
-    prev.totalCorrect += stars;
+    var prev = state.categoryStats[game.currentCategory] || { played:0, bestScore:0, totalQ:0, totalCorrect:0 };
+    prev.played++; prev.totalQ += total; prev.totalCorrect += stars;
     if (stars > prev.bestScore) prev.bestScore = stars;
-    state.categoryStats[state.currentCategory] = prev;
-
-    saveState();
+    state.categoryStats[game.currentCategory] = prev;
+    saveProfile();
 
     if (ratio >= 0.8) {
-        $("#results-emoji").textContent = "\u{1F3C6}";
-        $("#results-title").textContent = "Superstar!";
+        $("#results-emoji").textContent = "\u{1F3C6}"; $("#results-title").textContent = "Superstar!";
         $("#results-message").textContent = "Wow, " + state.playerName + "! You got " + stars + " out of " + total + " right away!";
     } else if (ratio >= 0.5) {
-        $("#results-emoji").textContent = "\u{1F31F}";
-        $("#results-title").textContent = "Great Job!";
+        $("#results-emoji").textContent = "\u{1F31F}"; $("#results-title").textContent = "Great Job!";
         $("#results-message").textContent = "Nice work, " + state.playerName + "! You got " + stars + " out of " + total + ". You're learning so much!";
     } else {
-        $("#results-emoji").textContent = "\u{1F4AA}";
-        $("#results-title").textContent = "Keep Going!";
+        $("#results-emoji").textContent = "\u{1F4AA}"; $("#results-title").textContent = "Keep Going!";
         $("#results-message").textContent = "You're doing great, " + state.playerName + "! You got " + stars + " out of " + total + ". Every try helps you learn!";
     }
-
-    var starIcons = "";
-    for (var i = 0; i < total; i++) starIcons += i < stars ? "\u2B50" : "\u2606";
-    $("#results-stars").textContent = starIcons;
-
+    var si = ""; for (var i = 0; i < total; i++) si += i < stars ? "\u2B50" : "\u2606";
+    $("#results-stars").textContent = si;
     var badge = checkBadges();
     var rb = $("#results-badge");
-    if (badge) {
-        rb.classList.remove("hidden");
-        rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!";
-    } else {
-        rb.classList.add("hidden");
-    }
-
-    updateStars();
-    showScreen("results-screen");
+    if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
+    else { rb.classList.add("hidden"); }
+    updateStars(); showScreen("results-screen");
 }
 
-$("#replay-btn").addEventListener("click", function() { startCategory(state.currentCategory); });
+$("#replay-btn").addEventListener("click", function() { startCategory(game.currentCategory); });
 $("#new-topic-btn").addEventListener("click", function() { renderCategories(); showScreen("category-screen"); });
 
 
-// ===== FEATURE 1: Emotion Match Mini-Game =====
+// ===== Emotion Match =====
 var emState = { items: [], index: 0, stars: 0, answered: false };
 
 function startEmotionMatch() {
     emState.items = shuffleArray(EMOTION_MATCH.slice());
-    emState.index = 0;
-    emState.stars = 0;
-    emState.answered = false;
-    updateStars();
-    showEmRound();
-    showScreen("emotion-match-screen");
+    emState.index = 0; emState.stars = 0; emState.answered = false;
+    updateStars(); showEmRound(); showScreen("emotion-match-screen");
 }
 
 function showEmRound() {
     var item = emState.items[emState.index];
-    var total = emState.items.length;
-    $("#em-progress-bar").style.width = ((emState.index / total) * 100) + "%";
+    $("#em-progress-bar").style.width = ((emState.index / emState.items.length) * 100) + "%";
     $("#em-face").textContent = item.face;
-
-    var area = $("#em-choices");
-    area.innerHTML = "";
+    var area = $("#em-choices"); area.innerHTML = "";
     shuffleArray(item.options).forEach(function(opt) {
         var btn = document.createElement("button");
-        btn.className = "em-choice-btn";
-        btn.textContent = opt;
+        btn.className = "em-choice-btn"; btn.textContent = opt;
         btn.addEventListener("click", function() { handleEmChoice(opt, btn); });
         area.appendChild(btn);
     });
-
-    $("#em-feedback").classList.add("hidden");
-    emState.answered = false;
+    $("#em-feedback").classList.add("hidden"); emState.answered = false;
 }
 
 function handleEmChoice(opt, selBtn) {
-    if (emState.answered) return;
-    emState.answered = true;
+    if (emState.answered) return; emState.answered = true;
     var item = emState.items[emState.index];
-
     $$("#em-choices .em-choice-btn").forEach(function(btn) {
         btn.disabled = true;
         if (btn.textContent === item.answer) btn.classList.add("correct");
     });
-
     if (opt === item.answer) {
         selBtn.classList.add("correct");
         $("#em-feedback-icon").textContent = "\u{1F31F}";
         $("#em-feedback-text").textContent = "That's right! This face shows " + item.answer + "!";
         $("#em-feedback-text").className = "feedback-text success";
-        emState.stars++;
-        state.totalStars++;
+        emState.stars++; state.totalStars++;
     } else {
         selBtn.classList.add("gentle");
         $("#em-feedback-icon").textContent = "\u{1F4A1}";
         $("#em-feedback-text").textContent = "Good try! This face actually shows " + item.answer + ".";
         $("#em-feedback-text").className = "feedback-text encourage";
     }
-
-    saveState();
-    updateStars();
-    $("#em-feedback").classList.remove("hidden");
-    $("#em-next-btn").focus();
+    saveProfile(); updateStars();
+    $("#em-feedback").classList.remove("hidden"); $("#em-next-btn").focus();
 }
 
 $("#em-next-btn").addEventListener("click", function() {
     emState.index++;
     if (emState.index >= emState.items.length) {
-        state.emotionMatchDone = true;
-        saveState();
-        checkBadges();
-        // Show results using the main results screen
-        var total = emState.items.length;
-        var stars = emState.stars;
+        state.emotionMatchDone = true; saveProfile(); checkBadges();
+        var total = emState.items.length, stars = emState.stars;
         $("#results-emoji").textContent = "\u{1F3AD}";
         $("#results-title").textContent = "Emotion Match Complete!";
-        $("#results-message").textContent = "You matched " + stars + " out of " + total + " faces correctly! Great job reading emotions, " + state.playerName + "!";
-        var si = "";
-        for (var i = 0; i < total; i++) si += i < stars ? "\u2B50" : "\u2606";
+        $("#results-message").textContent = "You matched " + stars + " out of " + total + " faces correctly! Great job, " + state.playerName + "!";
+        var si = ""; for (var i = 0; i < total; i++) si += i < stars ? "\u2B50" : "\u2606";
         $("#results-stars").textContent = si;
-        var badge = checkBadges();
-        var rb = $("#results-badge");
+        var badge = checkBadges(); var rb = $("#results-badge");
         if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
         else { rb.classList.add("hidden"); }
         showScreen("results-screen");
-    } else {
-        showEmRound();
-    }
+    } else { showEmRound(); }
 });
 
-// ===== FEATURE 2: How Would You Feel =====
+// ===== How Would You Feel =====
 var hfState = { items: [], index: 0, answered: false };
 
 function startHowFeel() {
     hfState.items = shuffleArray(HOW_WOULD_YOU_FEEL.slice());
-    hfState.index = 0;
-    hfState.answered = false;
-    showHfRound();
-    showScreen("howfeel-screen");
+    hfState.index = 0; hfState.answered = false;
+    showHfRound(); showScreen("howfeel-screen");
 }
 
 function showHfRound() {
     var item = hfState.items[hfState.index];
-    $("#hf-emoji").textContent = item.emoji;
-    $("#hf-text").textContent = item.text;
-
-    var area = $("#hf-choices");
-    area.innerHTML = "";
+    $("#hf-emoji").textContent = item.emoji; $("#hf-text").textContent = item.text;
+    var area = $("#hf-choices"); area.innerHTML = "";
     item.feelings.forEach(function(f) {
         var btn = document.createElement("button");
-        btn.className = "em-choice-btn";
-        btn.textContent = f;
+        btn.className = "em-choice-btn"; btn.textContent = f;
         btn.addEventListener("click", function() { handleHfChoice(f, btn); });
         area.appendChild(btn);
     });
-
-    $("#hf-feedback").classList.add("hidden");
-    hfState.answered = false;
+    $("#hf-feedback").classList.add("hidden"); hfState.answered = false;
 }
 
 function handleHfChoice(feeling, selBtn) {
-    if (hfState.answered) return;
-    hfState.answered = true;
+    if (hfState.answered) return; hfState.answered = true;
     var item = hfState.items[hfState.index];
-
     $$("#hf-choices .em-choice-btn").forEach(function(btn) { btn.disabled = true; });
     selBtn.classList.add("correct");
-
     $("#hf-feedback-icon").textContent = "\u{1F49C}";
     $("#hf-feedback-text").textContent = "Thanks for sharing!";
     $("#hf-feedback-text").className = "feedback-text success";
     $("#hf-feedback-explain").textContent = item.responses[feeling] || "That's a completely valid feeling!";
-
-    state.totalStars++;
-    saveState();
-    updateStars();
-    $("#hf-feedback").classList.remove("hidden");
-    $("#hf-next-btn").focus();
+    state.totalStars++; saveProfile(); updateStars();
+    $("#hf-feedback").classList.remove("hidden"); $("#hf-next-btn").focus();
 }
 
 $("#hf-next-btn").addEventListener("click", function() {
     hfState.index++;
-    if (hfState.index >= hfState.items.length) {
-        checkBadges();
-        showScreen("menu-screen");
-    } else {
-        showHfRound();
-    }
+    if (hfState.index >= hfState.items.length) { checkBadges(); showScreen("menu-screen"); }
+    else { showHfRound(); }
 });
 
-// ===== FEATURE 4: Social Stories =====
+// ===== Social Stories =====
 var svState = { story: null, step: 0 };
 
 function renderStories() {
-    var list = $("#ss-list");
-    list.innerHTML = "";
+    var list = $("#ss-list"); list.innerHTML = "";
     SOCIAL_STORIES.forEach(function(story) {
         var card = document.createElement("button");
         card.className = "story-card";
@@ -510,47 +534,30 @@ function renderStories() {
 }
 
 function openStory(story) {
-    svState.story = story;
-    svState.step = 0;
-    state.storyRead = true;
-    saveState();
-    checkBadges();
+    svState.story = story; svState.step = 0;
+    state.storyRead = true; saveProfile(); checkBadges();
     $("#sv-title").textContent = story.emoji + " " + story.title;
-    showStoryStep();
-    showScreen("story-viewer-screen");
+    showStoryStep(); showScreen("story-viewer-screen");
 }
 
 function showStoryStep() {
-    var s = svState.story.steps[svState.step];
-    var total = svState.story.steps.length;
-    $("#sv-step-indicator").textContent = "Step " + (svState.step + 1) + " of " + total;
-    $("#sv-step-emoji").textContent = s.emoji;
-    $("#sv-step-text").textContent = s.text;
+    var s = svState.story.steps[svState.step], total = svState.story.steps.length;
+    $("#sv-step-indicator").textContent = "Step " + (svState.step+1) + " of " + total;
+    $("#sv-step-emoji").textContent = s.emoji; $("#sv-step-text").textContent = s.text;
     $("#sv-prev").disabled = svState.step === 0;
-    $("#sv-next").textContent = svState.step === total - 1 ? "Done \u2714" : "Next \u2192";
+    $("#sv-next").textContent = svState.step === total-1 ? "Done \u2714" : "Next \u2192";
 }
 
-$("#sv-prev").addEventListener("click", function() {
-    if (svState.step > 0) { svState.step--; showStoryStep(); }
-});
+$("#sv-prev").addEventListener("click", function() { if (svState.step > 0) { svState.step--; showStoryStep(); } });
 $("#sv-next").addEventListener("click", function() {
-    if (svState.step < svState.story.steps.length - 1) {
-        svState.step++;
-        showStoryStep();
-    } else {
-        renderStories();
-        showScreen("stories-screen");
-    }
+    if (svState.step < svState.story.steps.length-1) { svState.step++; showStoryStep(); }
+    else { renderStories(); showScreen("stories-screen"); }
 });
 $("#sv-back-btn").addEventListener("click", function() { renderStories(); showScreen("stories-screen"); });
 $("#sv-audio-btn").addEventListener("click", function() { speak($("#sv-step-text").textContent); });
 
-
-// ===== FEATURE 7: Calm Down Corner =====
-
-// -- Breathing --
-var breathInterval = null;
-var breathCount = 0;
+// ===== Calm Down Corner =====
+var breathInterval = null, breathCount = 0;
 
 $("#calm-breathing").addEventListener("click", function() { showScreen("breathing-screen"); });
 $("#calm-grounding").addEventListener("click", function() { groundState.step = 0; showGroundStep(); showScreen("grounding-screen"); });
@@ -561,44 +568,26 @@ $("#breathing-circle").addEventListener("click", startBreathing);
 
 function startBreathing() {
     if (breathInterval) { stopBreathing(); return; }
-    breathCount = 0;
-    $("#breathing-start").textContent = "Stop";
-    doBreathe();
+    breathCount = 0; $("#breathing-start").textContent = "Stop"; doBreathe();
 }
 
 function doBreathe() {
-    var circle = $("#breathing-circle");
-    var label = $("#breathing-label");
-    var counter = $("#breathing-counter");
-
-    // Inhale
-    circle.classList.remove("exhale");
-    circle.classList.add("inhale");
-    label.textContent = "Breathe in...";
-
+    var circle = $("#breathing-circle"), label = $("#breathing-label"), counter = $("#breathing-counter");
+    circle.classList.remove("exhale"); circle.classList.add("inhale"); label.textContent = "Breathe in...";
     breathInterval = setTimeout(function() {
-        // Hold
         label.textContent = "Hold...";
         breathInterval = setTimeout(function() {
-            // Exhale
-            circle.classList.remove("inhale");
-            circle.classList.add("exhale");
-            label.textContent = "Breathe out...";
-            breathCount++;
+            circle.classList.remove("inhale"); circle.classList.add("exhale");
+            label.textContent = "Breathe out..."; breathCount++;
             counter.textContent = "Breaths: " + breathCount;
-
             breathInterval = setTimeout(function() {
                 if (breathCount >= 5) {
                     label.textContent = "Great job! \u{1F31F}";
                     counter.textContent = "You did 5 breaths! Feel calmer?";
                     $("#breathing-start").textContent = "Start Breathing";
                     breathInterval = null;
-                    state.calmUsed = true;
-                    saveState();
-                    checkBadges();
-                } else {
-                    doBreathe();
-                }
+                    state.calmUsed = true; saveProfile(); checkBadges();
+                } else { doBreathe(); }
             }, 4000);
         }, 2000);
     }, 4000);
@@ -606,98 +595,64 @@ function doBreathe() {
 
 function stopBreathing() {
     if (breathInterval) { clearTimeout(breathInterval); breathInterval = null; }
-    var circle = $("#breathing-circle");
-    circle.classList.remove("inhale", "exhale");
+    $("#breathing-circle").classList.remove("inhale","exhale");
     $("#breathing-label").textContent = "Tap to start";
     $("#breathing-start").textContent = "Start Breathing";
 }
 
 $("#breath-back-btn").addEventListener("click", function() { stopBreathing(); showScreen("calm-screen"); });
 
-// -- Grounding --
+// Grounding
 var groundState = { step: 0 };
-
 function showGroundStep() {
     var s = GROUNDING_STEPS[groundState.step];
-    $("#grounding-emoji").textContent = s.emoji;
-    $("#grounding-prompt").textContent = s.text;
+    $("#grounding-emoji").textContent = s.emoji; $("#grounding-prompt").textContent = s.text;
     $("#grounding-prev").disabled = groundState.step === 0;
-    $("#grounding-next").textContent = groundState.step === GROUNDING_STEPS.length - 1 ? "Done \u2714" : "Next \u2192";
+    $("#grounding-next").textContent = groundState.step === GROUNDING_STEPS.length-1 ? "Done \u2714" : "Next \u2192";
 }
-
-$("#grounding-prev").addEventListener("click", function() {
-    if (groundState.step > 0) { groundState.step--; showGroundStep(); }
-});
+$("#grounding-prev").addEventListener("click", function() { if (groundState.step > 0) { groundState.step--; showGroundStep(); } });
 $("#grounding-next").addEventListener("click", function() {
-    if (groundState.step < GROUNDING_STEPS.length - 1) {
-        groundState.step++;
-        showGroundStep();
-    } else {
-        state.calmUsed = true; saveState(); checkBadges();
-        showScreen("calm-screen");
-    }
+    if (groundState.step < GROUNDING_STEPS.length-1) { groundState.step++; showGroundStep(); }
+    else { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); }
 });
 $("#ground-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
 
-// -- Squeeze --
-var squeezeCount = 0;
-var sqCircle = $("#squeeze-circle");
-
-function sqDown() {
-    sqCircle.classList.add("pressed");
-    sqCircle.querySelector(".breathing-label").textContent = "Squeezing...";
-}
+// Squeeze
+var squeezeCount = 0, sqCircle = $("#squeeze-circle");
+function sqDown() { sqCircle.classList.add("pressed"); sqCircle.querySelector(".breathing-label").textContent = "Squeezing..."; }
 function sqUp() {
-    sqCircle.classList.remove("pressed");
-    squeezeCount++;
+    sqCircle.classList.remove("pressed"); squeezeCount++;
     sqCircle.querySelector(".breathing-label").textContent = "Hold me!";
     $("#squeeze-counter").textContent = "Squeezes: " + squeezeCount;
     if (squeezeCount >= 5) {
-        $("#squeeze-counter").textContent = "Great job! " + squeezeCount + " squeezes! Feel the calm \u{1F31F}";
-        state.calmUsed = true; saveState(); checkBadges();
+        $("#squeeze-counter").textContent = "Great job! " + squeezeCount + " squeezes! \u{1F31F}";
+        state.calmUsed = true; saveProfile(); checkBadges();
     }
 }
-
 sqCircle.addEventListener("mousedown", sqDown);
 sqCircle.addEventListener("mouseup", sqUp);
 sqCircle.addEventListener("mouseleave", function() { if (sqCircle.classList.contains("pressed")) sqUp(); });
 sqCircle.addEventListener("touchstart", function(e) { e.preventDefault(); sqDown(); }, { passive: false });
 sqCircle.addEventListener("touchend", function(e) { e.preventDefault(); sqUp(); }, { passive: false });
-
 $("#squeeze-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
 
-// ===== FEATURE 3: Emotion Thermometer =====
-function initThermometer() {
-    var slider = $("#therm-slider");
-    slider.value = 0;
-    updateTherm();
-}
-
+// ===== Emotion Thermometer =====
+function initThermometer() { $("#therm-slider").value = 0; updateTherm(); }
 function updateTherm() {
-    var val = parseInt($("#therm-slider").value);
-    var level = THERM_LEVELS[val];
+    var val = parseInt($("#therm-slider").value), level = THERM_LEVELS[val];
     $("#therm-emoji").textContent = level.emoji;
     $("#therm-label").textContent = level.label;
     $("#therm-label").style.color = level.color;
     $("#therm-tip").textContent = level.tip;
-
-    var calmBtn = $("#therm-calm-btn");
-    if (val >= 3) {
-        calmBtn.classList.remove("hidden");
-    } else {
-        calmBtn.classList.add("hidden");
-    }
+    if (val >= 3) $("#therm-calm-btn").classList.remove("hidden");
+    else $("#therm-calm-btn").classList.add("hidden");
 }
-
 $("#therm-slider").addEventListener("input", updateTherm);
-$("#therm-calm-btn").addEventListener("click", function() {
-    state.calmUsed = true; saveState(); checkBadges();
-    showScreen("calm-screen");
-});
+$("#therm-calm-btn").addEventListener("click", function() { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); });
 
-// ===== FEATURE 8: Daily Check-In =====
+
+// ===== Daily Check-In =====
 function renderCheckin() {
-    // Reset selection
     $$(".ci-face").forEach(function(f) { f.classList.remove("selected"); });
     $("#ci-response").classList.add("hidden");
     renderCheckinHistory();
@@ -708,68 +663,43 @@ $$(".ci-face").forEach(function(face) {
         var mood = face.getAttribute("data-mood");
         $$(".ci-face").forEach(function(f) { f.classList.remove("selected"); });
         face.classList.add("selected");
-
-        // Save check-in
         var entry = { mood: mood, date: todayStr(), emoji: face.querySelector(".ci-face-emoji").textContent };
-        // Don't duplicate today
         state.checkins = state.checkins.filter(function(c) { return c.date !== todayStr(); });
         state.checkins.push(entry);
-        state.totalStars++;
-        saveState();
-        updateStars();
-
-        // Show response
-        var resp = CHECKIN_RESPONSES[mood] || "Thanks for sharing how you feel!";
-        $("#ci-response-text").textContent = resp;
+        state.totalStars++; saveProfile(); updateStars();
+        $("#ci-response-text").textContent = CHECKIN_RESPONSES[mood] || "Thanks for sharing!";
         $("#ci-response").classList.remove("hidden");
-
-        checkBadges();
-        renderCheckinHistory();
+        checkBadges(); renderCheckinHistory();
     });
 });
 
 function renderCheckinHistory() {
-    var hist = $("#ci-history");
-    var empty = $("#ci-empty");
+    var hist = $("#ci-history"), empty = $("#ci-empty");
     hist.innerHTML = "";
-
-    if (!state.checkins || state.checkins.length === 0) {
-        empty.style.display = "block";
-        return;
-    }
+    if (!state.checkins || state.checkins.length === 0) { empty.style.display = "block"; return; }
     empty.style.display = "none";
-
-    // Show last 14 entries, newest first
-    var entries = state.checkins.slice(-14).reverse();
-    entries.forEach(function(e) {
-        var div = document.createElement("div");
-        div.className = "ci-entry";
-        div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji || "\u{1F60A}") + '</span>' +
+    state.checkins.slice(-14).reverse().forEach(function(e) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji||"\u{1F60A}") + '</span>' +
             '<div class="ci-entry-info"><div class="ci-entry-mood">' + capitalize(e.mood) + '</div>' +
             '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div></div>';
         hist.appendChild(div);
     });
 }
 
-function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
-// ===== FEATURE 5: Rewards & Themes =====
+// ===== Rewards & Themes =====
 function renderRewards() {
-    var grid = $("#rewards-grid");
-    grid.innerHTML = "";
+    var grid = $("#rewards-grid"); grid.innerHTML = "";
     BADGES.forEach(function(b) {
         var earned = state.earnedBadges.indexOf(b.id) !== -1;
         var card = document.createElement("div");
         card.className = "reward-card " + (earned ? "earned" : "locked");
-        card.setAttribute("role", "listitem");
         card.innerHTML = '<span class="reward-emoji">' + b.emoji + '</span>' +
             '<div class="reward-name">' + b.name + '</div>' +
             '<div class="reward-desc">' + (earned ? b.desc : "\u{1F512} " + b.desc) + '</div>';
         grid.appendChild(card);
     });
-
-    var tGrid = $("#themes-grid");
-    tGrid.innerHTML = "";
+    var tGrid = $("#themes-grid"); tGrid.innerHTML = "";
     THEMES.forEach(function(t) {
         var unlocked = state.totalStars >= t.starsNeeded;
         var active = state.activeTheme === t.className;
@@ -778,37 +708,33 @@ function renderRewards() {
         card.innerHTML = '<span class="reward-emoji">' + t.emoji + '</span>' +
             '<div class="reward-name">' + t.name + '</div>' +
             '<div class="reward-desc">' + (unlocked ? t.desc : "\u{1F512} Need " + t.starsNeeded + " stars") + '</div>';
-        if (unlocked) {
-            card.addEventListener("click", function() {
-                state.activeTheme = t.className;
-                saveState();
-                applyTheme();
-                renderRewards();
-            });
-        }
+        if (unlocked) card.addEventListener("click", function() {
+            state.activeTheme = t.className; saveProfile(); applyTheme(); renderRewards();
+        });
         tGrid.appendChild(card);
     });
 }
 
-// ===== FEATURE 10: Parent Dashboard =====
+// ===== Parent Dashboard =====
 function renderParent() {
-    // Stats
-    var stats = $("#parent-stats");
-    stats.innerHTML =
+    // If multiple profiles, show all kids
+    var profiles = getAllProfiles();
+    var keys = Object.keys(profiles);
+
+    // Current child stats
+    $("#parent-stats").innerHTML =
         '<div class="stat-card"><div class="stat-value">' + state.totalStars + '</div><div class="stat-label">Total Stars</div></div>' +
-        '<div class="stat-card"><div class="stat-value">' + state.earnedBadges.length + '</div><div class="stat-label">Badges Earned</div></div>' +
+        '<div class="stat-card"><div class="stat-value">' + state.earnedBadges.length + '</div><div class="stat-label">Badges</div></div>' +
         '<div class="stat-card"><div class="stat-value">' + state.categoriesCompleted.length + '/6</div><div class="stat-label">Topics Done</div></div>' +
-        '<div class="stat-card"><div class="stat-value">' + (state.checkins || []).length + '</div><div class="stat-label">Check-Ins</div></div>';
+        '<div class="stat-card"><div class="stat-value">' + (state.checkins||[]).length + '</div><div class="stat-label">Check-Ins</div></div>' +
+        (keys.length > 1 ? '<div class="stat-card"><div class="stat-value">' + keys.length + '</div><div class="stat-label">Total Players</div></div>' : '');
 
     // Category performance
-    var catDiv = $("#parent-categories");
-    catDiv.innerHTML = "";
+    var catDiv = $("#parent-categories"); catDiv.innerHTML = "";
     CATEGORIES.forEach(function(cat) {
-        var cs = (state.categoryStats || {})[cat.id];
-        var pct = 0;
+        var cs = (state.categoryStats||{})[cat.id]; var pct = 0;
         if (cs && cs.totalQ > 0) pct = Math.round((cs.totalCorrect / cs.totalQ) * 100);
-        var row = document.createElement("div");
-        row.className = "parent-cat-row";
+        var row = document.createElement("div"); row.className = "parent-cat-row";
         row.innerHTML = '<span class="parent-cat-name">' + cat.emoji + ' ' + cat.title + '</span>' +
             '<div class="parent-cat-bar"><div class="parent-cat-fill" style="width:' + pct + '%"></div></div>' +
             '<span class="parent-cat-pct">' + pct + '%</span>';
@@ -816,70 +742,68 @@ function renderParent() {
     });
 
     // Journal
-    var jDiv = $("#parent-journal");
-    jDiv.innerHTML = "";
+    var jDiv = $("#parent-journal"); jDiv.innerHTML = "";
     if (state.checkins && state.checkins.length > 0) {
         state.checkins.slice(-7).reverse().forEach(function(e) {
-            var div = document.createElement("div");
-            div.className = "ci-entry";
-            div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji || "\u{1F60A}") + '</span>' +
+            var div = document.createElement("div"); div.className = "ci-entry";
+            div.innerHTML = '<span class="ci-entry-emoji">' + (e.emoji||"\u{1F60A}") + '</span>' +
                 '<div class="ci-entry-info"><div class="ci-entry-mood">' + capitalize(e.mood) + '</div>' +
                 '<div class="ci-entry-date">' + friendlyDate(e.date) + '</div></div>';
             jDiv.appendChild(div);
         });
-    } else {
-        jDiv.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No check-ins yet.</p>';
+    } else { jDiv.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No check-ins yet.</p>'; }
+
+    // If multiple profiles, show a summary of all kids
+    if (keys.length > 1) {
+        var allKidsHtml = '<h3 style="margin:24px 0 12px;">All Players Overview</h3>';
+        keys.forEach(function(id) {
+            var p = profiles[id];
+            allKidsHtml += '<div class="parent-cat-row">' +
+                '<span class="parent-cat-name">' + getAvatar(p.playerName) + ' ' + escHtml(p.playerName) + '</span>' +
+                '<div class="parent-cat-bar"><div class="parent-cat-fill" style="width:' + Math.min(100, (p.totalStars||0)) + '%"></div></div>' +
+                '<span class="parent-cat-pct">\u2B50 ' + (p.totalStars||0) + '</span></div>';
+        });
+        jDiv.insertAdjacentHTML("afterend", allKidsHtml);
     }
 
     // Suggestions
-    var sugDiv = $("#parent-suggestions");
-    var suggestions = [];
-    if (state.categoriesCompleted.length === 0) suggestions.push("Start with 'Understanding Emotions' \u2014 it's a great foundation for all social skills.");
-    if (!state.calmUsed) suggestions.push("Explore the Calm Down Corner together \u2014 the breathing bubble is great for regulation practice.");
-    if ((state.checkins || []).length < 3) suggestions.push("Encourage daily check-ins to build emotional vocabulary and self-awareness.");
-
+    var sugDiv = $("#parent-suggestions"); var suggestions = [];
+    if (state.categoriesCompleted.length === 0) suggestions.push("Start with 'Understanding Emotions' \u2014 it's a great foundation.");
+    if (!state.calmUsed) suggestions.push("Explore the Calm Down Corner together \u2014 the breathing bubble is great for regulation.");
+    if ((state.checkins||[]).length < 3) suggestions.push("Encourage daily check-ins to build emotional vocabulary.");
     var weakest = null, weakPct = 101;
     CATEGORIES.forEach(function(cat) {
-        var cs = (state.categoryStats || {})[cat.id];
-        if (cs && cs.totalQ > 0) {
-            var p = (cs.totalCorrect / cs.totalQ) * 100;
-            if (p < weakPct) { weakPct = p; weakest = cat; }
-        }
+        var cs = (state.categoryStats||{})[cat.id];
+        if (cs && cs.totalQ > 0) { var p = (cs.totalCorrect/cs.totalQ)*100; if (p < weakPct) { weakPct = p; weakest = cat; } }
     });
-    if (weakest && weakPct < 70) suggestions.push("'" + weakest.title + "' could use more practice (currently " + Math.round(weakPct) + "% correct). Try playing it again at an easier difficulty.");
-
-    if (state.totalStars >= 25 && state.difficulty < 3) suggestions.push("Your child is doing well! Consider trying Level 2 or Level 3 difficulty for more challenge.");
-    if (suggestions.length === 0) suggestions.push("Your child is making great progress across all areas! Keep up the wonderful work together. \u{1F31F}");
-
+    if (weakest && weakPct < 70) suggestions.push("'" + weakest.title + "' could use more practice (" + Math.round(weakPct) + "%). Try an easier difficulty.");
+    if (state.totalStars >= 25 && state.difficulty < 3) suggestions.push("Your child is doing well! Consider Level 2 or 3 for more challenge.");
+    if (suggestions.length === 0) suggestions.push("Great progress across all areas! Keep up the wonderful work. \u{1F31F}");
     sugDiv.innerHTML = suggestions.map(function(s) { return "\u2022 " + s; }).join("<br><br>");
 }
 
 // ===== Keyboard =====
 document.addEventListener("keydown", function(e) {
     if (e.key === "Escape") {
-        var active = document.querySelector(".screen.active");
-        if (active) {
-            var id = active.id;
-            if (id === "game-screen") { renderCategories(); showScreen("category-screen"); }
-            else if (id === "results-screen" || id === "category-screen" || id === "emotion-match-screen" ||
-                     id === "howfeel-screen" || id === "stories-screen" || id === "calm-screen" ||
-                     id === "thermometer-screen" || id === "checkin-screen" || id === "rewards-screen" ||
-                     id === "parent-screen") { showScreen("menu-screen"); }
-            else if (id === "breathing-screen" || id === "grounding-screen" || id === "squeeze-screen") { stopBreathing(); showScreen("calm-screen"); }
-            else if (id === "story-viewer-screen") { renderStories(); showScreen("stories-screen"); }
-        }
+        var id = (document.querySelector(".screen.active") || {}).id;
+        if (id === "game-screen") { renderCategories(); showScreen("category-screen"); }
+        else if (["results-screen","category-screen","emotion-match-screen","howfeel-screen",
+                  "stories-screen","calm-screen","thermometer-screen","checkin-screen",
+                  "rewards-screen","parent-screen"].indexOf(id) !== -1) { showScreen("menu-screen"); }
+        else if (["breathing-screen","grounding-screen","squeeze-screen"].indexOf(id) !== -1) { stopBreathing(); showScreen("calm-screen"); }
+        else if (id === "story-viewer-screen") { renderStories(); showScreen("stories-screen"); }
+        else if (id === "menu-screen") { renderProfilePicker(); }
     }
 });
 
-// ===== Service Worker Registration =====
+// ===== Service Worker =====
 if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("sw.js").catch(function() {});
-    });
+    window.addEventListener("load", function() { navigator.serviceWorker.register("sw.js").catch(function(){}); });
 }
 
 // ===== Init =====
 initWelcome();
 initMenu();
+renderProfilePicker();
 
 })();

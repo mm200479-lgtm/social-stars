@@ -16,8 +16,19 @@
 <body>
     <div id="app">
 
-        <!-- ========== Welcome Screen ========== -->
-        <div id="welcome-screen" class="screen active" tabindex="-1">
+        <!-- ========== Profile Picker Screen ========== -->
+        <div id="profile-screen" class="screen" tabindex="-1">
+            <div class="welcome-container">
+                <h1 class="game-title">⭐ Social Stars ⭐</h1>
+                <p class="subtitle">Who's playing today?</p>
+                <div id="profile-grid" class="profile-grid" role="list">
+                    <!-- Profiles inserted by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Welcome Screen (New Profile) ========== -->
+        <div id="welcome-screen" class="screen" tabindex="-1">
             <div class="welcome-container">
                 <h1 class="game-title">⭐ Social Stars ⭐</h1>
                 <p class="subtitle">Learn about feelings, friends &amp; conversations!</p>
@@ -27,6 +38,7 @@
                     <input type="text" id="player-name" placeholder="Type your name here..." maxlength="20" autocomplete="off">
                 </div>
                 <button id="start-btn" class="btn btn-primary" disabled>Let's Play!</button>
+                <button id="welcome-back-btn" class="btn btn-back" style="margin-top:16px;">← Back to profiles</button>
             </div>
         </div>
 
@@ -39,6 +51,7 @@
                 <div class="header-right">
                     <span id="star-count" class="star-count">⭐ 0</span>
                     <span id="badge-count" class="badge-count" title="Badges earned">🏅 0</span>
+                    <button id="switch-profile-btn" class="btn btn-small btn-back" title="Switch player">👤 Switch</button>
                 </div>
             </header>
             <div class="menu-container">
