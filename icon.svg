@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Purple rounded background -->
+  <rect width="512" height="512" rx="100" ry="100" fill="#6c63ff"/>
+  
+  <!-- Subtle gradient overlay -->
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#6c63ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="100" ry="100" fill="url(#glow)"/>
+  
+  <!-- Gold star -->
+  <polygon points="256,80 296,190 412,190 318,258 350,370 256,302 162,370 194,258 100,190 216,190" 
+           fill="#ffc107" stroke="#ffb300" stroke-width="4" stroke-linejoin="round"/>
+  
+  <!-- Inner star highlight -->
+  <polygon points="256,110 288,198 390,198 308,254 334,348 256,294 178,348 204,254 122,198 224,198" 
+           fill="#ffca28" opacity="0.5"/>
+  
+  <!-- Smiley face on star -->
+  <!-- Left eye -->
+  <ellipse cx="228" cy="210" rx="12" ry="14" fill="#5d4037"/>
+  <!-- Right eye -->
+  <ellipse cx="284" cy="210" rx="12" ry="14" fill="#5d4037"/>
+  <!-- Eye sparkles -->
+  <circle cx="232" cy="205" r="4" fill="white" opacity="0.8"/>
+  <circle cx="288" cy="205" r="4" fill="white" opacity="0.8"/>
+  <!-- Smile -->
+  <path d="M 224 240 Q 256 275 288 240" fill="none" stroke="#5d4037" stroke-width="6" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <circle cx="212" cy="238" r="14" fill="#ff8a80" opacity="0.4"/>
+  <circle cx="300" cy="238" r="14" fill="#ff8a80" opacity="0.4"/>
+  
+  <!-- Small sparkles around star -->
+  <circle cx="130" cy="120" r="6" fill="white" opacity="0.7"/>
+  <circle cx="390" cy="100" r="4" fill="white" opacity="0.6"/>
+  <circle cx="420" cy="320" r="5" fill="white" opacity="0.5"/>
+  <circle cx="90" cy="350" r="4" fill="white" opacity="0.6"/>
+  <circle cx="160" cy="420" r="3" fill="white" opacity="0.5"/>
+  <circle cx="370" cy="420" r="5" fill="white" opacity="0.6"/>
+  
+  <!-- "Social Stars" text at bottom -->
+  <text x="256" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="48" fill="white" opacity="0.95">Social Stars</text>
+</svg>
