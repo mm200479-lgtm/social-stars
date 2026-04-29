@@ -549,6 +549,61 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     from { transform: translateY(-100%); } to { transform: translateY(0); }
 }
 
+/* ===== Star of the Day ===== */
+.sotd-banner {
+    max-width: 650px; width: 100%; margin: 0 auto 20px; animation: slideUp 0.4s ease;
+}
+.sotd-inner {
+    background: linear-gradient(135deg, #fff8e1, #fff3e0); border: 2px solid #ffe082;
+    border-radius: var(--radius); padding: 20px 24px; text-align: center;
+    box-shadow: 0 4px 20px rgba(255,193,7,0.2);
+}
+.sotd-inner h3 { font-size: 1.1rem; color: #e65100; margin-bottom: 10px; }
+.sotd-question { font-size: 1.05rem; margin-bottom: 14px; line-height: 1.5; }
+.sotd-choices { display: flex; flex-direction: column; gap: 8px; }
+.sotd-choice-btn {
+    padding: 12px 16px; font-size: 0.95rem; border: 2px solid #ffe082;
+    border-radius: var(--radius-sm); background: white; cursor: pointer;
+    transition: all var(--transition); font-family: var(--font-main);
+    touch-action: manipulation; text-align: left;
+}
+.sotd-choice-btn:active:not(:disabled) { border-color: #ff9800; background: #fff3e0; }
+.sotd-choice-btn:disabled { cursor: default; }
+.sotd-choice-btn.correct { border-color: var(--color-success); background: var(--color-success-bg); }
+.sotd-choice-btn.wrong { border-color: var(--color-gentle); background: var(--color-gentle-bg); }
+.sotd-result { margin-top: 12px; font-weight: 600; font-size: 1rem; }
+
+/* ===== Feelings Vocabulary ===== */
+.vocab-example {
+    margin-top: 12px; font-style: italic; color: var(--color-primary);
+    font-size: 0.95rem; padding: 10px 16px; background: rgba(108,99,255,0.06);
+    border-radius: var(--radius-sm);
+}
+
+/* ===== Settings ===== */
+.settings-group {
+    background: var(--color-card); border-radius: var(--radius); padding: 20px 24px;
+    margin-bottom: 14px; box-shadow: var(--shadow);
+}
+.settings-group label { display: block; font-weight: 700; margin-bottom: 10px; font-size: 1.05rem; }
+
+/* ===== Font Size Overrides ===== */
+body.font-xs { font-size: 13px; }
+body.font-sm { font-size: 14px; }
+body.font-md { font-size: 16px; }
+body.font-lg { font-size: 18px; }
+body.font-xl { font-size: 20px; }
+
+/* ===== High Contrast ===== */
+body.high-contrast {
+    --color-bg: #000000; --color-card: #1a1a1a; --color-text: #ffffff;
+    --color-text-light: #cccccc; --color-border: #444444;
+    --color-primary: #ffff00; --color-primary-hover: #cccc00;
+}
+body.high-contrast .choice-btn { color: #ffffff; }
+body.high-contrast .star-count { background: #333; }
+body.high-contrast .badge-count { background: #333; }
+
 /* ===== Accessibility ===== */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

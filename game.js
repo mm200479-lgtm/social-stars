@@ -1345,10 +1345,18 @@ if (menuCoping) menuCoping.addEventListener("click", function() { startCoping();
 var menuTimer = $("#menu-timer");
 if (menuTimer) menuTimer.addEventListener("click", function() { showScreen("timer-screen"); });
 
+var menuVocab = $("#menu-vocab");
+if (menuVocab) menuVocab.addEventListener("click", function() { startVocab(); });
+
+var menuRules = $("#menu-rules");
+if (menuRules) menuRules.addEventListener("click", function() { renderRules(); showScreen("rules-screen"); });
+
+var menuSettings = $("#menu-settings");
+if (menuSettings) menuSettings.addEventListener("click", function() { initSettings(); showScreen("settings-screen"); });
+
 // Override parent dashboard to go through PIN
 var menuParent = $("#menu-parent");
 if (menuParent) {
-    // Remove old listener by replacing node
     var newParent = menuParent.cloneNode(true);
     menuParent.parentNode.replaceChild(newParent, menuParent);
     newParent.addEventListener("click", function() {
@@ -1358,19 +1366,192 @@ if (menuParent) {
     });
 }
 
+// ===== STAR OF THE DAY =====
+function showStarOfTheDay() {
+    var banner = $("#sotd-banner");
+    if (!banner) return;
+    // Use date as seed for consistent daily question
+    var today = todayStr();
+    var seed = 0;
+    for (var i = 0; i < today.length; i++) seed += today.charCodeAt(i);
+    var qIndex = seed % STAR_OF_THE_DAY.length;
+    var q = STAR_OF_THE_DAY[qIndex];
+
+    // Check if already answered today
+    if (state._sotdDate === today) { banner.classList.add("hidden"); return; }
+
+    var emoji = $("#sotd-question");
+    emoji.textContent = q.emoji + " " + q.question;
+    var area = $("#sotd-choices"); area.innerHTML = "";
+    var result = $("#sotd-result"); result.classList.add("hidden");
+
+    q.choices.forEach(function(ch, idx) {
+        var btn = document.createElement("button");
+        btn.className = "sotd-choice-btn"; btn.textContent = ch;
+        btn.addEventListener("click", function() {
+            $$(".sotd-choice-btn").forEach(function(b, bi) {
+                b.disabled = true;
+                if (bi === q.answer) b.classList.add("correct");
+            });
+            if (idx === q.answer) {
+                btn.classList.add("correct");
+                result.textContent = "\u{1F31F} Correct! +2 stars!";
+                result.style.color = "#4caf50";
+                state.totalStars += 2; playChime();
+            } else {
+                btn.classList.add("wrong");
+                result.textContent = "\u{1F4A1} The answer was: " + q.choices[q.answer];
+                result.style.color = "#ff9800";
+                playGentle();
+            }
+            state._sotdDate = today;
+            saveProfile(); updateStars();
+            result.classList.remove("hidden");
+            setTimeout(function() { banner.classList.add("hidden"); }, 4000);
+        });
+        area.appendChild(btn);
+    });
+    banner.classList.remove("hidden");
+}
+
+// ===== FEELINGS VOCABULARY =====
+var vocabState = { index: 0 };
+
+function startVocab() {
+    vocabState.index = 0;
+    showVocabCard(); showScreen("vocab-screen");
+}
+
+function showVocabCard() {
+    var v = FEELINGS_VOCAB[vocabState.index];
+    $("#vocab-emoji").textContent = v.emoji;
+    $("#vocab-word").textContent = v.word;
+    $("#vocab-meaning").textContent = v.meaning;
+    $("#vocab-example").textContent = "\u{1F4AC} \"" + v.example + "\"";
+    $("#vocab-counter").textContent = (vocabState.index + 1) + " of " + FEELINGS_VOCAB.length;
+}
+
+$("#vocab-prev").addEventListener("click", function() {
+    if (vocabState.index > 0) { vocabState.index--; showVocabCard(); }
+});
+$("#vocab-next").addEventListener("click", function() {
+    if (vocabState.index < FEELINGS_VOCAB.length - 1) { vocabState.index++; showVocabCard(); }
+    else {
+        // +2 stars for reading all vocab
+        state.totalStars += 2; saveProfile(); updateStars(); playChime();
+        showScreen("menu-screen");
+    }
+});
+$("#vocab-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// ===== SOCIAL RULES =====
+function renderRules() {
+    var list = $("#rules-list"); list.innerHTML = "";
+    SOCIAL_RULES.forEach(function(rule) {
+        var card = document.createElement("div");
+        card.className = "story-card";
+        card.style.cursor = "default";
+        card.innerHTML = '<span class="story-icon">' + rule.emoji + '</span>' +
+            '<div class="story-info"><div class="story-title">' + rule.rule + '</div>' +
+            '<div class="story-desc">' + rule.detail + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+$("#rules-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// ===== SETTINGS =====
+var fontSizes = ["font-xs","font-sm","font-md","font-lg","font-xl"];
+
+function initSettings() {
+    var slider = $("#font-size-slider");
+    slider.value = state._fontSize || 2;
+    var contrastBtn = $("#contrast-toggle");
+    contrastBtn.textContent = state._highContrast ? "On" : "Off";
+    var simpBtn = $("#simplified-toggle");
+    simpBtn.textContent = state._simplified ? "On" : "Off";
+}
+
+$("#font-size-slider").addEventListener("input", function() {
+    var val = parseInt(this.value);
+    state._fontSize = val;
+    fontSizes.forEach(function(c) { document.body.classList.remove(c); });
+    document.body.classList.add(fontSizes[val]);
+    saveProfile();
+});
+
+$("#contrast-toggle").addEventListener("click", function() {
+    state._highContrast = !state._highContrast;
+    this.textContent = state._highContrast ? "On" : "Off";
+    if (state._highContrast) document.body.classList.add("high-contrast");
+    else document.body.classList.remove("high-contrast");
+    saveProfile();
+});
+
+$("#simplified-toggle").addEventListener("click", function() {
+    state._simplified = !state._simplified;
+    this.textContent = state._simplified ? "On" : "Off";
+    saveProfile();
+});
+
+$("#save-pin-btn").addEventListener("click", function() {
+    var inp = $("#new-pin-input");
+    var val = inp.value.trim();
+    if (val.length === 4 && /^\d{4}$/.test(val)) {
+        parentPin = val;
+        try { localStorage.setItem("socialStarsPin", val); } catch(e) {}
+        inp.value = "";
+        this.textContent = "Saved! \u2714";
+        setTimeout(function() { $("#save-pin-btn").textContent = "Save PIN"; }, 2000);
+    }
+});
+
+$("#settings-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// Apply saved settings on load
+function applySavedSettings() {
+    if (state._fontSize !== undefined) {
+        fontSizes.forEach(function(c) { document.body.classList.remove(c); });
+        document.body.classList.add(fontSizes[state._fontSize]);
+    }
+    if (state._highContrast) document.body.classList.add("high-contrast");
+}
+
+// ===== SIMPLIFIED MODE SUPPORT =====
+// Patch choice rendering to show only 2 choices when simplified mode is on
+var _origShowScenario = showScenario;
+showScenario = function() {
+    _origShowScenario();
+    if (state._simplified) {
+        var btns = $$("#choices-area .choice-btn");
+        if (btns.length > 2) {
+            // Keep the correct answer and one wrong answer
+            var sc = game.currentScenarios[game.currentIndex];
+            var correctText = sc.choices.find(function(c) { return c.correct; }).text;
+            var wrongBtns = [];
+            btns.forEach(function(btn) {
+                if (btn.textContent !== correctText) wrongBtns.push(btn);
+            });
+            // Remove all but one wrong answer
+            for (var i = 1; i < wrongBtns.length; i++) {
+                wrongBtns[i].remove();
+            }
+        }
+    }
+};
+
 // Add confetti and sound to existing correct answers
 var origHandleChoice = handleChoice;
 var _origHandleChoice = handleChoice;
-// We already have sound calls in tone/perspective. Let's patch the main game:
-// (The functions are already defined, we just need to add confetti to finishRound)
+
 var origFinishRound = finishRound;
 
-// Add confetti to results screen
-var origShowScreen = showScreen;
+// Add confetti to results screen, star of the day to menu
+var origShowScreen2 = showScreen;
 showScreen = function(id) {
-    origShowScreen(id);
+    origShowScreen2(id);
     if (id === "results-screen") { fireConfetti(); playComplete(); }
-    if (id === "menu-screen") { checkDailyBonus(); }
+    if (id === "menu-screen") { checkDailyBonus(); showStarOfTheDay(); applySavedSettings(); }
 };
 
 // ===== Init =====
