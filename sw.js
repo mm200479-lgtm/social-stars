@@ -1,5 +1,5 @@
 // Social Stars - Service Worker for offline support
-var CACHE_NAME = "social-stars-v2";
+var CACHE_NAME = "social-stars-v3";
 var ASSETS = [
     "./",
     "./index.html",
