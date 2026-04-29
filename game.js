@@ -53,7 +53,10 @@ function freshState(name) {
         earnedBadges: [],
         activeTheme: "",
         checkins: [],
-        categoryStats: {}
+        categoryStats: {},
+        lastLoginDate: "",
+        streakBonuses: {},
+        _thermUsedToday: ""
     };
 }
 
@@ -396,7 +399,11 @@ function finishRound() {
     var ratio = stars / total;
     if (state.categoriesCompleted.indexOf(game.currentCategory) === -1)
         state.categoriesCompleted.push(game.currentCategory);
-    if (ratio === 1) state.perfectRound = true;
+    if (ratio === 1) {
+        state.perfectRound = true;
+        // +3 bonus stars for a perfect round!
+        state.totalStars += 3;
+    }
     if (!state.categoryStats) state.categoryStats = {};
     var prev = state.categoryStats[game.currentCategory] || { played:0, bestScore:0, totalQ:0, totalCorrect:0 };
     prev.played++; prev.totalQ += total; prev.totalCorrect += stars;
@@ -406,7 +413,8 @@ function finishRound() {
 
     if (ratio >= 0.8) {
         $("#results-emoji").textContent = "\u{1F3C6}"; $("#results-title").textContent = "Superstar!";
-        $("#results-message").textContent = "Wow, " + state.playerName + "! You got " + stars + " out of " + total + " right away!";
+        var bonusMsg = ratio === 1 ? " (+3 bonus for perfect round!)" : "";
+        $("#results-message").textContent = "Wow, " + state.playerName + "! You got " + stars + " out of " + total + " right away!" + bonusMsg;
     } else if (ratio >= 0.5) {
         $("#results-emoji").textContent = "\u{1F31F}"; $("#results-title").textContent = "Great Job!";
         $("#results-message").textContent = "Nice work, " + state.playerName + "! You got " + stars + " out of " + total + ". You're learning so much!";
@@ -565,7 +573,11 @@ function showStoryStep() {
 $("#sv-prev").addEventListener("click", function() { if (svState.step > 0) { svState.step--; showStoryStep(); } });
 $("#sv-next").addEventListener("click", function() {
     if (svState.step < svState.story.steps.length-1) { svState.step++; showStoryStep(); }
-    else { renderStories(); showScreen("stories-screen"); }
+    else {
+        // +2 stars for reading a full story
+        state.totalStars += 2; saveProfile(); updateStars(); playChime();
+        renderStories(); showScreen("stories-screen");
+    }
 });
 $("#sv-back-btn").addEventListener("click", function() { renderStories(); showScreen("stories-screen"); });
 $("#sv-audio-btn").addEventListener("click", function() { speak($("#sv-step-text").textContent); });
@@ -597,10 +609,10 @@ function doBreathe() {
             breathInterval = setTimeout(function() {
                 if (breathCount >= 5) {
                     label.textContent = "Great job! \u{1F31F}";
-                    counter.textContent = "You did 5 breaths! Feel calmer?";
+                    counter.textContent = "You did 5 breaths! +1 \u2B50";
                     $("#breathing-start").textContent = "Start Breathing";
                     breathInterval = null;
-                    state.calmUsed = true; saveProfile(); checkBadges();
+                    state.calmUsed = true; state.totalStars++; saveProfile(); updateStars(); checkBadges();
                 } else { doBreathe(); }
             }, 4000);
         }, 2000);
@@ -627,7 +639,7 @@ function showGroundStep() {
 $("#grounding-prev").addEventListener("click", function() { if (groundState.step > 0) { groundState.step--; showGroundStep(); } });
 $("#grounding-next").addEventListener("click", function() {
     if (groundState.step < GROUNDING_STEPS.length-1) { groundState.step++; showGroundStep(); }
-    else { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); }
+    else { state.calmUsed = true; state.totalStars++; saveProfile(); updateStars(); checkBadges(); showScreen("calm-screen"); }
 });
 $("#ground-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
 
@@ -639,8 +651,8 @@ function sqUp() {
     sqCircle.querySelector(".breathing-label").textContent = "Hold me!";
     $("#squeeze-counter").textContent = "Squeezes: " + squeezeCount;
     if (squeezeCount >= 5) {
-        $("#squeeze-counter").textContent = "Great job! " + squeezeCount + " squeezes! \u{1F31F}";
-        state.calmUsed = true; saveProfile(); checkBadges();
+        $("#squeeze-counter").textContent = "Great job! " + squeezeCount + " squeezes! +1 \u2B50";
+        state.calmUsed = true; state.totalStars++; saveProfile(); updateStars(); checkBadges();
     }
 }
 sqCircle.addEventListener("mousedown", sqDown);
@@ -651,7 +663,14 @@ sqCircle.addEventListener("touchend", function(e) { e.preventDefault(); sqUp(); 
 $("#squeeze-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
 
 // ===== Emotion Thermometer =====
-function initThermometer() { $("#therm-slider").value = 0; updateTherm(); }
+function initThermometer() {
+    $("#therm-slider").value = 0; updateTherm();
+    // +1 star for using the thermometer (once per session)
+    if (!state._thermUsedToday || state._thermUsedToday !== todayStr()) {
+        state._thermUsedToday = todayStr();
+        state.totalStars++; saveProfile(); updateStars();
+    }
+}
 function updateTherm() {
     var val = parseInt($("#therm-slider").value), level = THERM_LEVELS[val];
     $("#therm-emoji").textContent = level.emoji;
@@ -710,12 +729,18 @@ if (saveNoteBtn) {
         // Find today's entry and add the note
         var todayEntry = state.checkins.find(function(c) { return c.date === todayStr(); });
         if (todayEntry) {
+            var isNewNote = !todayEntry.note;
             todayEntry.note = noteText;
-            saveProfile();
+            // 5 bonus stars for writing about feelings!
+            if (isNewNote) {
+                state.totalStars += 5;
+            }
+            saveProfile(); updateStars();
             renderCheckinHistory();
             // Visual feedback
-            saveNoteBtn.textContent = "Saved! \u2714";
-            setTimeout(function() { saveNoteBtn.textContent = "Save to Journal \u{1F4DD}"; }, 2000);
+            saveNoteBtn.textContent = isNewNote ? "Saved! +5 \u2B50\u2714" : "Updated! \u2714";
+            setTimeout(function() { saveNoteBtn.textContent = "Save to Journal \u{1F4DD}"; }, 2500);
+            if (isNewNote) { playChime(); }
         }
     });
 }
@@ -971,13 +996,52 @@ function checkStreak() {
         var diff = (d1 - d2) / (1000*60*60*24);
         if (diff <= 1.5) streak++; else break;
     }
+
+    // Streak bonus stars (awarded once per streak milestone)
+    if (!state.streakBonuses) state.streakBonuses = {};
+    var bonuses = [[3,2],[7,5],[14,10],[30,20]];
+    bonuses.forEach(function(b) {
+        var key = "streak_" + b[0];
+        if (streak >= b[0] && !state.streakBonuses[key]) {
+            state.streakBonuses[key] = true;
+            state.totalStars += b[1];
+            saveProfile(); updateStars();
+        }
+    });
+
     if (streak >= 2) {
         var banner = $("#streak-banner"), text = $("#streak-text");
         if (banner && text) {
-            text.textContent = "\u{1F525} " + streak + " day streak! Keep it up, " + state.playerName + "!";
+            var bonusMsg = "";
+            bonuses.forEach(function(b) {
+                if (streak === b[0]) bonusMsg = " +" + b[1] + " bonus stars!";
+            });
+            text.textContent = "\u{1F525} " + streak + " day streak!" + bonusMsg + " Keep it up, " + state.playerName + "!";
             banner.classList.remove("hidden");
-            setTimeout(function() { banner.classList.add("hidden"); }, 4000);
+            setTimeout(function() { banner.classList.add("hidden"); }, 5000);
         }
+    }
+}
+
+// ===== DAILY LOGIN BONUS =====
+function checkDailyBonus() {
+    if (!state.lastLoginDate || state.lastLoginDate !== todayStr()) {
+        state.lastLoginDate = todayStr();
+        state.totalStars += 1;
+        saveProfile(); updateStars();
+        // Show a brief welcome message
+        var banner = $("#streak-banner"), text = $("#streak-text");
+        if (banner && text) {
+            text.textContent = "\u{1F31F} Welcome back, " + state.playerName + "! +1 daily star!";
+            banner.classList.remove("hidden");
+            setTimeout(function() {
+                banner.classList.add("hidden");
+                // Then check streak after daily bonus
+                checkStreak();
+            }, 3000);
+        }
+    } else {
+        checkStreak();
     }
 }
 
@@ -1123,11 +1187,12 @@ $("#persp-next-btn").addEventListener("click", function() {
 $("#persp-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
 
 // ===== COPING CARDS =====
-var copingState = { cards: [], index: 0 };
+var copingState = { cards: [], index: 0, cardsViewed: 0 };
 
 function startCoping() {
     copingState.cards = shuffleArray(COPING_CARDS.slice());
     copingState.index = 0;
+    copingState.cardsViewed = 0;
     showCopingCard(); showScreen("coping-screen");
 }
 
@@ -1142,8 +1207,13 @@ $("#coping-prev").addEventListener("click", function() {
     if (copingState.index > 0) { copingState.index--; showCopingCard(); }
 });
 $("#coping-next").addEventListener("click", function() {
+    copingState.cardsViewed++;
     if (copingState.index < copingState.cards.length - 1) { copingState.index++; showCopingCard(); }
     else { copingState.index = 0; showCopingCard(); }
+    // +1 star for viewing 5 coping cards
+    if (copingState.cardsViewed === 5) {
+        state.totalStars++; saveProfile(); updateStars(); playChime();
+    }
 });
 $("#coping-shuffle").addEventListener("click", function() {
     copingState.cards = shuffleArray(COPING_CARDS.slice());
@@ -1300,7 +1370,7 @@ var origShowScreen = showScreen;
 showScreen = function(id) {
     origShowScreen(id);
     if (id === "results-screen") { fireConfetti(); playComplete(); }
-    if (id === "menu-screen") { checkStreak(); }
+    if (id === "menu-screen") { checkDailyBonus(); }
 };
 
 // ===== Init =====
