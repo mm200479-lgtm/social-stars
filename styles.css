@@ -549,6 +549,42 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     from { transform: translateY(-100%); } to { transform: translateY(0); }
 }
 
+/* ===== Family Code ===== */
+.family-code-box {
+    width: 100%; max-width: 400px; margin-top: 20px;
+}
+.family-explain {
+    font-size: 0.95rem; color: var(--color-text-light); margin-bottom: 20px; line-height: 1.6; text-align: center;
+}
+.family-input-group { margin-bottom: 14px; }
+.family-input-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 1rem; }
+.family-code-input {
+    width: 100%; padding: 16px 20px; font-size: 1.5rem; font-weight: 800;
+    border: 2px solid var(--color-border); border-radius: var(--radius-sm);
+    text-align: center; letter-spacing: 6px; font-family: var(--font-main);
+    background: var(--color-card); outline: none; text-transform: uppercase;
+}
+.family-code-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+.family-divider {
+    display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--color-text-light);
+}
+.family-divider::before, .family-divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--color-border);
+}
+.family-status {
+    margin-top: 16px; padding: 12px 20px; border-radius: var(--radius-sm);
+    text-align: center; font-weight: 600; font-size: 0.95rem;
+}
+.family-status.success { background: var(--color-success-bg); color: var(--color-success); }
+.family-status.error { background: var(--color-gentle-bg); color: #e65100; }
+.family-code-display {
+    font-size: 1.4rem; font-weight: 800; letter-spacing: 4px; color: var(--color-primary);
+    padding: 8px 0;
+}
+.sync-indicator {
+    font-size: 1.1rem; padding: 4px 8px; border-radius: 12px; background: #e3f2fd;
+}
+
 /* ===== Star of the Day ===== */
 .sotd-banner {
     max-width: 650px; width: 100%; margin: 0 auto 20px; animation: slideUp 0.4s ease;

@@ -16,6 +16,26 @@
 <body>
     <div id="app">
 
+        <!-- ========== Family Code Screen ========== -->
+        <div id="family-screen" class="screen" tabindex="-1">
+            <div class="welcome-container">
+                <h1 class="game-title">⭐ Social Stars ⭐</h1>
+                <p class="subtitle">Connect your devices!</p>
+                <div class="family-code-box">
+                    <p class="family-explain">Enter your family code to sync progress across devices, or create a new one.</p>
+                    <div class="family-input-group">
+                        <label for="family-code-input">Family Code</label>
+                        <input type="text" id="family-code-input" class="family-code-input" placeholder="e.g. ABC123" maxlength="6" autocomplete="off" style="text-transform:uppercase;">
+                    </div>
+                    <button id="family-join-btn" class="btn btn-primary" style="width:100%;">Join Family</button>
+                    <div class="family-divider"><span>or</span></div>
+                    <button id="family-create-btn" class="btn btn-secondary" style="width:100%;">Create New Family Code</button>
+                    <button id="family-skip-btn" class="btn btn-back" style="margin-top:12px;">Skip — play offline only</button>
+                </div>
+                <div id="family-status" class="family-status hidden"></div>
+            </div>
+        </div>
+
         <!-- ========== Profile Picker Screen ========== -->
         <div id="profile-screen" class="screen" tabindex="-1">
             <div class="welcome-container">
@@ -52,6 +72,7 @@
                     <span id="star-count" class="star-count">⭐ 0</span>
                     <span id="badge-count" class="badge-count" title="Badges earned">🏅 0</span>
                     <button id="switch-profile-btn" class="btn btn-small btn-back" title="Switch player">👤 Switch</button>
+                    <span id="sync-indicator" class="sync-indicator hidden" title="Cloud sync active">☁️</span>
                 </div>
             </header>
             <div class="menu-container">
@@ -650,6 +671,11 @@
             <div class="game-container">
                 <h2 class="section-title">⚙️ Settings</h2>
                 <div class="settings-group">
+                    <label>Family Code (for syncing across devices)</label>
+                    <p id="settings-family-code" class="family-code-display">Not connected</p>
+                    <button id="settings-change-family" class="btn btn-secondary btn-small" style="margin-top:8px;">Change Family Code</button>
+                </div>
+                <div class="settings-group">
                     <label for="font-size-slider">Text Size</label>
                     <input type="range" id="font-size-slider" class="therm-slider" min="0" max="4" value="2" step="1">
                     <div class="therm-scale"><span>Small</span><span></span><span>Normal</span><span></span><span>Large</span></div>
@@ -683,7 +709,10 @@
 
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="scenarios.js"></script>
+    <script src="firebase-sync.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

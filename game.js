@@ -73,7 +73,7 @@ var game = {
     answered: false
 };
 
-// ===== Multi-Profile Persistence =====
+// ===== Multi-Profile Persistence (with cloud sync) =====
 function getAllProfiles() {
     try {
         var raw = localStorage.getItem("socialStarsProfiles");
@@ -83,6 +83,8 @@ function getAllProfiles() {
 
 function saveAllProfiles(profiles) {
     try { localStorage.setItem("socialStarsProfiles", JSON.stringify(profiles)); } catch(e) {}
+    // Sync to cloud
+    cloudSaveProfiles(profiles);
 }
 
 function loadProfile(id) {
@@ -1555,8 +1557,126 @@ showScreen = function(id) {
 };
 
 // ===== Init =====
+initFirebase();
 initWelcome();
 initMenu();
-renderProfilePicker();
+initFamilyScreen();
+
+// Check if we have a family code already
+var savedCode = getFamilyCode();
+if (savedCode) {
+    familyCode = savedCode;
+    startWithSync();
+} else {
+    // Show family code screen first
+    showScreen("family-screen");
+}
+
+function startWithSync() {
+    if (syncEnabled && familyCode) {
+        // Show sync indicator
+        var si = document.getElementById("sync-indicator");
+        if (si) si.classList.remove("hidden");
+        // Update settings display
+        var sfc = document.getElementById("settings-family-code");
+        if (sfc) sfc.textContent = familyCode;
+
+        // Load from cloud, merge with local, then show profiles
+        cloudLoadProfiles().then(function(cloudProfiles) {
+            if (cloudProfiles) {
+                var local = getAllProfiles();
+                var merged = mergeProfiles(local, cloudProfiles);
+                try { localStorage.setItem("socialStarsProfiles", JSON.stringify(merged)); } catch(e) {}
+                // Save merged back to cloud
+                cloudSaveProfiles(merged);
+            }
+            renderProfilePicker();
+
+            // Listen for real-time changes from other devices
+            cloudListen(function(cloudProfiles) {
+                var local = getAllProfiles();
+                var merged = mergeProfiles(local, cloudProfiles);
+                try { localStorage.setItem("socialStarsProfiles", JSON.stringify(merged)); } catch(e) {}
+            });
+        });
+    } else {
+        renderProfilePicker();
+    }
+}
+
+function initFamilyScreen() {
+    var joinBtn = document.getElementById("family-join-btn");
+    var createBtn = document.getElementById("family-create-btn");
+    var skipBtn = document.getElementById("family-skip-btn");
+    var input = document.getElementById("family-code-input");
+    var status = document.getElementById("family-status");
+
+    if (joinBtn) joinBtn.addEventListener("click", function() {
+        var code = (input.value || "").trim().toUpperCase();
+        if (code.length < 4) {
+            status.textContent = "Please enter at least 4 characters";
+            status.className = "family-status error";
+            status.classList.remove("hidden");
+            return;
+        }
+        joinBtn.disabled = true;
+        joinBtn.textContent = "Checking...";
+
+        if (syncEnabled) {
+            cloudCheckCode(code).then(function(exists) {
+                if (exists) {
+                    setFamilyCode(code);
+                    familyCode = code;
+                    status.textContent = "\u2714 Joined family! Syncing profiles...";
+                    status.className = "family-status success";
+                    status.classList.remove("hidden");
+                    setTimeout(function() { startWithSync(); }, 1000);
+                } else {
+                    // Code doesn't exist yet — create it
+                    setFamilyCode(code);
+                    familyCode = code;
+                    // Upload current local profiles
+                    var local = getAllProfiles();
+                    cloudSaveProfiles(local);
+                    status.textContent = "\u2714 Created family code: " + code + "! Use this on other devices.";
+                    status.className = "family-status success";
+                    status.classList.remove("hidden");
+                    setTimeout(function() { startWithSync(); }, 1500);
+                }
+                joinBtn.disabled = false;
+                joinBtn.textContent = "Join Family";
+            });
+        } else {
+            status.textContent = "Cloud sync not available. Playing offline.";
+            status.className = "family-status error";
+            status.classList.remove("hidden");
+            joinBtn.disabled = false;
+            joinBtn.textContent = "Join Family";
+        }
+    });
+
+    if (createBtn) createBtn.addEventListener("click", function() {
+        var code = generateFamilyCode();
+        setFamilyCode(code);
+        familyCode = code;
+        var local = getAllProfiles();
+        cloudSaveProfiles(local);
+        status.textContent = "\u2714 Your family code is: " + code + "\nUse this code on other devices to sync!";
+        status.className = "family-status success";
+        status.classList.remove("hidden");
+        input.value = code;
+        setTimeout(function() { startWithSync(); }, 2500);
+    });
+
+    if (skipBtn) skipBtn.addEventListener("click", function() {
+        renderProfilePicker();
+    });
+
+    // Settings: change family code
+    var changeFamBtn = document.getElementById("settings-change-family");
+    if (changeFamBtn) changeFamBtn.addEventListener("click", function() {
+        showScreen("family-screen");
+    });
+}
 
 })();

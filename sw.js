@@ -1,10 +1,11 @@
 // Social Stars - Service Worker for offline support
-var CACHE_NAME = "social-stars-v8";
+var CACHE_NAME = "social-stars-v9";
 var ASSETS = [
     "./",
     "./index.html",
     "./styles.css",
     "./scenarios.js",
+    "./firebase-sync.js",
     "./game.js",
     "./manifest.json"
 ];
