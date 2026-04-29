@@ -202,11 +202,16 @@ const BADGES = [
 
 /* ===== THEMES ===== */
 const THEMES = [
-    { id: "default", name: "Starlight", emoji: "\u{2B50}", desc: "The classic look", starsNeeded: 0, className: "" },
-    { id: "ocean", name: "Ocean Wave", emoji: "\u{1F30A}", desc: "Cool blue vibes", starsNeeded: 15, className: "theme-ocean" },
-    { id: "forest", name: "Forest Green", emoji: "\u{1F332}", desc: "Nature and calm", starsNeeded: 30, className: "theme-forest" },
-    { id: "sunset", name: "Sunset Glow", emoji: "\u{1F305}", desc: "Warm and cozy", starsNeeded: 50, className: "theme-sunset" },
-    { id: "galaxy", name: "Galaxy Purple", emoji: "\u{1F52E}", desc: "Out of this world", starsNeeded: 75, className: "theme-galaxy" }
+    { id: "default", name: "Starlight", emoji: "\u{2B50}", desc: "The classic look", starsNeeded: 0, className: "", starIcon: "\u{2B50}", celebIcon: "\u{1F31F}", welcomeChar: "\u{1F31F}" },
+    { id: "unicorn", name: "Unicorn Dreams", emoji: "\u{1F984}", desc: "Sparkles and magic", starsNeeded: 5, className: "theme-unicorn", starIcon: "\u{1F984}", celebIcon: "\u{2728}", welcomeChar: "\u{1F984}" },
+    { id: "princess", name: "Princess Kingdom", emoji: "\u{1F451}", desc: "Royal and golden", starsNeeded: 15, className: "theme-princess", starIcon: "\u{1F451}", celebIcon: "\u{1F490}", welcomeChar: "\u{1F478}" },
+    { id: "fairy", name: "Fairy Tales", emoji: "\u{1F9DA}", desc: "Magical and enchanting", starsNeeded: 25, className: "theme-fairy", starIcon: "\u{1F33C}", celebIcon: "\u{1F9DA}", welcomeChar: "\u{1F9DA}" },
+    { id: "ocean", name: "Ocean Adventure", emoji: "\u{1F30A}", desc: "Under the sea", starsNeeded: 35, className: "theme-ocean", starIcon: "\u{1F41A}", celebIcon: "\u{1F42C}", welcomeChar: "\u{1F42C}" },
+    { id: "cherry", name: "Cherry Blossom", emoji: "\u{1F338}", desc: "Soft and peaceful", starsNeeded: 45, className: "theme-cherry", starIcon: "\u{1F338}", celebIcon: "\u{1F33A}", welcomeChar: "\u{1F338}" },
+    { id: "katseye", name: "Katseye", emoji: "\u{1F431}", desc: "Cool and confident", starsNeeded: 55, className: "theme-katseye", starIcon: "\u{1F431}", celebIcon: "\u{1F3A4}", welcomeChar: "\u{1F3B6}" },
+    { id: "space", name: "Space Explorer", emoji: "\u{1F680}", desc: "To the stars and beyond", starsNeeded: 70, className: "theme-space", starIcon: "\u{1FA90}", celebIcon: "\u{1F680}", welcomeChar: "\u{1F680}" },
+    { id: "galaxy", name: "Galaxy Purple", emoji: "\u{1F52E}", desc: "Mysterious and deep", starsNeeded: 85, className: "theme-galaxy", starIcon: "\u{1F52E}", celebIcon: "\u{1F30C}", welcomeChar: "\u{1F52E}" },
+    { id: "rainbow", name: "Rainbow Magic", emoji: "\u{1F308}", desc: "All the colours!", starsNeeded: 100, className: "theme-rainbow", starIcon: "\u{1F308}", celebIcon: "\u{1F389}", welcomeChar: "\u{1F308}" }
 ];
 
 /* ===== CHECK-IN RESPONSES ===== */

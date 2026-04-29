@@ -24,11 +24,53 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Theme overrides */
-body.theme-ocean { --color-bg: #e3f2fd; --color-primary: #1976d2; --color-primary-hover: #1565c0; }
-body.theme-forest { --color-bg: #e8f5e9; --color-primary: #388e3c; --color-primary-hover: #2e7d32; }
-body.theme-sunset { --color-bg: #fff3e0; --color-primary: #e65100; --color-primary-hover: #bf360c; }
-body.theme-galaxy { --color-bg: #ede7f6; --color-primary: #7b1fa2; --color-primary-hover: #6a1b9a; }
+/* Theme overrides — each transforms the entire app */
+body.theme-unicorn {
+    --color-bg: #fce4ff; --color-primary: #d946ef; --color-primary-hover: #c026d3;
+    --color-card: #fff5ff; --color-border: #f0b8ff; --color-star: #d946ef;
+}
+body.theme-princess {
+    --color-bg: #fff8e1; --color-primary: #d4a017; --color-primary-hover: #b8860b;
+    --color-card: #fffdf5; --color-border: #ffe082; --color-star: #ffd700;
+}
+body.theme-fairy {
+    --color-bg: #e8f5e9; --color-primary: #66bb6a; --color-primary-hover: #43a047;
+    --color-card: #f1f8f1; --color-border: #a5d6a7; --color-star: #66bb6a;
+}
+body.theme-ocean {
+    --color-bg: #e3f2fd; --color-primary: #1e88e5; --color-primary-hover: #1565c0;
+    --color-card: #f5faff; --color-border: #90caf9; --color-star: #1e88e5;
+}
+body.theme-cherry {
+    --color-bg: #fce4ec; --color-primary: #ec407a; --color-primary-hover: #d81b60;
+    --color-card: #fff5f7; --color-border: #f8bbd0; --color-star: #ec407a;
+}
+body.theme-katseye {
+    --color-bg: #f3e5f5; --color-primary: #ab47bc; --color-primary-hover: #8e24aa;
+    --color-card: #faf5fc; --color-border: #ce93d8; --color-star: #ab47bc;
+}
+body.theme-space {
+    --color-bg: #1a1a2e; --color-primary: #e94560; --color-primary-hover: #c81e45;
+    --color-card: #16213e; --color-border: #0f3460; --color-text: #eaeaea;
+    --color-text-light: #a0a0c0; --color-star: #e94560;
+}
+body.theme-galaxy {
+    --color-bg: #ede7f6; --color-primary: #7b1fa2; --color-primary-hover: #6a1b9a;
+    --color-card: #f8f5fc; --color-border: #ce93d8; --color-star: #7b1fa2;
+}
+body.theme-rainbow {
+    --color-bg: #fff9f0; --color-primary: #ff6f00; --color-primary-hover: #e65100;
+    --color-card: #ffffff; --color-border: #ffe0b2; --color-star: #ff6f00;
+}
+
+/* Space theme needs light text on dark backgrounds */
+body.theme-space .star-count { background: #0f3460; }
+body.theme-space .badge-count { background: #0f3460; }
+body.theme-space .name-input-group input { background: #16213e; color: #eaeaea; border-color: #0f3460; }
+body.theme-space .name-input-group input::placeholder { color: #a0a0c0; }
+body.theme-space .choice-btn { color: #eaeaea; }
+body.theme-space .choice-btn.correct { background: #1b5e20; border-color: #4caf50; }
+body.theme-space .choice-btn.gentle { background: #4a2800; border-color: #ff9800; }
 
 body {
     font-family: var(--font-main);

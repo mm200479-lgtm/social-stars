@@ -141,16 +141,30 @@ function showScreen(id) {
     if (el) { el.classList.add("active"); el.scrollTop = 0; window.scrollTo(0, 0); }
 }
 
+function getActiveTheme() {
+    return THEMES.find(function(t) { return t.className === state.activeTheme; }) || THEMES[0];
+}
+
 function updateStars() {
-    var t = "\u2B50 " + state.totalStars;
-    ["#star-count","#cat-star-count","#game-star-count","#em-star-count","#hf-star-count"].forEach(function(s) {
+    var theme = getActiveTheme();
+    var icon = theme.starIcon || "\u2B50";
+    var t = icon + " " + state.totalStars;
+    ["#star-count","#cat-star-count","#game-star-count","#em-star-count","#hf-star-count","#tone-star-count","#persp-star-count"].forEach(function(s) {
         var el = $(s); if (el) el.textContent = t;
     });
     var bc = $("#badge-count");
     if (bc) bc.textContent = "\u{1F3C5} " + state.earnedBadges.length;
 }
 
-function applyTheme() { document.body.className = state.activeTheme || ""; }
+function applyTheme() {
+    document.body.className = state.activeTheme || "";
+    // Update welcome character if on welcome screen
+    var wc = document.querySelector(".welcome-character");
+    if (wc) {
+        var theme = getActiveTheme();
+        wc.textContent = theme.welcomeChar || "\u{1F31F}";
+    }
+}
 
 function checkBadges() {
     var newBadge = null;
@@ -741,9 +755,9 @@ function renderRewards() {
         card.className = "reward-card " + (unlocked ? "earned" : "locked") + (active ? " active-theme" : "");
         card.innerHTML = '<span class="reward-emoji">' + t.emoji + '</span>' +
             '<div class="reward-name">' + t.name + '</div>' +
-            '<div class="reward-desc">' + (unlocked ? t.desc : "\u{1F512} Need " + t.starsNeeded + " stars") + '</div>';
+            '<div class="reward-desc">' + (unlocked ? t.desc + (active ? " \u2714 Active" : " \u2014 Tap to use!") : "\u{1F512} Need " + t.starsNeeded + " stars") + '</div>';
         if (unlocked) card.addEventListener("click", function() {
-            state.activeTheme = t.className; saveProfile(); applyTheme(); renderRewards();
+            state.activeTheme = t.className; saveProfile(); applyTheme(); updateStars(); renderRewards();
         });
         tGrid.appendChild(card);
     });
@@ -845,14 +859,26 @@ function fireConfetti() {
     confettiCanvas.width = window.innerWidth;
     confettiCanvas.height = window.innerHeight;
     var particles = [];
-    var colors = ["#6c63ff","#ff9800","#4caf50","#e91e63","#ffc107","#2196f3","#9c27b0"];
+    var colors = getComputedStyle(document.body).getPropertyValue("--color-primary").trim();
+    var themeColors = {
+        "theme-unicorn": ["#d946ef","#f0abfc","#fce4ff","#a855f7","#ec4899","#f472b6"],
+        "theme-princess": ["#ffd700","#d4a017","#ffe082","#ffb300","#fff176","#f9a825"],
+        "theme-fairy": ["#66bb6a","#a5d6a7","#81c784","#4caf50","#c8e6c9","#aed581"],
+        "theme-ocean": ["#1e88e5","#42a5f5","#90caf9","#64b5f6","#29b6f6","#0288d1"],
+        "theme-cherry": ["#ec407a","#f48fb1","#f8bbd0","#e91e63","#ff80ab","#f06292"],
+        "theme-katseye": ["#ab47bc","#ce93d8","#ba68c8","#9c27b0","#e1bee7","#8e24aa"],
+        "theme-space": ["#e94560","#533483","#0f3460","#16213e","#e94560","#ff6b6b"],
+        "theme-galaxy": ["#7b1fa2","#ce93d8","#ab47bc","#9c27b0","#e1bee7","#6a1b9a"],
+        "theme-rainbow": ["#f44336","#ff9800","#ffeb3b","#4caf50","#2196f3","#9c27b0"]
+    };
+    var cArr = themeColors[state.activeTheme] || ["#6c63ff","#ff9800","#4caf50","#e91e63","#ffc107","#2196f3","#9c27b0"];
     for (var i = 0; i < 80; i++) {
         particles.push({
             x: Math.random() * confettiCanvas.width,
             y: -20 - Math.random() * 100,
             w: 6 + Math.random() * 6,
             h: 4 + Math.random() * 4,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            color: cArr[Math.floor(Math.random() * cArr.length)],
             vx: (Math.random() - 0.5) * 4,
             vy: 2 + Math.random() * 4,
             rot: Math.random() * 360,
