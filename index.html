@@ -77,10 +77,30 @@
                         <span class="card-title">Social Stories</span>
                         <span class="card-desc">Step-by-step guides</span>
                     </button>
+                    <button class="menu-card" id="menu-tone" role="listitem">
+                        <span class="card-emoji">🗣️</span>
+                        <span class="card-title">Tone of Voice</span>
+                        <span class="card-desc">Sarcastic, joking, or serious?</span>
+                    </button>
+                    <button class="menu-card" id="menu-perspective" role="listitem">
+                        <span class="card-emoji">👀</span>
+                        <span class="card-title">Their Point of View</span>
+                        <span class="card-desc">How does the other person feel?</span>
+                    </button>
                     <button class="menu-card" id="menu-calm" role="listitem">
                         <span class="card-emoji">🧘</span>
                         <span class="card-title">Calm Down Corner</span>
                         <span class="card-desc">Breathing &amp; grounding tools</span>
+                    </button>
+                    <button class="menu-card" id="menu-coping" role="listitem">
+                        <span class="card-emoji">🃏</span>
+                        <span class="card-title">Coping Cards</span>
+                        <span class="card-desc">Strategies when things are tough</span>
+                    </button>
+                    <button class="menu-card" id="menu-timer" role="listitem">
+                        <span class="card-emoji">⏱️</span>
+                        <span class="card-title">Visual Timer</span>
+                        <span class="card-desc">Countdown for turns &amp; waiting</span>
                     </button>
                     <button class="menu-card" id="menu-thermometer" role="listitem">
                         <span class="card-emoji">🌡️</span>
@@ -419,6 +439,154 @@
                 <h3 style="margin:24px 0 12px;">Suggestions</h3>
                 <div id="parent-suggestions" class="parent-suggestions"></div>
             </div>
+        </div>
+
+        <!-- ========== Tone of Voice Screen ========== -->
+        <div id="tone-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="tone-back-btn" class="btn btn-small btn-back">← Menu</button>
+                <div class="header-right">
+                    <button id="tone-audio-btn" class="btn btn-small btn-icon" aria-label="Read aloud">🔊</button>
+                    <span id="tone-star-count" class="star-count">⭐ 0</span>
+                </div>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">🗣️ Tone of Voice</h2>
+                <p class="section-subtitle">Is this person being sarcastic, joking, or serious?</p>
+                <div class="progress-bar-container">
+                    <div id="tone-progress-bar" class="progress-bar" role="progressbar"></div>
+                </div>
+                <div id="tone-scenario" class="scenario-area">
+                    <div id="tone-emoji" class="scenario-emoji" aria-hidden="true"></div>
+                    <p id="tone-quote" class="scenario-text tone-quote"></p>
+                    <p id="tone-context" class="tone-context"></p>
+                </div>
+                <div id="tone-choices" class="em-choices" role="list"></div>
+                <div id="tone-feedback" class="feedback-area hidden">
+                    <div id="tone-feedback-icon" class="feedback-icon" aria-hidden="true"></div>
+                    <p id="tone-feedback-text" class="feedback-text"></p>
+                    <p id="tone-feedback-explain" class="feedback-explanation"></p>
+                    <button id="tone-next-btn" class="btn btn-primary">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Perspective Taking Screen ========== -->
+        <div id="perspective-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="persp-back-btn" class="btn btn-small btn-back">← Menu</button>
+                <div class="header-right">
+                    <span id="persp-star-count" class="star-count">⭐ 0</span>
+                </div>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">👀 Their Point of View</h2>
+                <p class="section-subtitle">How does the OTHER person feel?</p>
+                <div class="progress-bar-container">
+                    <div id="persp-progress-bar" class="progress-bar" role="progressbar"></div>
+                </div>
+                <div id="persp-scenario" class="scenario-area">
+                    <div id="persp-emoji" class="scenario-emoji" aria-hidden="true"></div>
+                    <p id="persp-text" class="scenario-text"></p>
+                </div>
+                <div id="persp-choices" class="choices-area" role="list"></div>
+                <div id="persp-feedback" class="feedback-area hidden">
+                    <div id="persp-feedback-icon" class="feedback-icon" aria-hidden="true"></div>
+                    <p id="persp-feedback-text" class="feedback-text"></p>
+                    <p id="persp-feedback-explain" class="feedback-explanation"></p>
+                    <button id="persp-next-btn" class="btn btn-primary">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Coping Cards Screen ========== -->
+        <div id="coping-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="coping-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">🃏 Coping Cards</h2>
+                <p class="section-subtitle">Tap a card for a strategy to try!</p>
+                <div id="coping-card" class="coping-card">
+                    <div id="coping-card-emoji" class="coping-card-emoji"></div>
+                    <h3 id="coping-card-title" class="coping-card-title"></h3>
+                    <p id="coping-card-text" class="coping-card-text"></p>
+                </div>
+                <div class="story-nav">
+                    <button id="coping-prev" class="btn btn-secondary btn-small">← Previous</button>
+                    <button id="coping-shuffle" class="btn btn-primary btn-small">🔀 Shuffle</button>
+                    <button id="coping-next" class="btn btn-primary btn-small">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Visual Timer Screen ========== -->
+        <div id="timer-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="timer-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">⏱️ Visual Timer</h2>
+                <p class="section-subtitle">Set a time and watch it count down</p>
+                <div class="timer-presets">
+                    <button class="timer-preset-btn" data-seconds="30">30s</button>
+                    <button class="timer-preset-btn" data-seconds="60">1 min</button>
+                    <button class="timer-preset-btn" data-seconds="120">2 min</button>
+                    <button class="timer-preset-btn" data-seconds="300">5 min</button>
+                </div>
+                <div class="timer-display-wrap">
+                    <svg id="timer-svg" class="timer-svg" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#e0e0f0" stroke-width="12"/>
+                        <circle id="timer-ring" cx="100" cy="100" r="90" fill="none" stroke="#6c63ff" stroke-width="12"
+                            stroke-linecap="round" stroke-dasharray="565.48" stroke-dashoffset="0"
+                            transform="rotate(-90 100 100)"/>
+                    </svg>
+                    <div id="timer-text" class="timer-text">0:00</div>
+                </div>
+                <div class="timer-controls">
+                    <button id="timer-start" class="btn btn-primary">Start</button>
+                    <button id="timer-reset" class="btn btn-secondary">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== PIN Entry for Parent Dashboard ========== -->
+        <div id="pin-screen" class="screen" tabindex="-1">
+            <div class="welcome-container">
+                <h2 class="section-title">🔒 Parent Area</h2>
+                <p class="section-subtitle">Enter your 4-digit PIN</p>
+                <div class="pin-display" id="pin-display">
+                    <span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span>
+                </div>
+                <div class="pin-pad">
+                    <button class="pin-key" data-key="1">1</button>
+                    <button class="pin-key" data-key="2">2</button>
+                    <button class="pin-key" data-key="3">3</button>
+                    <button class="pin-key" data-key="4">4</button>
+                    <button class="pin-key" data-key="5">5</button>
+                    <button class="pin-key" data-key="6">6</button>
+                    <button class="pin-key" data-key="7">7</button>
+                    <button class="pin-key" data-key="8">8</button>
+                    <button class="pin-key" data-key="9">9</button>
+                    <button class="pin-key pin-key-wide" data-key="clear">Clear</button>
+                    <button class="pin-key" data-key="0">0</button>
+                    <button class="pin-key pin-key-wide" data-key="back">⌫</button>
+                </div>
+                <p id="pin-error" class="pin-error hidden">Wrong PIN — try again</p>
+                <p id="pin-hint" class="pin-hint">Default PIN: 1234</p>
+                <button id="pin-back-btn" class="btn btn-back" style="margin-top:12px;">← Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+
+        <!-- Sound toggle -->
+        <button id="sound-toggle" class="sound-toggle" aria-label="Toggle sound" title="Toggle sound">🔔</button>
+
+        <!-- Streak banner -->
+        <div id="streak-banner" class="streak-banner hidden">
+            <span id="streak-text"></span>
         </div>
 
     </div>

@@ -801,6 +801,447 @@ if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() { navigator.serviceWorker.register("sw.js").catch(function(){}); });
 }
 
+// ===== CONFETTI =====
+var confettiCanvas = document.getElementById("confetti-canvas");
+var confettiCtx = confettiCanvas ? confettiCanvas.getContext("2d") : null;
+
+function fireConfetti() {
+    if (!confettiCanvas || !confettiCtx) return;
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    var particles = [];
+    var colors = ["#6c63ff","#ff9800","#4caf50","#e91e63","#ffc107","#2196f3","#9c27b0"];
+    for (var i = 0; i < 80; i++) {
+        particles.push({
+            x: Math.random() * confettiCanvas.width,
+            y: -20 - Math.random() * 100,
+            w: 6 + Math.random() * 6,
+            h: 4 + Math.random() * 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            vx: (Math.random() - 0.5) * 4,
+            vy: 2 + Math.random() * 4,
+            rot: Math.random() * 360,
+            rv: (Math.random() - 0.5) * 10
+        });
+    }
+    var frames = 0;
+    function draw() {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        var alive = false;
+        particles.forEach(function(p) {
+            p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.rot += p.rv;
+            if (p.y < confettiCanvas.height + 20) alive = true;
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate(p.rot * Math.PI / 180);
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            confettiCtx.restore();
+        });
+        frames++;
+        if (alive && frames < 180) requestAnimationFrame(draw);
+        else confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+    draw();
+}
+
+// ===== SOUND EFFECTS =====
+var soundEnabled = true;
+var audioCtx = null;
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    return audioCtx;
+}
+
+function playChime() {
+    if (!soundEnabled) return;
+    var ctx = getAudioCtx(); if (!ctx) return;
+    var osc = ctx.createOscillator(); var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = "sine"; osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+}
+
+function playGentle() {
+    if (!soundEnabled) return;
+    var ctx = getAudioCtx(); if (!ctx) return;
+    var osc = ctx.createOscillator(); var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = "sine"; osc.frequency.setValueAtTime(440, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
+}
+
+function playComplete() {
+    if (!soundEnabled) return;
+    var ctx = getAudioCtx(); if (!ctx) return;
+    [523, 659, 784, 1047].forEach(function(freq, i) {
+        var osc = ctx.createOscillator(); var gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = "sine"; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.3);
+        osc.start(ctx.currentTime + i * 0.15); osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+    });
+}
+
+var soundBtn = $("#sound-toggle");
+if (soundBtn) {
+    soundBtn.addEventListener("click", function() {
+        soundEnabled = !soundEnabled;
+        soundBtn.textContent = soundEnabled ? "\u{1F514}" : "\u{1F515}";
+    });
+}
+
+// ===== STREAK TRACKER =====
+function checkStreak() {
+    if (!state.checkins || state.checkins.length < 2) return;
+    var dates = state.checkins.map(function(c) { return c.date; }).sort().reverse();
+    var streak = 1;
+    for (var i = 0; i < dates.length - 1; i++) {
+        var d1 = new Date(dates[i]), d2 = new Date(dates[i+1]);
+        var diff = (d1 - d2) / (1000*60*60*24);
+        if (diff <= 1.5) streak++; else break;
+    }
+    if (streak >= 2) {
+        var banner = $("#streak-banner"), text = $("#streak-text");
+        if (banner && text) {
+            text.textContent = "\u{1F525} " + streak + " day streak! Keep it up, " + state.playerName + "!";
+            banner.classList.remove("hidden");
+            setTimeout(function() { banner.classList.add("hidden"); }, 4000);
+        }
+    }
+}
+
+// ===== TONE OF VOICE =====
+var toneState = { items: [], index: 0, stars: 0, answered: false };
+
+function startTone() {
+    toneState.items = shuffleArray(TONE_OF_VOICE.slice());
+    toneState.index = 0; toneState.stars = 0; toneState.answered = false;
+    showToneRound(); showScreen("tone-screen");
+}
+
+function showToneRound() {
+    var item = toneState.items[toneState.index];
+    $("#tone-progress-bar").style.width = ((toneState.index / toneState.items.length) * 100) + "%";
+    $("#tone-emoji").textContent = item.emoji;
+    $("#tone-quote").textContent = item.quote;
+    $("#tone-context").textContent = item.context;
+    var area = $("#tone-choices"); area.innerHTML = "";
+    shuffleArray(item.options).forEach(function(opt) {
+        var btn = document.createElement("button");
+        btn.className = "em-choice-btn"; btn.textContent = opt;
+        btn.addEventListener("click", function() { handleToneChoice(opt, btn); });
+        area.appendChild(btn);
+    });
+    $("#tone-feedback").classList.add("hidden"); toneState.answered = false;
+}
+
+function handleToneChoice(opt, selBtn) {
+    if (toneState.answered) return; toneState.answered = true;
+    var item = toneState.items[toneState.index];
+    $$("#tone-choices .em-choice-btn").forEach(function(btn) {
+        btn.disabled = true;
+        if (btn.textContent === item.answer) btn.classList.add("correct");
+    });
+    if (opt === item.answer) {
+        selBtn.classList.add("correct");
+        $("#tone-feedback-icon").textContent = "\u{1F31F}";
+        $("#tone-feedback-text").textContent = "You got it!";
+        $("#tone-feedback-text").className = "feedback-text success";
+        $("#tone-feedback-explain").textContent = item.correctFeedback;
+        toneState.stars++; state.totalStars++; playChime();
+    } else {
+        selBtn.classList.add("gentle");
+        $("#tone-feedback-icon").textContent = "\u{1F4A1}";
+        $("#tone-feedback-text").textContent = "Good try!";
+        $("#tone-feedback-text").className = "feedback-text encourage";
+        $("#tone-feedback-explain").textContent = item.encourageFeedback;
+        playGentle();
+    }
+    saveProfile(); updateStars();
+    $("#tone-feedback").classList.remove("hidden"); $("#tone-next-btn").focus();
+}
+
+$("#tone-next-btn").addEventListener("click", function() {
+    toneState.index++;
+    if (toneState.index >= toneState.items.length) {
+        playComplete(); fireConfetti();
+        $("#results-emoji").textContent = "\u{1F5E3}\uFE0F";
+        $("#results-title").textContent = "Tone Expert!";
+        $("#results-message").textContent = "You identified " + toneState.stars + " out of " + toneState.items.length + " tones correctly! Great listening, " + state.playerName + "!";
+        var si = ""; for (var i = 0; i < toneState.items.length; i++) si += i < toneState.stars ? "\u2B50" : "\u2606";
+        $("#results-stars").textContent = si;
+        var badge = checkBadges(); var rb = $("#results-badge");
+        if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
+        else { rb.classList.add("hidden"); }
+        showScreen("results-screen");
+    } else { showToneRound(); }
+});
+
+$("#tone-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+$("#tone-audio-btn").addEventListener("click", function() {
+    speak($("#tone-quote").textContent + ". " + $("#tone-context").textContent);
+});
+
+// ===== PERSPECTIVE TAKING =====
+var perspState = { items: [], index: 0, stars: 0, answered: false };
+
+function startPerspective() {
+    perspState.items = shuffleArray(PERSPECTIVE_TAKING.slice());
+    perspState.index = 0; perspState.stars = 0; perspState.answered = false;
+    showPerspRound(); showScreen("perspective-screen");
+}
+
+function showPerspRound() {
+    var item = perspState.items[perspState.index];
+    $("#persp-progress-bar").style.width = ((perspState.index / perspState.items.length) * 100) + "%";
+    $("#persp-emoji").textContent = item.emoji;
+    $("#persp-text").textContent = item.text;
+    var area = $("#persp-choices"); area.innerHTML = "";
+    shuffleArray(item.choices).forEach(function(ch) {
+        var btn = document.createElement("button");
+        btn.className = "choice-btn"; btn.textContent = ch.text;
+        btn.addEventListener("click", function() { handlePerspChoice(ch, btn); });
+        area.appendChild(btn);
+    });
+    $("#persp-feedback").classList.add("hidden"); perspState.answered = false;
+}
+
+function handlePerspChoice(choice, selBtn) {
+    if (perspState.answered) return; perspState.answered = true;
+    var item = perspState.items[perspState.index];
+    $$("#persp-choices .choice-btn").forEach(function(btn) {
+        btn.disabled = true;
+        var correct = item.choices.find(function(c) { return c.correct; });
+        if (btn.textContent === correct.text) btn.classList.add("correct");
+    });
+    if (choice.correct) {
+        selBtn.classList.add("correct");
+        $("#persp-feedback-icon").textContent = "\u{1F31F}";
+        $("#persp-feedback-text").textContent = "Great empathy!";
+        $("#persp-feedback-text").className = "feedback-text success";
+        $("#persp-feedback-explain").textContent = item.correctFeedback;
+        perspState.stars++; state.totalStars++; playChime();
+    } else {
+        selBtn.classList.add("gentle");
+        $("#persp-feedback-icon").textContent = "\u{1F4A1}";
+        $("#persp-feedback-text").textContent = "Good thinking!";
+        $("#persp-feedback-text").className = "feedback-text encourage";
+        $("#persp-feedback-explain").textContent = item.encourageFeedback;
+        playGentle();
+    }
+    saveProfile(); updateStars();
+    $("#persp-feedback").classList.remove("hidden"); $("#persp-next-btn").focus();
+}
+
+$("#persp-next-btn").addEventListener("click", function() {
+    perspState.index++;
+    if (perspState.index >= perspState.items.length) {
+        playComplete(); fireConfetti();
+        $("#results-emoji").textContent = "\u{1F440}";
+        $("#results-title").textContent = "Empathy Star!";
+        $("#results-message").textContent = "You understood " + perspState.stars + " out of " + perspState.items.length + " perspectives! Amazing, " + state.playerName + "!";
+        var si = ""; for (var i = 0; i < perspState.items.length; i++) si += i < perspState.stars ? "\u2B50" : "\u2606";
+        $("#results-stars").textContent = si;
+        var badge = checkBadges(); var rb = $("#results-badge");
+        if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
+        else { rb.classList.add("hidden"); }
+        showScreen("results-screen");
+    } else { showPerspRound(); }
+});
+
+$("#persp-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// ===== COPING CARDS =====
+var copingState = { cards: [], index: 0 };
+
+function startCoping() {
+    copingState.cards = shuffleArray(COPING_CARDS.slice());
+    copingState.index = 0;
+    showCopingCard(); showScreen("coping-screen");
+}
+
+function showCopingCard() {
+    var card = copingState.cards[copingState.index];
+    $("#coping-card-emoji").textContent = card.emoji;
+    $("#coping-card-title").textContent = card.title;
+    $("#coping-card-text").textContent = card.text;
+}
+
+$("#coping-prev").addEventListener("click", function() {
+    if (copingState.index > 0) { copingState.index--; showCopingCard(); }
+});
+$("#coping-next").addEventListener("click", function() {
+    if (copingState.index < copingState.cards.length - 1) { copingState.index++; showCopingCard(); }
+    else { copingState.index = 0; showCopingCard(); }
+});
+$("#coping-shuffle").addEventListener("click", function() {
+    copingState.cards = shuffleArray(COPING_CARDS.slice());
+    copingState.index = 0; showCopingCard();
+    var card = $("#coping-card");
+    card.style.transform = "rotateY(180deg)";
+    setTimeout(function() { card.style.transform = "rotateY(0deg)"; }, 300);
+});
+$("#coping-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
+
+// ===== VISUAL TIMER =====
+var timerState = { total: 60, remaining: 60, running: false, interval: null };
+var TIMER_CIRCUMFERENCE = 2 * Math.PI * 90; // ~565.48
+
+$$(".timer-preset-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+        $$(".timer-preset-btn").forEach(function(b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        var secs = parseInt(btn.getAttribute("data-seconds"));
+        timerState.total = secs; timerState.remaining = secs;
+        timerState.running = false;
+        if (timerState.interval) { clearInterval(timerState.interval); timerState.interval = null; }
+        updateTimerDisplay();
+        $("#timer-start").textContent = "Start";
+    });
+});
+
+function updateTimerDisplay() {
+    var mins = Math.floor(timerState.remaining / 60);
+    var secs = timerState.remaining % 60;
+    $("#timer-text").textContent = mins + ":" + String(secs).padStart(2, "0");
+    var pct = timerState.total > 0 ? timerState.remaining / timerState.total : 0;
+    var ring = $("#timer-ring");
+    if (ring) ring.setAttribute("stroke-dashoffset", TIMER_CIRCUMFERENCE * (1 - pct));
+}
+
+$("#timer-start").addEventListener("click", function() {
+    if (timerState.running) {
+        timerState.running = false;
+        if (timerState.interval) { clearInterval(timerState.interval); timerState.interval = null; }
+        $("#timer-start").textContent = "Start";
+    } else {
+        if (timerState.remaining <= 0) { timerState.remaining = timerState.total; }
+        timerState.running = true;
+        $("#timer-start").textContent = "Pause";
+        timerState.interval = setInterval(function() {
+            timerState.remaining--;
+            updateTimerDisplay();
+            if (timerState.remaining <= 0) {
+                clearInterval(timerState.interval); timerState.interval = null;
+                timerState.running = false;
+                $("#timer-start").textContent = "Start";
+                $("#timer-text").textContent = "Done!";
+                playComplete();
+            }
+        }, 1000);
+    }
+});
+
+$("#timer-reset").addEventListener("click", function() {
+    timerState.running = false;
+    if (timerState.interval) { clearInterval(timerState.interval); timerState.interval = null; }
+    timerState.remaining = timerState.total;
+    updateTimerDisplay();
+    $("#timer-start").textContent = "Start";
+});
+
+$("#timer-back-btn").addEventListener("click", function() {
+    timerState.running = false;
+    if (timerState.interval) { clearInterval(timerState.interval); timerState.interval = null; }
+    showScreen("menu-screen");
+});
+
+updateTimerDisplay();
+
+// ===== PIN-PROTECTED PARENT DASHBOARD =====
+var parentPin = "1234";
+var pinEntry = "";
+
+try {
+    var savedPin = localStorage.getItem("socialStarsPin");
+    if (savedPin) parentPin = savedPin;
+} catch(e) {}
+
+$$(".pin-key").forEach(function(key) {
+    key.addEventListener("click", function() {
+        var val = key.getAttribute("data-key");
+        if (val === "clear") { pinEntry = ""; }
+        else if (val === "back") { pinEntry = pinEntry.slice(0, -1); }
+        else if (pinEntry.length < 4) { pinEntry += val; }
+        updatePinDots();
+        if (pinEntry.length === 4) {
+            if (pinEntry === parentPin) {
+                pinEntry = "";
+                updatePinDots();
+                $("#pin-error").classList.add("hidden");
+                renderParent();
+                showScreen("parent-screen");
+            } else {
+                $("#pin-error").classList.remove("hidden");
+                pinEntry = "";
+                updatePinDots();
+            }
+        }
+    });
+});
+
+function updatePinDots() {
+    var dots = $$("#pin-display .pin-dot");
+    dots.forEach(function(dot, i) {
+        if (i < pinEntry.length) dot.classList.add("filled");
+        else dot.classList.remove("filled");
+    });
+}
+
+$("#pin-back-btn").addEventListener("click", function() { pinEntry = ""; updatePinDots(); showScreen("menu-screen"); });
+
+// ===== Hook up new menu items and add confetti/sound to existing features =====
+// Override the original menu routes for new features
+var menuTone = $("#menu-tone");
+if (menuTone) menuTone.addEventListener("click", function() { startTone(); });
+
+var menuPersp = $("#menu-perspective");
+if (menuPersp) menuPersp.addEventListener("click", function() { startPerspective(); });
+
+var menuCoping = $("#menu-coping");
+if (menuCoping) menuCoping.addEventListener("click", function() { startCoping(); });
+
+var menuTimer = $("#menu-timer");
+if (menuTimer) menuTimer.addEventListener("click", function() { showScreen("timer-screen"); });
+
+// Override parent dashboard to go through PIN
+var menuParent = $("#menu-parent");
+if (menuParent) {
+    // Remove old listener by replacing node
+    var newParent = menuParent.cloneNode(true);
+    menuParent.parentNode.replaceChild(newParent, menuParent);
+    newParent.addEventListener("click", function() {
+        pinEntry = ""; updatePinDots();
+        $("#pin-error").classList.add("hidden");
+        showScreen("pin-screen");
+    });
+}
+
+// Add confetti and sound to existing correct answers
+var origHandleChoice = handleChoice;
+var _origHandleChoice = handleChoice;
+// We already have sound calls in tone/perspective. Let's patch the main game:
+// (The functions are already defined, we just need to add confetti to finishRound)
+var origFinishRound = finishRound;
+
+// Add confetti to results screen
+var origShowScreen = showScreen;
+showScreen = function(id) {
+    origShowScreen(id);
+    if (id === "results-screen") { fireConfetti(); playComplete(); }
+    if (id === "menu-screen") { checkStreak(); }
+};
+
 // ===== Init =====
 initWelcome();
 initMenu();
