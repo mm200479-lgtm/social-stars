@@ -470,6 +470,14 @@ input, textarea { -webkit-user-select: text; user-select: text; }
 .profile-card:active { transform: scale(0.97); border-color: var(--color-primary); }
 .profile-card.profile-add { border-style: dashed; opacity: 0.8; }
 .profile-card.profile-add:active { opacity: 1; }
+.profile-delete-btn {
+    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
+    border: none; background: rgba(244,67,54,0.1); border-radius: 50%;
+    font-size: 0.8rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; transition: all 0.2s ease; touch-action: manipulation;
+}
+.profile-delete-btn:active { background: rgba(244,67,54,0.3); transform: scale(0.9); }
+.profile-card { position: relative; }
 .profile-avatar { font-size: 2.8rem; display: block; }
 .profile-name { font-size: 1.1rem; font-weight: 700; }
 .profile-stars { font-size: 0.9rem; color: var(--color-text-light); }

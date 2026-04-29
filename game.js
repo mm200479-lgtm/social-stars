@@ -193,13 +193,17 @@ function renderProfilePicker() {
 
     keys.forEach(function(id) {
         var p = profiles[id];
-        var card = document.createElement("button");
+        var card = document.createElement("div");
         card.className = "profile-card";
         card.innerHTML =
             '<span class="profile-avatar">' + getAvatar(p.playerName) + '</span>' +
             '<span class="profile-name">' + escHtml(p.playerName) + '</span>' +
-            '<span class="profile-stars">\u2B50 ' + (p.totalStars || 0) + '</span>';
-        card.addEventListener("click", function() {
+            '<span class="profile-stars">\u2B50 ' + (p.totalStars || 0) + '</span>' +
+            '<button class="profile-delete-btn" aria-label="Delete profile" title="Delete profile">\u{274C}</button>';
+
+        // Click the card to load profile
+        card.addEventListener("click", function(e) {
+            if (e.target.classList.contains("profile-delete-btn")) return;
             loadProfile(id);
             applyTheme();
             updateStars();
@@ -207,10 +211,10 @@ function renderProfilePicker() {
             showScreen("menu-screen");
         });
 
-        // Long-press / right-click to delete
-        card.addEventListener("contextmenu", function(e) {
-            e.preventDefault();
-            if (confirm("Remove " + p.playerName + "'s profile? This cannot be undone.")) {
+        // Delete button
+        card.querySelector(".profile-delete-btn").addEventListener("click", function(e) {
+            e.stopPropagation();
+            if (confirm("Remove " + p.playerName + "'s profile?\n\nThis will delete all their stars, badges, and journal entries. This cannot be undone.")) {
                 deleteProfile(id);
                 renderProfilePicker();
             }
