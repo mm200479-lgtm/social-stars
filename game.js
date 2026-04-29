@@ -294,7 +294,18 @@ function initMenu() {
         "menu-thermometer": function() { initThermometer(); showScreen("thermometer-screen"); },
         "menu-checkin": function() { renderCheckin(); showScreen("checkin-screen"); },
         "menu-rewards": function() { renderRewards(); showScreen("rewards-screen"); },
-        "menu-parent": function() { renderParent(); showScreen("parent-screen"); }
+        "menu-tone": function() { startTone(); },
+        "menu-perspective": function() { startPerspective(); },
+        "menu-coping": function() { startCoping(); },
+        "menu-timer": function() { showScreen("timer-screen"); },
+        "menu-vocab": function() { startVocab(); },
+        "menu-rules": function() { renderRules(); showScreen("rules-screen"); },
+        "menu-settings": function() { initSettings(); showScreen("settings-screen"); },
+        "menu-parent": function() {
+            pinEntry = ""; updatePinDots();
+            var pe = $("#pin-error"); if (pe) pe.classList.add("hidden");
+            showScreen("pin-screen");
+        }
     };
     Object.keys(routes).forEach(function(id) {
         var el = $("#" + id); if (el) el.addEventListener("click", routes[id]);
@@ -1334,39 +1345,9 @@ function updatePinDots() {
 $("#pin-back-btn").addEventListener("click", function() { pinEntry = ""; updatePinDots(); showScreen("menu-screen"); });
 
 // ===== Hook up new menu items and add confetti/sound to existing features =====
-// Override the original menu routes for new features
-var menuTone = $("#menu-tone");
-if (menuTone) menuTone.addEventListener("click", function() { startTone(); });
-
-var menuPersp = $("#menu-perspective");
-if (menuPersp) menuPersp.addEventListener("click", function() { startPerspective(); });
-
-var menuCoping = $("#menu-coping");
-if (menuCoping) menuCoping.addEventListener("click", function() { startCoping(); });
-
-var menuTimer = $("#menu-timer");
-if (menuTimer) menuTimer.addEventListener("click", function() { showScreen("timer-screen"); });
-
-var menuVocab = $("#menu-vocab");
-if (menuVocab) menuVocab.addEventListener("click", function() { startVocab(); });
-
-var menuRules = $("#menu-rules");
-if (menuRules) menuRules.addEventListener("click", function() { renderRules(); showScreen("rules-screen"); });
-
-var menuSettings = $("#menu-settings");
-if (menuSettings) menuSettings.addEventListener("click", function() { initSettings(); showScreen("settings-screen"); });
-
-// Override parent dashboard to go through PIN
-var menuParent = $("#menu-parent");
-if (menuParent) {
-    var newParent = menuParent.cloneNode(true);
-    menuParent.parentNode.replaceChild(newParent, menuParent);
-    newParent.addEventListener("click", function() {
-        pinEntry = ""; updatePinDots();
-        $("#pin-error").classList.add("hidden");
-        showScreen("pin-screen");
-    });
-}
+// Settings: family code display
+var sfc2 = document.getElementById("settings-family-code");
+if (sfc2 && familyCode) sfc2.textContent = familyCode;
 
 // ===== STAR OF THE DAY =====
 function showStarOfTheDay() {
