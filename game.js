@@ -3758,7 +3758,12 @@ function initFamilyScreen() {
 // ===== GAME SCREEN BUTTONS =====
 ["memory","ttt","hangman","drawing","coloring","pattern","bingo","spotdiff","dotsboxes","wordsearch","ctd","facebuilder"].forEach(function(g) {
     var back = document.getElementById(g + "-back");
-    if (back) back.addEventListener("click", function() { showScreen("submenu-screen"); });
+    if (back) back.addEventListener("click", function() {
+        // Use querySelectorAll to hide all screens and show submenu
+        document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
+        var sub = document.getElementById("submenu-screen");
+        if (sub) { sub.classList.add("active"); sub.scrollTop = 0; window.scrollTo(0, 0); }
+    });
 });
 var gameActions = {
     "memory-new": function(){startMemory();},
