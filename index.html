@@ -804,6 +804,10 @@
                     <button id="simplified-toggle" class="btn btn-secondary btn-small">Off</button>
                 </div>
                 <div class="settings-group">
+                    <label>Quiet Mode (minimal visuals for overwhelmed days)</label>
+                    <button id="quiet-toggle" class="btn btn-secondary btn-small">Off</button>
+                </div>
+                <div class="settings-group">
                     <label>Change Parent PIN</label>
                     <input type="password" id="new-pin-input" class="ci-note-input" maxlength="4" placeholder="New 4-digit PIN" style="max-width:200px;text-align:center;">
                     <button id="save-pin-btn" class="btn btn-primary btn-small" style="margin-top:8px;">Save PIN</button>
@@ -1403,7 +1407,23 @@
             <div class="game-container"><h2 class="section-title">🔎 Word Search</h2>
             <p id="ws-info" class="section-subtitle">Find the hidden feelings words!</p>
             <p id="ws-words" class="section-subtitle"></p>
-            <div id="ws-grid" class="ws-grid"></div></div>
+            <div id="ws-grid" class="ws-grid"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startWordSearch()">New Puzzle</button></div>
+        </div>
+
+        <div id="ctd-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">🔗 Connect the Dots</h2>
+            <p id="ctd-info" class="section-subtitle">Tap the dots in order: 1, 2, 3...</p>
+            <canvas id="ctd-canvas" style="border:2px solid var(--color-border);border-radius:12px;"></canvas>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startConnectDots()">New Puzzle</button></div>
+        </div>
+
+        <div id="facebuilder-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">😀 Expression Builder</h2>
+            <p class="section-subtitle">Build a face and guess the emotion!</p>
+            <div id="face-builder"></div></div>
         </div>
         <button id="safe-space-btn" class="safe-space-btn" aria-label="Go to Calm Down Corner" title="Calm Down Corner">🧘</button>
 

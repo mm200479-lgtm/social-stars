@@ -40,7 +40,7 @@ function flipMemCard(idx, el) {
             if (memMatched >= memCards.length/2) {
                 var info = document.getElementById("memory-info");
                 if(info) info.textContent = "\u{1F389} You matched them all in " + memMoves + " moves! +5\u2B50";
-                if (typeof state !== "undefined") { state.totalStars += 5; state.replayCount = (state.replayCount||0)+1; if(typeof saveProfile==="function") saveProfile(); if(typeof updateStars==="function") updateStars(); if(typeof checkBadges==="function") checkBadges(); }
+                if (typeof state !== "undefined") { state.totalStars += 5; state.memoryDone = true; state.replayCount = (state.replayCount||0)+1; if(typeof saveProfile==="function") saveProfile(); if(typeof updateStars==="function") updateStars(); if(typeof checkBadges==="function") checkBadges(); }
                 if (typeof fireConfetti === "function") fireConfetti();
             }
         } else {
@@ -71,8 +71,8 @@ function tttMove(idx, el) {
     var info = document.getElementById("ttt-info");
     if (winner) {
         tttDone = true;
-        if(info) info.textContent = winner + " wins! \u{1F389} Great game!";
-        if(typeof state!=="undefined") { state.totalStars += 3; if(typeof saveProfile==="function") saveProfile(); if(typeof updateStars==="function") updateStars(); }
+        if(info) info.textContent = winner + " wins! \u{1F389} Great game! +3\u2B50";
+        if(typeof state!=="undefined") { state.totalStars += 3; state.tttPlayed = true; if(typeof saveProfile==="function") saveProfile(); if(typeof updateStars==="function") updateStars(); if(typeof checkBadges==="function") checkBadges(); }
         if(typeof playComplete==="function") playComplete();
     } else if (tttBoard.indexOf("") === -1) {
         tttDone = true;
@@ -138,7 +138,7 @@ function renderHangman() {
     var won = hangWord.split("").every(function(l){return hangGuessed.indexOf(l)!==-1;});
     if(won) {
         if(info) info.textContent = "\u{1F389} You got it! The word was " + hangWord + "! +3\u2B50";
-        if(typeof state!=="undefined"){state.totalStars+=3;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();}
+        if(typeof state!=="undefined"){state.totalStars+=3;state.hangmanWon=true;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();if(typeof checkBadges==="function")checkBadges();}
         if(typeof playComplete==="function")playComplete();
     } else if(hangWrong>=hangMax) {
         if(info) info.textContent = "The word was " + hangWord + ". Try again! +1\u2B50";
@@ -172,7 +172,7 @@ function startDrawing() {
     }
     drawCanvas.onmousedown = function(e) { drawing=true; var p=getPos(e); drawCtx.beginPath(); drawCtx.moveTo(p.x,p.y); };
     drawCanvas.onmousemove = function(e) { if(!drawing) return; var p=getPos(e); drawCtx.strokeStyle=drawColor; drawCtx.lineWidth=drawSize; drawCtx.lineTo(p.x,p.y); drawCtx.stroke(); };
-    drawCanvas.onmouseup = function() { drawing=false; };
+    drawCanvas.onmouseup = function() { drawing=false; if(typeof state!=="undefined"){state.drawingDone=true;if(typeof saveProfile==="function")saveProfile();} };
     drawCanvas.ontouchstart = function(e) { e.preventDefault(); drawing=true; var p=getPos(e); drawCtx.beginPath(); drawCtx.moveTo(p.x,p.y); };
     drawCanvas.ontouchmove = function(e) { e.preventDefault(); if(!drawing) return; var p=getPos(e); drawCtx.strokeStyle=drawColor; drawCtx.lineWidth=drawSize; drawCtx.lineTo(p.x,p.y); drawCtx.stroke(); };
     drawCanvas.ontouchend = function() { drawing=false; };
@@ -413,4 +413,206 @@ function dbCheckBoxes() {
         }
     }
     return scored;
+}
+
+
+// ===== WORD SEARCH =====
+var wsWords = ["HAPPY","SAD","ANGRY","SCARED","PROUD","CALM","BRAVE","KIND","SHY","LOVE"];
+var wsGrid=[], wsSize=10, wsFound=[], wsTargets=[];
+
+function startWordSearch() {
+    wsFound = [];
+    wsTargets = shuffleArray(wsWords).slice(0,5);
+    wsGrid = [];
+    for(var r=0;r<wsSize;r++) { wsGrid[r]=[]; for(var c=0;c<wsSize;c++) wsGrid[r][c]=""; }
+
+    // Place words
+    wsTargets.forEach(function(word) {
+        var placed = false;
+        for(var attempt=0; attempt<50 && !placed; attempt++) {
+            var dir = Math.floor(Math.random()*3); // 0=horiz, 1=vert, 2=diag
+            var dr = dir===0?0:(dir===1?1:1), dc = dir===0?1:(dir===1?0:1);
+            var sr = Math.floor(Math.random()*(wsSize-word.length*dr));
+            var sc = Math.floor(Math.random()*(wsSize-word.length*dc));
+            var ok = true;
+            for(var i=0;i<word.length;i++) {
+                var cr=sr+i*dr, cc=sc+i*dc;
+                if(wsGrid[cr][cc] && wsGrid[cr][cc]!==word[i]) { ok=false; break; }
+            }
+            if(ok) {
+                for(var j=0;j<word.length;j++) wsGrid[sr+j*dr][sc+j*dc] = word[j];
+                placed = true;
+            }
+        }
+    });
+
+    // Fill empty cells
+    var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(var r2=0;r2<wsSize;r2++) for(var c2=0;c2<wsSize;c2++) {
+        if(!wsGrid[r2][c2]) wsGrid[r2][c2] = letters[Math.floor(Math.random()*26)];
+    }
+
+    renderWordSearch();
+}
+
+function renderWordSearch() {
+    var grid = document.getElementById("ws-grid"); if(!grid) return;
+    grid.innerHTML = ""; grid.style.gridTemplateColumns = "repeat("+wsSize+", 1fr)";
+    for(var r=0;r<wsSize;r++) for(var c=0;c<wsSize;c++) {
+        var cell = document.createElement("button");
+        cell.className = "ws-cell"; cell.textContent = wsGrid[r][c];
+        cell.dataset.r = r; cell.dataset.c = c;
+        cell.addEventListener("click", function() {
+            this.classList.toggle("ws-selected");
+            checkWsWords();
+        });
+        grid.appendChild(cell);
+    }
+    var wordsEl = document.getElementById("ws-words");
+    if(wordsEl) wordsEl.innerHTML = "Find: " + wsTargets.map(function(w) {
+        return wsFound.indexOf(w)!==-1 ? "<s>"+w+"</s>" : "<strong>"+w+"</strong>";
+    }).join(" &bull; ");
+}
+
+function checkWsWords() {
+    var selected = document.querySelectorAll(".ws-cell.ws-selected");
+    if(selected.length < 3) return;
+    var word = ""; selected.forEach(function(c) { word += c.textContent; });
+    var reversed = word.split("").reverse().join("");
+    wsTargets.forEach(function(target) {
+        if((word.indexOf(target)!==-1 || reversed.indexOf(target)!==-1) && wsFound.indexOf(target)===-1) {
+            wsFound.push(target);
+            selected.forEach(function(c) { c.classList.add("ws-found"); c.classList.remove("ws-selected"); });
+            if(typeof playChime==="function") playChime();
+            renderWordSearch();
+            if(wsFound.length >= wsTargets.length) {
+                var info = document.getElementById("ws-info");
+                if(info) info.textContent = "\u{1F389} You found all the words! +5\u2B50";
+                if(typeof state!=="undefined"){state.totalStars+=5;state.wordsearchDone=true;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();if(typeof checkBadges==="function")checkBadges();}
+                if(typeof fireConfetti==="function") fireConfetti();
+            }
+        }
+    });
+    // Clear selection if no match
+    if(word.length > 10) { selected.forEach(function(c){c.classList.remove("ws-selected");}); }
+}
+
+// ===== CONNECT THE DOTS =====
+var ctdDots=[], ctdCurrent=0, ctdTotal=15;
+
+function startConnectDots() {
+    ctdCurrent = 0;
+    ctdTotal = 12 + Math.floor(Math.random()*6);
+    ctdDots = [];
+    var canvas = document.getElementById("ctd-canvas"); if(!canvas) return;
+    canvas.width = Math.min(500, window.innerWidth-40); canvas.height = 400;
+    var ctx = canvas.getContext("2d");
+
+    // Generate dots in a rough shape
+    for(var i=0;i<ctdTotal;i++) {
+        var angle = (i/ctdTotal)*Math.PI*2;
+        var r = 120 + Math.random()*40;
+        ctdDots.push({
+            x: canvas.width/2 + Math.cos(angle)*r,
+            y: canvas.height/2 + Math.sin(angle)*r,
+            num: i+1
+        });
+    }
+    drawConnectDots(ctx, canvas);
+
+    canvas.onclick = function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX-rect.left)*(canvas.width/rect.width);
+        var y = (e.clientY-rect.top)*(canvas.height/rect.height);
+        var dot = ctdDots[ctdCurrent];
+        if(!dot) return;
+        var dx=x-dot.x, dy=y-dot.y;
+        if(dx*dx+dy*dy < 900) { // within 30px
+            ctdCurrent++;
+            if(typeof playChime==="function") playChime();
+            drawConnectDots(ctx, canvas);
+            if(ctdCurrent >= ctdTotal) {
+                var info = document.getElementById("ctd-info");
+                if(info) info.textContent = "\u{1F389} Connected! +3\u2B50";
+                if(typeof state!=="undefined"){state.totalStars+=3;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();}
+                if(typeof fireConfetti==="function") fireConfetti();
+            }
+        }
+    };
+}
+
+function drawConnectDots(ctx, canvas) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var primary = getComputedStyle(document.body).getPropertyValue("--color-primary").trim() || "#6c63ff";
+    // Draw connected lines
+    ctx.strokeStyle = primary; ctx.lineWidth = 3;
+    for(var i=0;i<ctdCurrent-1;i++) {
+        ctx.beginPath(); ctx.moveTo(ctdDots[i].x,ctdDots[i].y); ctx.lineTo(ctdDots[i+1].x,ctdDots[i+1].y); ctx.stroke();
+    }
+    // Draw dots
+    ctdDots.forEach(function(dot,i) {
+        ctx.beginPath(); ctx.arc(dot.x,dot.y,15,0,Math.PI*2);
+        ctx.fillStyle = i<ctdCurrent ? primary : (i===ctdCurrent ? "#ff9800" : "#e0e0e0");
+        ctx.fill(); ctx.strokeStyle="#333"; ctx.lineWidth=1; ctx.stroke();
+        ctx.fillStyle = i<ctdCurrent ? "white" : "#333";
+        ctx.font = "bold 11px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(dot.num, dot.x, dot.y);
+    });
+}
+
+// ===== FACIAL EXPRESSION BUILDER =====
+var faceEyebrows = ["\u{1F610}","\u2B06\uFE0F Raised","\u{1F615} Furrowed","\u{1F612} Flat"];
+var faceEyes = ["\u{1F440} Normal","\u{1F60A} Squinting","\u{1F633} Wide","\u{1F622} Teary"];
+var faceMouths = ["\u{1F610} Neutral","\u{1F604} Smiling","\u{1F641} Frowning","\u{1F62E} Open","\u{1F620} Gritting"];
+var faceResults = {
+    "Raised,Normal,Smiling":"Surprised and happy!",
+    "Raised,Wide,Open":"Shocked or very surprised!",
+    "Furrowed,Normal,Frowning":"Angry or frustrated",
+    "Furrowed,Squinting,Gritting":"Very angry!",
+    "Flat,Teary,Frowning":"Sad",
+    "Raised,Teary,Frowning":"About to cry",
+    "Flat,Normal,Neutral":"Calm or bored",
+    "Flat,Squinting,Smiling":"Content and relaxed"
+};
+
+function startFaceBuilder() {
+    var container = document.getElementById("face-builder"); if(!container) return;
+    container.innerHTML = "";
+    var selected = {eyebrows:"",eyes:"",mouth:""};
+
+    function renderFB() {
+        container.innerHTML = "";
+        [["Eyebrows",faceEyebrows,"eyebrows"],["Eyes",faceEyes,"eyes"],["Mouth",faceMouths,"mouth"]].forEach(function(group) {
+            var h = document.createElement("h3"); h.textContent = group[0]; h.style.margin = "12px 0 6px";
+            container.appendChild(h);
+            var row = document.createElement("div"); row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
+            group[1].forEach(function(opt,i) {
+                if(i===0) return; // skip placeholder
+                var name = opt.split(" ").slice(1).join(" ") || opt;
+                var btn = document.createElement("button");
+                btn.className = "em-choice-btn" + (selected[group[2]]===name?" correct":"");
+                btn.textContent = opt; btn.style.flex = "1"; btn.style.minWidth = "80px";
+                btn.addEventListener("click", function() {
+                    selected[group[2]] = name; renderFB();
+                });
+                row.appendChild(btn);
+            });
+            container.appendChild(row);
+        });
+        // Show result
+        if(selected.eyebrows && selected.eyes && selected.mouth) {
+            var key = selected.eyebrows+","+selected.eyes+","+selected.mouth;
+            var result = faceResults[key] || "Hmm, that's an interesting expression! What emotion do you think this shows?";
+            var res = document.createElement("div");
+            res.className = "feedback-area"; res.style.marginTop = "16px";
+            res.innerHTML = '<p class="feedback-text success">' + result + '</p>';
+            container.appendChild(res);
+            if(typeof state!=="undefined" && !state._faceBuilderUsed) {
+                state._faceBuilderUsed = true; state.totalStars += 2;
+                if(typeof saveProfile==="function") saveProfile();
+                if(typeof updateStars==="function") updateStars();
+            }
+        }
+    }
+    renderFB();
 }

@@ -215,7 +215,9 @@ function showBadgeResult(badge) {
     if (!rb) return;
     if (badge) {
         rb.classList.remove("hidden");
-        rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "! +3 \u2B50";
+        var buddyMsg = typeof getBuddyMsg === "function" ? getBuddyMsg("badge") : "earned a badge!";
+        var avatar = typeof getAvatarDisplay === "function" ? getAvatarDisplay() : "";
+        rb.textContent = "\u{1F389} " + avatar + " " + buddyMsg + " " + badge.emoji + " " + badge.name + "! +3 \u2B50";
     } else {
         rb.classList.add("hidden");
     }
@@ -386,7 +388,9 @@ function initMenu() {
         "menu-memory": function() { startMemory(); showScreen("memory-screen"); },
         "menu-ttt": function() { startTTT(); showScreen("ttt-screen"); },
         "menu-hangman": function() { startHangman(); showScreen("hangman-screen"); },
-        "menu-wordsearch": function() { showScreen("wordsearch-screen"); },
+        "menu-wordsearch": function() { startWordSearch(); showScreen("wordsearch-screen"); },
+        "menu-ctd": function() { startConnectDots(); showScreen("ctd-screen"); },
+        "menu-facebuilder": function() { startFaceBuilder(); showScreen("facebuilder-screen"); },
         "menu-drawing": function() { startDrawing(); showScreen("drawing-screen"); },
         "menu-coloring": function() { startColoring(); showScreen("coloring-screen"); },
         "menu-bingo": function() { startBingo(); showScreen("bingo-screen"); },
@@ -434,7 +438,8 @@ function initMenu() {
             { id:"menu-howfeel", emoji:"\u{1FA9E}", title:"How Would You Feel?", desc:"Explore your own reactions" },
             { id:"menu-teach", emoji:"\u{1F393}", title:"Teach Me!", desc:"YOU become the teacher" },
             { id:"menu-sarcasm", emoji:"\u{1F50D}", title:"Sarcasm Decoder", desc:"What did they really mean?" },
-            { id:"menu-convsim", emoji:"\u{1F5E8}\uFE0F", title:"Conversation Practice", desc:"Practice real conversations" }
+            { id:"menu-convsim", emoji:"\u{1F5E8}\uFE0F", title:"Conversation Practice", desc:"Practice real conversations" },
+            { id:"menu-facebuilder", emoji:"\u{1F600}", title:"Expression Builder", desc:"Build a face, guess the emotion" }
         ]},
         "cat-games": { title: "\u{1F3AE} Fun & Games", items: [
             { id:"menu-memory", emoji:"\u{1F9E0}", title:"Memory Match", desc:"Find matching emotion pairs" },
@@ -447,6 +452,7 @@ function initMenu() {
             { id:"menu-pattern", emoji:"\u{1F9E9}", title:"Pattern Match", desc:"Complete the emoji pattern" },
             { id:"menu-spotdiff", emoji:"\u{1F440}", title:"Spot the Difference", desc:"Find what changed" },
             { id:"menu-dotsboxes", emoji:"\u{1F7E2}", title:"Dots & Boxes", desc:"2-player strategy game" },
+            { id:"menu-ctd", emoji:"\u{1F517}", title:"Connect the Dots", desc:"Tap dots in order" },
             { id:"menu-wyr", emoji:"\u{1F914}", title:"Would You Rather?", desc:"Fun choices to discuss" },
             { id:"menu-convo", emoji:"\u{1F3B2}", title:"Conversation Starters", desc:"Things to say to make friends" },
             { id:"menu-spinner", emoji:"\u{1F3B0}", title:"Reward Spinner", desc:"Spin for surprise rewards" }
@@ -3373,6 +3379,8 @@ function initSettings() {
     contrastBtn.textContent = state._highContrast ? "On" : "Off";
     var simpBtn = $("#simplified-toggle");
     simpBtn.textContent = state._simplified ? "On" : "Off";
+    var quietBtn = $("#quiet-toggle");
+    if (quietBtn) quietBtn.textContent = state._quietMode ? "On" : "Off";
 }
 
 $("#font-size-slider").addEventListener("input", function() {
@@ -3397,6 +3405,15 @@ $("#simplified-toggle").addEventListener("click", function() {
     saveProfile();
 });
 
+$("#quiet-toggle").addEventListener("click", function() {
+    state._quietMode = !state._quietMode;
+    this.textContent = state._quietMode ? "On" : "Off";
+    if (state._quietMode) document.body.classList.add("quiet-mode");
+    else document.body.classList.remove("quiet-mode");
+    soundEnabled = !state._quietMode;
+    saveProfile();
+});
+
 $("#save-pin-btn").addEventListener("click", function() {
     var inp = $("#new-pin-input");
     var val = inp.value.trim();
@@ -3418,6 +3435,7 @@ function applySavedSettings() {
         document.body.classList.add(fontSizes[state._fontSize]);
     }
     if (state._highContrast) document.body.classList.add("high-contrast");
+    if (state._quietMode) { document.body.classList.add("quiet-mode"); soundEnabled = false; }
 }
 
 // ===== SIMPLIFIED MODE SUPPORT =====
@@ -3455,6 +3473,19 @@ showScreen = function(id) {
     origShowScreen2(id);
     if (id === "results-screen") { fireConfetti(); playComplete(); }
     if (id === "menu-screen") { checkDailyBonus(); checkBadges(); showWeeklyChallenge(); showStarOfTheDay(); applySavedSettings(); }
+    // Avatar buddy messages on key screens
+    if (typeof getBuddyMsg === "function" && typeof getAvatarDisplay === "function") {
+        var avatar = getAvatarDisplay();
+        var buddyTargets = {
+            "calm-screen": { msg: getBuddyMsg("calm"), sel: null },
+            "checkin-screen": { msg: getBuddyMsg("checkin"), sel: null }
+        };
+        // Show buddy greeting on menu
+        if (id === "menu-screen") {
+            var greet = $("#player-greeting");
+            if (greet) greet.textContent = avatar + " " + getBuddyMsg("welcome").split("!")[0] + "!";
+        }
+    }
 };
 
 // ===== Init =====
