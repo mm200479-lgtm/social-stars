@@ -1366,41 +1366,41 @@
 
         <!-- ========== GAME SCREENS ========== -->
         <div id="memory-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="memory-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">🧠 Memory Match</h2>
             <p id="memory-info" class="section-subtitle"></p>
             <div id="memory-grid" class="memory-grid"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startMemory()">New Game</button></div>
+            <button id="memory-new" class="btn btn-primary" style="margin-top:16px;">New Game</button></div>
         </div>
 
         <div id="ttt-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="ttt-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">❌ Tic-Tac-Toe</h2>
             <p id="ttt-info" class="section-subtitle"></p>
             <div id="ttt-grid" class="ttt-grid"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startTTT()">New Game</button></div>
+            <button id="ttt-new" class="btn btn-primary" style="margin-top:16px;">New Game</button></div>
         </div>
 
         <div id="hangman-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="hangman-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">📝 Hangman</h2>
             <p id="hang-info" class="section-subtitle"></p>
             <canvas id="hang-canvas" width="200" height="200" style="margin:0 auto;display:block;"></canvas>
             <p id="hang-word" style="font-size:2rem;letter-spacing:8px;text-align:center;font-weight:800;margin:16px 0;"></p>
             <div id="hang-keyboard" class="hang-keyboard"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startHangman()">New Word</button></div>
+            <button id="hangman-new" class="btn btn-primary" style="margin-top:16px;">New Word</button></div>
         </div>
 
         <div id="drawing-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="drawing-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">🎨 Drawing Pad</h2>
             <div class="draw-colors" id="draw-colors"></div>
             <canvas id="draw-canvas" style="border:2px solid var(--color-border);border-radius:12px;touch-action:none;"></canvas>
-            <button class="btn btn-secondary btn-small" style="margin-top:12px;" onclick="startDrawing()">Clear</button></div>
+            <button id="drawing-clear" class="btn btn-secondary btn-small" style="margin-top:12px;">Clear</button></div>
         </div>
 
         <div id="coloring-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="coloring-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">🖍️ Colouring Book</h2>
             <p class="section-subtitle">Pick a picture, then tap sections to colour!</p>
             <div id="color-page-picker" class="timer-presets" style="margin-bottom:12px;"></div>
@@ -1409,57 +1409,57 @@
         </div>
 
         <div id="pattern-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="pattern-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">🧩 Pattern Match</h2>
             <p id="pattern-info" class="section-subtitle"></p>
             <div id="pattern-display" class="pattern-display"></div>
             <div id="pattern-choices" class="em-choices" style="margin-top:16px;"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startPattern()">New Pattern</button></div>
+            <button id="pattern-new" class="btn btn-primary" style="margin-top:16px;">New Pattern</button></div>
         </div>
 
         <div id="bingo-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="bingo-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">🎯 Feelings Bingo</h2>
             <p id="bingo-info" class="section-subtitle"></p>
             <div id="bingo-grid" class="bingo-grid"></div></div>
         </div>
 
         <div id="spotdiff-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="spotdiff-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">👀 Spot the Difference</h2>
             <p id="spot-info" class="section-subtitle"></p>
             <div id="spot-grid1" class="spot-grid"></div>
             <div id="spot-grid2" class="spot-grid" style="margin-top:12px;"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startSpotDiff()">New Puzzle</button></div>
+            <button id="spotdiff-new" class="btn btn-primary" style="margin-top:16px;">New Puzzle</button></div>
         </div>
 
         <div id="dotsboxes-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="dotsboxes-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">🟢 Dots & Boxes</h2>
             <p id="db-info" class="section-subtitle"></p>
             <div id="db-grid" class="db-grid"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startDotsBoxes()">New Game</button></div>
+            <button id="dotsboxes-new" class="btn btn-primary" style="margin-top:16px;">New Game</button></div>
         </div>
 
         <div id="wordsearch-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="wordsearch-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">🔎 Word Search</h2>
             <p id="ws-info" class="section-subtitle">Find the hidden feelings words!</p>
             <p id="ws-words" class="section-subtitle"></p>
             <div id="ws-grid" class="ws-grid"></div>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startWordSearch()">New Puzzle</button></div>
+            <button id="wordsearch-new" class="btn btn-primary" style="margin-top:16px;">New Puzzle</button></div>
         </div>
 
         <div id="ctd-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="ctd-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container breathing-container"><h2 class="section-title">🔗 Connect the Dots</h2>
             <p id="ctd-info" class="section-subtitle">Tap the dots in order: 1, 2, 3...</p>
             <canvas id="ctd-canvas" style="border:2px solid var(--color-border);border-radius:12px;"></canvas>
-            <button class="btn btn-primary" style="margin-top:16px;" onclick="startConnectDots()">New Puzzle</button></div>
+            <button id="ctd-new" class="btn btn-primary" style="margin-top:16px;">New Puzzle</button></div>
         </div>
 
         <div id="facebuilder-screen" class="screen" tabindex="-1">
-            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <header class="game-header"><button id="facebuilder-back" class="btn btn-small btn-back">← Back</button></header>
             <div class="game-container"><h2 class="section-title">😀 Expression Builder</h2>
             <p class="section-subtitle">Build a face and guess the emotion!</p>
             <div id="face-builder"></div></div>

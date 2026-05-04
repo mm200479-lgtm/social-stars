@@ -3755,4 +3755,25 @@ function initFamilyScreen() {
     });
 }
 
+// ===== GAME SCREEN BUTTONS =====
+["memory","ttt","hangman","drawing","coloring","pattern","bingo","spotdiff","dotsboxes","wordsearch","ctd","facebuilder"].forEach(function(g) {
+    var back = document.getElementById(g + "-back");
+    if (back) back.addEventListener("click", function() { showScreen("submenu-screen"); });
+});
+var gameActions = {
+    "memory-new": function(){startMemory();},
+    "ttt-new": function(){startTTT();},
+    "hangman-new": function(){startHangman();},
+    "drawing-clear": function(){startDrawing();},
+    "pattern-new": function(){startPattern();},
+    "spotdiff-new": function(){startSpotDiff();},
+    "dotsboxes-new": function(){startDotsBoxes();},
+    "wordsearch-new": function(){startWordSearch();},
+    "ctd-new": function(){startConnectDots();}
+};
+Object.keys(gameActions).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("click", gameActions[id]);
+});
+
 })();
