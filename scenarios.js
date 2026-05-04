@@ -197,7 +197,16 @@ const BADGES = [
     { id: "checkin-7", emoji: "\u{1F4D6}", name: "Feelings Tracker", desc: "Do 7 daily check-ins", condition: (s) => (s.checkins || []).length >= 7 },
     { id: "calm-used", emoji: "\u{1F9D8}", name: "Calm Master", desc: "Use the Calm Down Corner", condition: (s) => s.calmUsed },
     { id: "story-read", emoji: "\u{1F4D6}", name: "Story Explorer", desc: "Read a Social Story", condition: (s) => s.storyRead },
-    { id: "perfect-round", emoji: "\u{1F48E}", name: "Perfect Round", desc: "Get all answers right in one topic", condition: (s) => s.perfectRound }
+    { id: "perfect-round", emoji: "\u{1F48E}", name: "Perfect Round", desc: "Get all answers right in one topic", condition: (s) => s.perfectRound },
+    { id: "tone-done", emoji: "\u{1F5E3}\uFE0F", name: "Tone Detective", desc: "Complete Tone of Voice", condition: (s) => s.toneDone },
+    { id: "persp-done", emoji: "\u{1F440}", name: "Empathy Star", desc: "Complete Their Point of View", condition: (s) => s.perspDone },
+    { id: "vocab-done", emoji: "\u{1F4D6}", name: "Word Wizard", desc: "Read all Feelings Words", condition: (s) => s.vocabDone },
+    { id: "coping-done", emoji: "\u{1F3B4}", name: "Coping Pro", desc: "View 5 Coping Cards", condition: (s) => s.copingDone },
+    { id: "rules-read", emoji: "\u{1F4CB}", name: "Rule Knower", desc: "Read the Social Rules", condition: (s) => s.rulesRead },
+    { id: "timer-used", emoji: "\u{23F1}\uFE0F", name: "Time Keeper", desc: "Use the Visual Timer", condition: (s) => s.timerUsed },
+    { id: "star-150", emoji: "\u{1F31F}", name: "Mega Star", desc: "Earn 150 stars", condition: (s) => s.totalStars >= 150 },
+    { id: "star-200", emoji: "\u{1F4A5}", name: "Legendary", desc: "Earn 200 stars", condition: (s) => s.totalStars >= 200 },
+    { id: "all-badges", emoji: "\u{1F3C5}", name: "Badge Collector", desc: "Earn 20 badges", condition: (s) => (s.earnedBadges || []).length >= 20 }
 ];
 
 /* ===== THEMES ===== */

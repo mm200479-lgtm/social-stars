@@ -56,7 +56,17 @@ function freshState(name) {
         categoryStats: {},
         lastLoginDate: "",
         streakBonuses: {},
-        _thermUsedToday: ""
+        _thermUsedToday: "",
+        toneDone: false,
+        perspDone: false,
+        vocabDone: false,
+        copingDone: false,
+        rulesRead: false,
+        timerUsed: false,
+        _sotdDate: "",
+        _fontSize: 2,
+        _highContrast: false,
+        _simplified: false
     };
 }
 
@@ -1116,6 +1126,7 @@ function handleToneChoice(opt, selBtn) {
 $("#tone-next-btn").addEventListener("click", function() {
     toneState.index++;
     if (toneState.index >= toneState.items.length) {
+        state.toneDone = true; saveProfile();
         playComplete(); fireConfetti();
         $("#results-emoji").textContent = "\u{1F5E3}\uFE0F";
         $("#results-title").textContent = "Tone Expert!";
@@ -1188,6 +1199,7 @@ function handlePerspChoice(choice, selBtn) {
 $("#persp-next-btn").addEventListener("click", function() {
     perspState.index++;
     if (perspState.index >= perspState.items.length) {
+        state.perspDone = true; saveProfile();
         playComplete(); fireConfetti();
         $("#results-emoji").textContent = "\u{1F440}";
         $("#results-title").textContent = "Empathy Star!";
@@ -1229,7 +1241,9 @@ $("#coping-next").addEventListener("click", function() {
     else { copingState.index = 0; showCopingCard(); }
     // +1 star for viewing 5 coping cards
     if (copingState.cardsViewed === 5) {
+        state.copingDone = true;
         state.totalStars++; saveProfile(); updateStars(); playChime();
+        checkBadges();
     }
 });
 $("#coping-shuffle").addEventListener("click", function() {
@@ -1284,6 +1298,11 @@ $("#timer-start").addEventListener("click", function() {
                 timerState.running = false;
                 $("#timer-start").textContent = "Start";
                 $("#timer-text").textContent = "Done!";
+                if (!state.timerUsed) {
+                    state.timerUsed = true;
+                    state.totalStars++; saveProfile(); updateStars();
+                    checkBadges();
+                }
                 playComplete();
             }
         }, 1000);
@@ -1425,7 +1444,9 @@ $("#vocab-next").addEventListener("click", function() {
     if (vocabState.index < FEELINGS_VOCAB.length - 1) { vocabState.index++; showVocabCard(); }
     else {
         // +2 stars for reading all vocab
+        state.vocabDone = true;
         state.totalStars += 2; saveProfile(); updateStars(); playChime();
+        checkBadges();
         showScreen("menu-screen");
     }
 });
@@ -1434,6 +1455,12 @@ $("#vocab-back-btn").addEventListener("click", function() { showScreen("menu-scr
 // ===== SOCIAL RULES =====
 function renderRules() {
     var list = $("#rules-list"); list.innerHTML = "";
+    // Award star and badge for reading rules
+    if (!state.rulesRead) {
+        state.rulesRead = true;
+        state.totalStars += 2; saveProfile(); updateStars();
+        checkBadges();
+    }
     SOCIAL_RULES.forEach(function(rule) {
         var card = document.createElement("div");
         card.className = "story-card";
