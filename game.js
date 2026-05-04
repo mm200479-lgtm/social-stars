@@ -1302,7 +1302,12 @@ document.addEventListener("keydown", function(e) {
 
 // ===== Service Worker =====
 if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() { navigator.serviceWorker.register("sw.js").catch(function(){}); });
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("sw.js").then(function(reg) {
+            // Force check for updates
+            reg.update();
+        }).catch(function(){});
+    });
 }
 
 // ===== CONFETTI =====
