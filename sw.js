@@ -1,5 +1,6 @@
-// Social Stars - Service Worker for offline support
-var CACHE_NAME = "social-stars-v9";
+// Social Stars - Service Worker
+// Network-first strategy: always tries to get the latest, falls back to cache offline
+var CACHE_NAME = "social-stars-v10";
 var ASSETS = [
     "./",
     "./index.html",
@@ -7,20 +8,22 @@ var ASSETS = [
     "./scenarios.js",
     "./firebase-sync.js",
     "./game.js",
-    "./manifest.json"
+    "./manifest.json",
+    "./icon.svg"
 ];
 
-// Install: cache all assets
+// Install: cache all assets immediately
 self.addEventListener("install", function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME).then(function(cache) {
             return cache.addAll(ASSETS);
         })
     );
+    // Activate immediately, don't wait
     self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: delete ALL old caches and take control immediately
 self.addEventListener("activate", function(event) {
     event.waitUntil(
         caches.keys().then(function(names) {
@@ -28,16 +31,29 @@ self.addEventListener("activate", function(event) {
                 names.filter(function(n) { return n !== CACHE_NAME; })
                      .map(function(n) { return caches.delete(n); })
             );
+        }).then(function() {
+            // Take control of all pages immediately
+            return self.clients.claim();
         })
     );
-    self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
+// Fetch: network-first — always try to get fresh content
+// Only use cache as fallback when offline
 self.addEventListener("fetch", function(event) {
     event.respondWith(
-        caches.match(event.request).then(function(response) {
-            return response || fetch(event.request);
+        fetch(event.request).then(function(networkResponse) {
+            // Got fresh response — update the cache
+            if (networkResponse && networkResponse.status === 200) {
+                var responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then(function(cache) {
+                    cache.put(event.request, responseClone);
+                });
+            }
+            return networkResponse;
+        }).catch(function() {
+            // Offline — serve from cache
+            return caches.match(event.request);
         })
     );
 });
