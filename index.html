@@ -1322,6 +1322,91 @@
         <!-- Safe Space Button (always visible) -->
         <button id="safe-space-btn" class="safe-space-btn" aria-label="Go to Calm Down Corner" title="Calm Down Corner">🧘</button>
 
+        <!-- ========== GAME SCREENS ========== -->
+        <div id="memory-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">🧠 Memory Match</h2>
+            <p id="memory-info" class="section-subtitle"></p>
+            <div id="memory-grid" class="memory-grid"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startMemory()">New Game</button></div>
+        </div>
+
+        <div id="ttt-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">❌ Tic-Tac-Toe</h2>
+            <p id="ttt-info" class="section-subtitle"></p>
+            <div id="ttt-grid" class="ttt-grid"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startTTT()">New Game</button></div>
+        </div>
+
+        <div id="hangman-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">📝 Hangman</h2>
+            <p id="hang-info" class="section-subtitle"></p>
+            <canvas id="hang-canvas" width="200" height="200" style="margin:0 auto;display:block;"></canvas>
+            <p id="hang-word" style="font-size:2rem;letter-spacing:8px;text-align:center;font-weight:800;margin:16px 0;"></p>
+            <div id="hang-keyboard" class="hang-keyboard"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startHangman()">New Word</button></div>
+        </div>
+
+        <div id="drawing-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">🎨 Drawing Pad</h2>
+            <div class="draw-colors" id="draw-colors"></div>
+            <canvas id="draw-canvas" style="border:2px solid var(--color-border);border-radius:12px;touch-action:none;"></canvas>
+            <button class="btn btn-secondary btn-small" style="margin-top:12px;" onclick="startDrawing()">Clear</button></div>
+        </div>
+
+        <div id="coloring-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">🖍️ Colouring Book</h2>
+            <p class="section-subtitle">Tap a section to colour it!</p>
+            <div id="color-palette" class="color-palette"></div>
+            <canvas id="color-canvas" style="border:2px solid var(--color-border);border-radius:12px;"></canvas></div>
+        </div>
+
+        <div id="pattern-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container breathing-container"><h2 class="section-title">🧩 Pattern Match</h2>
+            <p id="pattern-info" class="section-subtitle"></p>
+            <div id="pattern-display" class="pattern-display"></div>
+            <div id="pattern-choices" class="em-choices" style="margin-top:16px;"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startPattern()">New Pattern</button></div>
+        </div>
+
+        <div id="bingo-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">🎯 Feelings Bingo</h2>
+            <p id="bingo-info" class="section-subtitle"></p>
+            <div id="bingo-grid" class="bingo-grid"></div></div>
+        </div>
+
+        <div id="spotdiff-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">👀 Spot the Difference</h2>
+            <p id="spot-info" class="section-subtitle"></p>
+            <div id="spot-grid1" class="spot-grid"></div>
+            <div id="spot-grid2" class="spot-grid" style="margin-top:12px;"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startSpotDiff()">New Puzzle</button></div>
+        </div>
+
+        <div id="dotsboxes-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">🟢 Dots & Boxes</h2>
+            <p id="db-info" class="section-subtitle"></p>
+            <div id="db-grid" class="db-grid"></div>
+            <button class="btn btn-primary" style="margin-top:16px;" onclick="startDotsBoxes()">New Game</button></div>
+        </div>
+
+        <div id="wordsearch-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button class="btn btn-small btn-back" onclick="showScreen('submenu-screen')">← Back</button></header>
+            <div class="game-container"><h2 class="section-title">🔎 Word Search</h2>
+            <p id="ws-info" class="section-subtitle">Find the hidden feelings words!</p>
+            <p id="ws-words" class="section-subtitle"></p>
+            <div id="ws-grid" class="ws-grid"></div></div>
+        </div>
+        <button id="safe-space-btn" class="safe-space-btn" aria-label="Go to Calm Down Corner" title="Calm Down Corner">🧘</button>
+
         <!-- I Need Help Button -->
         <button id="need-help-btn" class="need-help-btn" aria-label="I need help" title="I need help">🆘</button>
 
@@ -1342,6 +1427,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="scenarios.js"></script>
     <script src="firebase-sync.js"></script>
+    <script src="games.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
