@@ -3225,7 +3225,11 @@ showScreen = function(id) {
         // Show buddy greeting on menu
         if (id === "menu-screen") {
             var greet = $("#player-greeting");
-            if (greet) greet.textContent = avatar + " " + getBuddyMsg("welcome").split("!")[0] + "!";
+            if (greet) {
+                var name = (typeof state !== "undefined" && state.playerName) ? state.playerName : "";
+                var msg = getBuddyMsg("welcome").split("!")[0] + "!";
+                greet.textContent = avatar + " Hi " + name + "! " + msg;
+            }
         }
     }
 };

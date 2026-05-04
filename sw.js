@@ -1,6 +1,6 @@
 // Social Stars - Service Worker
 // Network-first strategy: always tries to get the latest, falls back to cache offline
-var CACHE_NAME = "social-stars-v18";
+var CACHE_NAME = "social-stars-v19";
 var ASSETS = [
     "./",
     "./index.html",
