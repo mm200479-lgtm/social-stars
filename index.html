@@ -81,268 +81,74 @@
             </header>
             <div class="menu-container">
                 <h2>What would you like to do?</h2>
+                <div id="weekly-challenge" class="weekly-challenge hidden">
+                    <div class="weekly-inner">
+                        <h3 id="weekly-title">📅 Weekly Challenge</h3>
+                        <p id="weekly-desc" class="weekly-desc"></p>
+                        <div id="weekly-status" class="weekly-status"></div>
+                    </div>
+                </div>
+                <div id="sotd-banner" class="sotd-banner hidden">
+                    <div class="sotd-inner">
+                        <h3>⭐ Star of the Day ⭐</h3>
+                        <p id="sotd-question" class="sotd-question"></p>
+                        <div id="sotd-choices" class="sotd-choices"></div>
+                        <p id="sotd-result" class="sotd-result hidden"></p>
+                    </div>
+                </div>
                 <div class="menu-grid" role="list">
-                    <button class="menu-card" id="menu-learn" role="listitem">
+                    <button class="menu-card" id="cat-learn" role="listitem">
                         <span class="card-emoji">📚</span>
                         <span class="card-title">Learn &amp; Play</span>
-                        <span class="card-desc">Social skills scenarios</span>
+                        <span class="card-desc">Social skills &amp; emotions</span>
                     </button>
-                    <button class="menu-card" id="menu-emotions" role="listitem">
-                        <span class="card-emoji">🎭</span>
-                        <span class="card-title">Emotion Match</span>
-                        <span class="card-desc">Match faces to feelings</span>
+                    <button class="menu-card" id="cat-games" role="listitem">
+                        <span class="card-emoji">🎮</span>
+                        <span class="card-title">Fun &amp; Games</span>
+                        <span class="card-desc">Games, drawing &amp; puzzles</span>
                     </button>
-                    <button class="menu-card" id="menu-howfeel" role="listitem">
-                        <span class="card-emoji">🪞</span>
-                        <span class="card-title">How Would You Feel?</span>
-                        <span class="card-desc">Explore your own reactions</span>
-                    </button>
-                    <button class="menu-card" id="menu-stories" role="listitem">
+                    <button class="menu-card" id="cat-guides" role="listitem">
                         <span class="card-emoji">📖</span>
-                        <span class="card-title">Social Stories</span>
-                        <span class="card-desc">Step-by-step guides</span>
-                    </button>
-                    <button class="menu-card" id="menu-tone" role="listitem">
-                        <span class="card-emoji">🗣️</span>
-                        <span class="card-title">Tone of Voice</span>
-                        <span class="card-desc">Sarcastic, joking, or serious?</span>
-                    </button>
-                    <button class="menu-card" id="menu-perspective" role="listitem">
-                        <span class="card-emoji">👀</span>
-                        <span class="card-title">Their Point of View</span>
-                        <span class="card-desc">How does the other person feel?</span>
+                        <span class="card-title">Stories &amp; Guides</span>
+                        <span class="card-desc">Social stories &amp; scripts</span>
                     </button>
                     <button class="menu-card" id="menu-calm" role="listitem">
                         <span class="card-emoji">🧘</span>
                         <span class="card-title">Calm Down Corner</span>
-                        <span class="card-desc">Breathing &amp; grounding tools</span>
+                        <span class="card-desc">Breathing &amp; calming tools</span>
                     </button>
-                    <button class="menu-card" id="menu-coping" role="listitem">
-                        <span class="card-emoji">🃏</span>
-                        <span class="card-title">Coping Cards</span>
-                        <span class="card-desc">Strategies when things are tough</span>
+                    <button class="menu-card" id="cat-feelings" role="listitem">
+                        <span class="card-emoji">💜</span>
+                        <span class="card-title">My Feelings</span>
+                        <span class="card-desc">Check-in, journal &amp; more</span>
                     </button>
-                    <button class="menu-card" id="menu-timer" role="listitem">
-                        <span class="card-emoji">⏱️</span>
-                        <span class="card-title">Visual Timer</span>
-                        <span class="card-desc">Countdown for turns &amp; waiting</span>
-                    </button>
-                    <button class="menu-card" id="menu-thermometer" role="listitem">
-                        <span class="card-emoji">🌡️</span>
-                        <span class="card-title">Emotion Thermometer</span>
-                        <span class="card-desc">Check how you're feeling</span>
-                    </button>
-                    <button class="menu-card" id="menu-checkin" role="listitem">
-                        <span class="card-emoji">📝</span>
-                        <span class="card-title">Daily Check-In</span>
-                        <span class="card-desc">How are you feeling today?</span>
-                    </button>
-                    <button class="menu-card" id="menu-rewards" role="listitem">
+                    <button class="menu-card" id="cat-rewards" role="listitem">
                         <span class="card-emoji">🏆</span>
                         <span class="card-title">My Rewards</span>
-                        <span class="card-desc">Badges, themes &amp; celebrations</span>
+                        <span class="card-desc">Badges, themes &amp; prizes</span>
                     </button>
-                    <button class="menu-card" id="menu-wall" role="listitem">
-                        <span class="card-emoji">🖼️</span>
-                        <span class="card-title">Achievement Wall</span>
-                        <span class="card-desc">See all your accomplishments</span>
+                    <button class="menu-card" id="cat-mystuff" role="listitem">
+                        <span class="card-emoji">👤</span>
+                        <span class="card-title">My Stuff</span>
+                        <span class="card-desc">Avatar, routine &amp; chores</span>
                     </button>
-                    <button class="menu-card" id="menu-avatar" role="listitem">
-                        <span class="card-emoji">🧑‍🎨</span>
-                        <span class="card-title">My Avatar</span>
-                        <span class="card-desc">Build your character!</span>
-                    </button>
-                    <button class="menu-card" id="menu-vouchers" role="listitem">
-                        <span class="card-emoji">🎟️</span>
-                        <span class="card-title">My Vouchers</span>
-                        <span class="card-desc">Earn real-life rewards!</span>
-                    </button>
-                    <button class="menu-card" id="menu-vocab" role="listitem">
-                        <span class="card-emoji">📖</span>
-                        <span class="card-title">Feelings Words</span>
-                        <span class="card-desc">Learn new emotion words</span>
-                    </button>
-                    <button class="menu-card" id="menu-rules" role="listitem">
-                        <span class="card-emoji">📋</span>
-                        <span class="card-title">Social Rules</span>
-                        <span class="card-desc">Helpful guides for social situations</span>
-                    </button>
-                    <button class="menu-card" id="menu-chores" role="listitem">
-                        <span class="card-emoji">✅</span>
-                        <span class="card-title">My Chores</span>
-                        <span class="card-desc">Complete tasks &amp; earn stars</span>
-                    </button>
-                    <button class="menu-card" id="menu-routine" role="listitem">
-                        <span class="card-emoji">📋</span>
-                        <span class="card-title">My Routine</span>
-                        <span class="card-desc">Morning &amp; evening steps</span>
-                    </button>
-                    <button class="menu-card" id="menu-scripts" role="listitem">
-                        <span class="card-emoji">💬</span>
-                        <span class="card-title">Social Scripts</span>
-                        <span class="card-desc">What to say in situations</span>
-                    </button>
-                    <button class="menu-card" id="menu-flashcards" role="listitem">
-                        <span class="card-emoji">🃏</span>
-                        <span class="card-title">Feelings Flashcards</span>
-                        <span class="card-desc">Show how you feel</span>
-                    </button>
-                    <button class="menu-card" id="menu-idioms" role="listitem">
-                        <span class="card-emoji">🗣️</span>
-                        <span class="card-title">Idiom Explainer</span>
-                        <span class="card-desc">What do phrases really mean?</span>
-                    </button>
-                    <button class="menu-card" id="menu-hidden" role="listitem">
-                        <span class="card-emoji">🏫</span>
-                        <span class="card-title">Hidden Rules</span>
-                        <span class="card-desc">Unwritten rules of school</span>
-                    </button>
-                    <button class="menu-card" id="menu-whatif" role="listitem">
-                        <span class="card-emoji">🆘</span>
-                        <span class="card-title">What Do I Do If...</span>
-                        <span class="card-desc">Emergency &amp; tricky situations</span>
-                    </button>
-                    <button class="menu-card" id="menu-convo" role="listitem">
-                        <span class="card-emoji">🎲</span>
-                        <span class="card-title">Conversation Starters</span>
-                        <span class="card-desc">Things to say to make friends</span>
-                    </button>
-                    <button class="menu-card" id="menu-friendship" role="listitem">
-                        <span class="card-emoji">🌟</span>
-                        <span class="card-title">Friendship Challenges</span>
-                        <span class="card-desc">Real-world kindness tasks</span>
-                    </button>
-                    <button class="menu-card" id="menu-waiting" role="listitem">
-                        <span class="card-emoji">⏳</span>
-                        <span class="card-title">Waiting Strategies</span>
-                        <span class="card-desc">Things to do while waiting</span>
-                    </button>
-                    <button class="menu-card" id="menu-problem" role="listitem">
-                        <span class="card-emoji">🧩</span>
-                        <span class="card-title">Problem Solving</span>
-                        <span class="card-desc">Step-by-step problem fixer</span>
-                    </button>
-                    <button class="menu-card" id="menu-kindness" role="listitem">
-                        <span class="card-emoji">🫙</span>
-                        <span class="card-title">Kindness Jar</span>
-                        <span class="card-desc">Collect your kind acts</span>
-                    </button>
-                    <button class="menu-card" id="menu-gratitude" role="listitem">
-                        <span class="card-emoji">🌻</span>
-                        <span class="card-title">Gratitude Garden</span>
-                        <span class="card-desc">Grow flowers of thankfulness</span>
-                    </button>
-                    <button class="menu-card" id="menu-sleep" role="listitem">
-                        <span class="card-emoji">🌙</span>
-                        <span class="card-title">Sleep Helper</span>
-                        <span class="card-desc">Wind down for bedtime</span>
-                    </button>
-                    <button class="menu-card" id="menu-surprise" role="listitem">
-                        <span class="card-emoji">🎁</span>
-                        <span class="card-title">Daily Surprise</span>
-                        <span class="card-desc">A fun surprise just for you!</span>
-                    </button>
-                    <button class="menu-card" id="menu-wyr" role="listitem">
-                        <span class="card-emoji">🤔</span>
-                        <span class="card-title">Would You Rather?</span>
-                        <span class="card-desc">Fun choices to discuss!</span>
-                    </button>
-                    <button class="menu-card" id="menu-sensory" role="listitem">
-                        <span class="card-emoji">🧠</span>
-                        <span class="card-title">My Sensory Card</span>
-                        <span class="card-desc">What bothers me &amp; what helps</span>
-                    </button>
-                    <button class="menu-card" id="menu-emergency" role="listitem">
-                        <span class="card-emoji">🆔</span>
-                        <span class="card-title">Emergency Card</span>
-                        <span class="card-desc">Important info for emergencies</span>
-                    </button>
-                    <button class="menu-card" id="menu-volume" role="listitem">
-                        <span class="card-emoji">🔊</span>
-                        <span class="card-title">Volume Check</span>
-                        <span class="card-desc">Which voice should I use?</span>
-                    </button>
-                    <button class="menu-card" id="menu-convsim" role="listitem">
-                        <span class="card-emoji">🗨️</span>
-                        <span class="card-title">Conversation Practice</span>
-                        <span class="card-desc">Practice real conversations</span>
-                    </button>
-                    <button class="menu-card" id="menu-teach" role="listitem">
-                        <span class="card-emoji">🎓</span>
-                        <span class="card-title">Teach Me!</span>
-                        <span class="card-desc">YOU become the teacher</span>
-                    </button>
-                    <button class="menu-card" id="menu-sarcasm" role="listitem">
-                        <span class="card-emoji">🔍</span>
-                        <span class="card-title">Sarcasm Decoder</span>
-                        <span class="card-desc">What did they really mean?</span>
-                    </button>
-                    <button class="menu-card" id="menu-progressmap" role="listitem">
-                        <span class="card-emoji">🗺️</span>
-                        <span class="card-title">My Journey Map</span>
-                        <span class="card-desc">See how far you've come!</span>
-                    </button>
-                    <button class="menu-card" id="menu-spinner" role="listitem">
-                        <span class="card-emoji">🎰</span>
-                        <span class="card-title">Reward Spinner</span>
-                        <span class="card-desc">Spin for surprise rewards!</span>
-                    </button>
-                    <button class="menu-card" id="menu-memory" role="listitem">
-                        <span class="card-emoji">🧠</span>
-                        <span class="card-title">Memory Match</span>
-                        <span class="card-desc">Find matching emotion pairs!</span>
-                    </button>
-                    <button class="menu-card" id="menu-ttt" role="listitem">
-                        <span class="card-emoji">❌</span>
-                        <span class="card-title">Tic-Tac-Toe</span>
-                        <span class="card-desc">Play with a friend!</span>
-                    </button>
-                    <button class="menu-card" id="menu-hangman" role="listitem">
-                        <span class="card-emoji">📝</span>
-                        <span class="card-title">Hangman</span>
-                        <span class="card-desc">Guess the feelings word!</span>
-                    </button>
-                    <button class="menu-card" id="menu-wordsearch" role="listitem">
-                        <span class="card-emoji">🔎</span>
-                        <span class="card-title">Word Search</span>
-                        <span class="card-desc">Find hidden feelings words!</span>
-                    </button>
-                    <button class="menu-card" id="menu-drawing" role="listitem">
-                        <span class="card-emoji">🎨</span>
-                        <span class="card-title">Drawing Pad</span>
-                        <span class="card-desc">Draw your feelings!</span>
-                    </button>
-                    <button class="menu-card" id="menu-bingo" role="listitem">
-                        <span class="card-emoji">🎯</span>
-                        <span class="card-title">Feelings Bingo</span>
-                        <span class="card-desc">Mark feelings as you feel them!</span>
-                    </button>
-                    <button class="menu-card" id="menu-pattern" role="listitem">
-                        <span class="card-emoji">🧩</span>
-                        <span class="card-title">Pattern Match</span>
-                        <span class="card-desc">Complete the emoji pattern!</span>
-                    </button>
-                    <button class="menu-card" id="menu-spotdiff" role="listitem">
-                        <span class="card-emoji">👀</span>
-                        <span class="card-title">Spot the Difference</span>
-                        <span class="card-desc">Find what changed!</span>
-                    </button>
-                    <button class="menu-card" id="menu-dotsboxes" role="listitem">
-                        <span class="card-emoji">🟢</span>
-                        <span class="card-title">Dots &amp; Boxes</span>
-                        <span class="card-desc">2-player strategy game!</span>
-                    </button>
-                    <button class="menu-card" id="menu-settings" role="listitem">
+                    <button class="menu-card" id="cat-settings" role="listitem">
                         <span class="card-emoji">⚙️</span>
                         <span class="card-title">Settings</span>
-                        <span class="card-desc">Font size &amp; accessibility</span>
-                    </button>
-                    <button class="menu-card" id="menu-parent" role="listitem">
-                        <span class="card-emoji">👨‍👩‍👧</span>
-                        <span class="card-title">Parent Dashboard</span>
-                        <span class="card-desc">Progress &amp; insights</span>
+                        <span class="card-desc">Options &amp; parent area</span>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- ========== Sub-Menu Screen ========== -->
+        <div id="submenu-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="submenu-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="menu-container">
+                <h2 id="submenu-title"></h2>
+                <div id="submenu-grid" class="menu-grid" role="list"></div>
             </div>
         </div>
 
@@ -830,23 +636,6 @@
                 <p id="pin-error" class="pin-error hidden">Wrong PIN — try again</p>
                 <p id="pin-hint" class="pin-hint">Default PIN: 1234</p>
                 <button id="pin-back-btn" class="btn btn-back" style="margin-top:12px;">← Back to Menu</button>
-            </div>
-        </div>
-
-        <!-- ========== Star of the Day (on menu) ========== -->
-        <div id="weekly-challenge" class="weekly-challenge hidden">
-            <div class="weekly-inner">
-                <h3 id="weekly-title">📅 Weekly Challenge</h3>
-                <p id="weekly-desc" class="weekly-desc"></p>
-                <div id="weekly-status" class="weekly-status"></div>
-            </div>
-        </div>
-        <div id="sotd-banner" class="sotd-banner hidden">
-            <div class="sotd-inner">
-                <h3>⭐ Star of the Day ⭐</h3>
-                <p id="sotd-question" class="sotd-question"></p>
-                <div id="sotd-choices" class="sotd-choices"></div>
-                <p id="sotd-result" class="sotd-result hidden"></p>
             </div>
         </div>
 

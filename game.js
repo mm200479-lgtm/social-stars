@@ -414,6 +414,105 @@ function initMenu() {
         var el = $("#" + id); if (el) el.addEventListener("click", routes[id]);
     });
 
+    // ===== CATEGORY SUB-MENUS =====
+    var subMenus = {
+        "cat-learn": { title: "\u{1F4DA} Learn & Play", items: [
+            { id:"menu-learn", emoji:"\u{1F4DA}", title:"Scenarios", desc:"Social skills questions" },
+            { id:"menu-emotions", emoji:"\u{1F3AD}", title:"Emotion Match", desc:"Match faces to feelings" },
+            { id:"menu-tone", emoji:"\u{1F5E3}\uFE0F", title:"Tone of Voice", desc:"Sarcastic, joking, or serious?" },
+            { id:"menu-perspective", emoji:"\u{1F440}", title:"Their Point of View", desc:"How does the other person feel?" },
+            { id:"menu-howfeel", emoji:"\u{1FA9E}", title:"How Would You Feel?", desc:"Explore your own reactions" },
+            { id:"menu-teach", emoji:"\u{1F393}", title:"Teach Me!", desc:"YOU become the teacher" },
+            { id:"menu-sarcasm", emoji:"\u{1F50D}", title:"Sarcasm Decoder", desc:"What did they really mean?" },
+            { id:"menu-convsim", emoji:"\u{1F5E8}\uFE0F", title:"Conversation Practice", desc:"Practice real conversations" }
+        ]},
+        "cat-games": { title: "\u{1F3AE} Fun & Games", items: [
+            { id:"menu-memory", emoji:"\u{1F9E0}", title:"Memory Match", desc:"Find matching emotion pairs" },
+            { id:"menu-ttt", emoji:"\u274C", title:"Tic-Tac-Toe", desc:"Play with a friend!" },
+            { id:"menu-hangman", emoji:"\u{1F4DD}", title:"Hangman", desc:"Guess the feelings word" },
+            { id:"menu-wordsearch", emoji:"\u{1F50E}", title:"Word Search", desc:"Find hidden feelings words" },
+            { id:"menu-drawing", emoji:"\u{1F3A8}", title:"Drawing Pad", desc:"Draw your feelings" },
+            { id:"menu-coloring", emoji:"\u{1F58D}\uFE0F", title:"Colouring Book", desc:"Colour calming pictures" },
+            { id:"menu-bingo", emoji:"\u{1F3AF}", title:"Feelings Bingo", desc:"Mark feelings as you feel them" },
+            { id:"menu-pattern", emoji:"\u{1F9E9}", title:"Pattern Match", desc:"Complete the emoji pattern" },
+            { id:"menu-spotdiff", emoji:"\u{1F440}", title:"Spot the Difference", desc:"Find what changed" },
+            { id:"menu-dotsboxes", emoji:"\u{1F7E2}", title:"Dots & Boxes", desc:"2-player strategy game" },
+            { id:"menu-wyr", emoji:"\u{1F914}", title:"Would You Rather?", desc:"Fun choices to discuss" },
+            { id:"menu-convo", emoji:"\u{1F3B2}", title:"Conversation Starters", desc:"Things to say to make friends" },
+            { id:"menu-spinner", emoji:"\u{1F3B0}", title:"Reward Spinner", desc:"Spin for surprise rewards" }
+        ]},
+        "cat-guides": { title: "\u{1F4D6} Stories & Guides", items: [
+            { id:"menu-stories", emoji:"\u{1F4D6}", title:"Social Stories", desc:"Step-by-step guides" },
+            { id:"menu-scripts", emoji:"\u{1F4AC}", title:"Social Scripts", desc:"What to say in situations" },
+            { id:"menu-idioms", emoji:"\u{1F5E3}\uFE0F", title:"Idiom Explainer", desc:"What do phrases really mean?" },
+            { id:"menu-hidden", emoji:"\u{1F3EB}", title:"Hidden Rules", desc:"Unwritten rules of school" },
+            { id:"menu-volume", emoji:"\u{1F50A}", title:"Volume Check", desc:"Which voice should I use?" },
+            { id:"menu-whatif", emoji:"\u{1F198}", title:"What Do I Do If...", desc:"Emergency & tricky situations" },
+            { id:"menu-waiting", emoji:"\u23F3", title:"Waiting Strategies", desc:"Things to do while waiting" },
+            { id:"menu-problem", emoji:"\u{1F9E9}", title:"Problem Solving", desc:"Step-by-step problem fixer" },
+            { id:"menu-rules", emoji:"\u{1F4CB}", title:"Social Rules", desc:"Helpful guides" },
+            { id:"menu-vocab", emoji:"\u{1F4D6}", title:"Feelings Words", desc:"Learn new emotion words" }
+        ]},
+        "cat-feelings": { title: "\u{1F49C} My Feelings", items: [
+            { id:"menu-checkin", emoji:"\u{1F4DD}", title:"Daily Check-In", desc:"How are you feeling today?" },
+            { id:"menu-thermometer", emoji:"\u{1F321}\uFE0F", title:"Emotion Thermometer", desc:"How strong is the feeling?" },
+            { id:"menu-flashcards", emoji:"\u{1F0CF}", title:"Feelings Flashcards", desc:"Show how you feel" },
+            { id:"menu-kindness", emoji:"\u{1FAD9}", title:"Kindness Jar", desc:"Collect your kind acts" },
+            { id:"menu-gratitude", emoji:"\u{1F33B}", title:"Gratitude Garden", desc:"Grow flowers of thankfulness" },
+            { id:"menu-surprise", emoji:"\u{1F381}", title:"Daily Surprise", desc:"A fun surprise just for you" }
+        ]},
+        "cat-rewards": { title: "\u{1F3C6} My Rewards", items: [
+            { id:"menu-rewards", emoji:"\u{1F3C6}", title:"Badges & Themes", desc:"Badges, themes & celebrations" },
+            { id:"menu-wall", emoji:"\u{1F5BC}\uFE0F", title:"Achievement Wall", desc:"See all your accomplishments" },
+            { id:"menu-vouchers", emoji:"\u{1F39F}\uFE0F", title:"My Vouchers", desc:"Earn real-life rewards" },
+            { id:"menu-progressmap", emoji:"\u{1F5FA}\uFE0F", title:"My Journey Map", desc:"See how far you've come" }
+        ]},
+        "cat-mystuff": { title: "\u{1F464} My Stuff", items: [
+            { id:"menu-avatar", emoji:"\u{1F9D1}\u200D\u{1F3A8}", title:"My Avatar", desc:"Build your character" },
+            { id:"menu-routine", emoji:"\u{1F4CB}", title:"My Routine", desc:"Morning & evening steps" },
+            { id:"menu-chores", emoji:"\u2705", title:"My Chores", desc:"Complete tasks & earn stars" },
+            { id:"menu-friendship", emoji:"\u{1F31F}", title:"Friendship Challenges", desc:"Real-world kindness tasks" },
+            { id:"menu-sensory", emoji:"\u{1F9E0}", title:"My Sensory Card", desc:"What bothers me & what helps" },
+            { id:"menu-emergency", emoji:"\u{1F194}", title:"Emergency Card", desc:"Important info for emergencies" },
+            { id:"menu-sleep", emoji:"\u{1F319}", title:"Sleep Helper", desc:"Wind down for bedtime" },
+            { id:"menu-timer", emoji:"\u23F1\uFE0F", title:"Visual Timer", desc:"Countdown for turns & waiting" }
+        ]},
+        "cat-settings": { title: "\u2699\uFE0F Settings", items: [
+            { id:"menu-settings", emoji:"\u2699\uFE0F", title:"Settings", desc:"Font size & accessibility" },
+            { id:"menu-parent", emoji:"\u{1F468}\u200D\u{1F469}\u200D\u{1F467}", title:"Parent Dashboard", desc:"Progress & insights" }
+        ]}
+    };
+
+    function showSubMenu(catId) {
+        var cat = subMenus[catId];
+        if (!cat) return;
+        $("#submenu-title").textContent = cat.title;
+        var grid = $("#submenu-grid"); grid.innerHTML = "";
+        cat.items.forEach(function(item) {
+            var card = document.createElement("button");
+            card.className = "menu-card";
+            card.innerHTML = '<span class="card-emoji">' + item.emoji + '</span>' +
+                '<span class="card-title">' + item.title + '</span>' +
+                '<span class="card-desc">' + item.desc + '</span>';
+            card.addEventListener("click", function() {
+                // Trigger the existing route
+                if (routes[item.id]) { routes[item.id](); }
+            });
+            grid.appendChild(card);
+        });
+        showScreen("submenu-screen");
+    }
+
+    // Bind category buttons
+    Object.keys(subMenus).forEach(function(catId) {
+        var el = $("#" + catId);
+        if (el) el.addEventListener("click", function() { showSubMenu(catId); });
+    });
+
+    // Sub-menu back button
+    var smBack = $("#submenu-back-btn");
+    if (smBack) smBack.addEventListener("click", function() { showScreen("menu-screen"); });
+
     // Back buttons to menu
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
      "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results",
