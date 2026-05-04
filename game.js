@@ -429,7 +429,16 @@ function initMenu() {
             pinEntry = ""; updatePinDots();
             var pe = $("#pin-error"); if (pe) pe.classList.add("hidden");
             showScreen("pin-screen");
-        }
+        },
+        "menu-wyr": function() { showWYR(); showScreen("wyr-screen"); },
+        "menu-sensory": function() { initSensory(); showScreen("sensory-screen"); },
+        "menu-emergency": function() { loadEmergencyCard(); showScreen("emergency-screen"); },
+        "menu-volume": function() { renderVolume(); showScreen("volume-screen"); },
+        "menu-convsim": function() { startConvSim(); showScreen("convsim-screen"); },
+        "menu-teach": function() { startTeachMe(); showScreen("teach-screen"); },
+        "menu-sarcasm": function() { sarcasmIdx=0; showSarcasmCard(); showScreen("sarcasm-screen"); },
+        "menu-progressmap": function() { renderProgressMap(); showScreen("progressmap-screen"); },
+        "menu-spinner": function() { showScreen("spinner-screen"); }
     };
     Object.keys(routes).forEach(function(id) {
         var el = $("#" + id); if (el) el.addEventListener("click", routes[id]);
@@ -518,7 +527,6 @@ function initMenu() {
                 '<span class="card-title">' + item.title + '</span>' +
                 '<span class="card-desc">' + item.desc + '</span>';
             card.addEventListener("click", function() {
-                // Trigger the existing route
                 if (routes[item.id]) { routes[item.id](); }
             });
             grid.appendChild(card);
