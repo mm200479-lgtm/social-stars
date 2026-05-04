@@ -690,17 +690,44 @@ var ADVANCED_COPING = [
 
 /* ===== AVATAR BUILDER ===== */
 var AVATAR_PARTS = {
+    skinTone: [
+        { id:"s1", emoji:"\u{1F3FB}", name:"Light", starsNeeded:0 },
+        { id:"s2", emoji:"\u{1F3FC}", name:"Medium-Light", starsNeeded:0 },
+        { id:"s3", emoji:"\u{1F3FD}", name:"Medium", starsNeeded:0 },
+        { id:"s4", emoji:"\u{1F3FE}", name:"Medium-Dark", starsNeeded:0 },
+        { id:"s5", emoji:"\u{1F3FF}", name:"Dark", starsNeeded:0 }
+    ],
     face: [
-        { id:"f1", emoji:"\u{1F9D1}", name:"Person", starsNeeded:0 },
-        { id:"f2", emoji:"\u{1F467}", name:"Girl", starsNeeded:0 },
-        { id:"f3", emoji:"\u{1F466}", name:"Boy", starsNeeded:0 },
-        { id:"f4", emoji:"\u{1F9DA}", name:"Fairy", starsNeeded:20 },
-        { id:"f5", emoji:"\u{1F478}", name:"Princess", starsNeeded:40 },
-        { id:"f6", emoji:"\u{1F934}", name:"Prince", starsNeeded:40 },
-        { id:"f7", emoji:"\u{1F9B8}", name:"Superhero", starsNeeded:80 },
-        { id:"f8", emoji:"\u{1F9DC}", name:"Merperson", starsNeeded:120 },
-        { id:"f9", emoji:"\u{1F9D9}", name:"Wizard", starsNeeded:200 },
-        { id:"f10", emoji:"\u{1F47C}", name:"Angel", starsNeeded:300 }
+        { id:"f1", base:"\u{1F9D1}", name:"Person", starsNeeded:0 },
+        { id:"f2", base:"\u{1F467}", name:"Girl", starsNeeded:0 },
+        { id:"f3", base:"\u{1F466}", name:"Boy", starsNeeded:0 },
+        { id:"f4", base:"\u{1F469}", name:"Woman", starsNeeded:0 },
+        { id:"f5", base:"\u{1F9DA}", name:"Fairy", starsNeeded:20 },
+        { id:"f6", base:"\u{1F478}", name:"Princess", starsNeeded:40 },
+        { id:"f7", base:"\u{1F934}", name:"Prince", starsNeeded:40 },
+        { id:"f8", base:"\u{1F9B8}", name:"Superhero", starsNeeded:80 },
+        { id:"f9", base:"\u{1F9DC}", name:"Merperson", starsNeeded:120 },
+        { id:"f10", base:"\u{1F9D9}", name:"Wizard", starsNeeded:200 },
+        { id:"f11", base:"\u{1F47C}", name:"Angel", starsNeeded:300 },
+        { id:"f12", base:"\u{1F935}", name:"Fancy", starsNeeded:150 }
+    ],
+    outfit: [
+        { id:"o0", emoji:"", name:"None", starsNeeded:0 },
+        { id:"o1", emoji:"\u{1F455}", name:"T-Shirt", starsNeeded:0 },
+        { id:"o2", emoji:"\u{1F457}", name:"Dress", starsNeeded:0 },
+        { id:"o3", emoji:"\u{1F9E5}", name:"Hoodie", starsNeeded:10 },
+        { id:"o4", emoji:"\u{1F45A}", name:"Blouse", starsNeeded:15 },
+        { id:"o5", emoji:"\u{1F458}", name:"Kimono", starsNeeded:30 },
+        { id:"o6", emoji:"\u{1F97E}", name:"Boots", starsNeeded:25 },
+        { id:"o7", emoji:"\u{1F460}", name:"Heels", starsNeeded:50 },
+        { id:"o8", emoji:"\u{1F45F}", name:"Trainers", starsNeeded:20 },
+        { id:"o9", emoji:"\u{1F3BD}", name:"Sports Kit", starsNeeded:35 },
+        { id:"o10", emoji:"\u{1F454}", name:"Tie & Shirt", starsNeeded:60 },
+        { id:"o11", emoji:"\u{1F9E3}", name:"Scarf", starsNeeded:40 },
+        { id:"o12", emoji:"\u{1F9E4}", name:"Gloves", starsNeeded:45 },
+        { id:"o13", emoji:"\u{1FA73}", name:"Shorts", starsNeeded:15 },
+        { id:"o14", emoji:"\u{1F97C}", name:"Lab Coat", starsNeeded:100 },
+        { id:"o15", emoji:"\u{1F9BA}", name:"Ballet Shoes", starsNeeded:75 }
     ],
     hair: [
         { id:"h0", emoji:"", name:"None", starsNeeded:0 },
@@ -710,7 +737,9 @@ var AVATAR_PARTS = {
         { id:"h4", emoji:"\u{1F393}", name:"Grad Cap", starsNeeded:100 },
         { id:"h5", emoji:"\u{1F452}", name:"Top Hat", starsNeeded:75 },
         { id:"h6", emoji:"\u{1FA84}", name:"Magic Wand", starsNeeded:150 },
-        { id:"h7", emoji:"\u{1F31F}", name:"Star Halo", starsNeeded:200 }
+        { id:"h7", emoji:"\u{1F31F}", name:"Star Halo", starsNeeded:200 },
+        { id:"h8", emoji:"\u{1F490}", name:"Flowers", starsNeeded:30 },
+        { id:"h9", emoji:"\u{1F3A9}", name:"Party Hat", starsNeeded:20 }
     ],
     accessory: [
         { id:"a0", emoji:"", name:"None", starsNeeded:0 },
@@ -720,7 +749,9 @@ var AVATAR_PARTS = {
         { id:"a4", emoji:"\u{1F48D}", name:"Ring", starsNeeded:60 },
         { id:"a5", emoji:"\u{1F3A4}", name:"Microphone", starsNeeded:90 },
         { id:"a6", emoji:"\u{1F3A8}", name:"Paint Palette", starsNeeded:130 },
-        { id:"a7", emoji:"\u{1F4AB}", name:"Sparkle", starsNeeded:250 }
+        { id:"a7", emoji:"\u{1F4AB}", name:"Sparkle", starsNeeded:250 },
+        { id:"a8", emoji:"\u{1F48E}", name:"Gem", starsNeeded:175 },
+        { id:"a9", emoji:"\u{1F339}", name:"Rose", starsNeeded:40 }
     ],
     pet: [
         { id:"p0", emoji:"", name:"None", starsNeeded:0 },
@@ -731,6 +762,247 @@ var AVATAR_PARTS = {
         { id:"p5", emoji:"\u{1F984}", name:"Unicorn", starsNeeded:100 },
         { id:"p6", emoji:"\u{1F409}", name:"Dragon", starsNeeded:200 },
         { id:"p7", emoji:"\u{1F985}", name:"Eagle", starsNeeded:150 },
-        { id:"p8", emoji:"\u{1F42C}", name:"Dolphin", starsNeeded:175 }
+        { id:"p8", emoji:"\u{1F42C}", name:"Dolphin", starsNeeded:175 },
+        { id:"p9", emoji:"\u{1F99C}", name:"Parrot", starsNeeded:80 },
+        { id:"p10", emoji:"\u{1F43B}", name:"Bear", starsNeeded:120 }
     ]
 };
+
+
+/* ===== AVATAR BUDDY MESSAGES ===== */
+var BUDDY_MESSAGES = {
+    welcome: [
+        "Hey! I missed you! Ready to learn together today?",
+        "You're back! I'm so happy to see you!",
+        "Welcome back, friend! What shall we do today?",
+        "Hi there! I've been waiting for you! Let's have fun!",
+        "Yay, you're here! Today is going to be great!"
+    ],
+    correct: [
+        "Wow, you really understood that! I'm so proud of you!",
+        "You got it! You're getting so good at this!",
+        "Amazing! You're teaching ME things now!",
+        "That's right! Your brain is incredible!",
+        "Yes! High five! You nailed it!"
+    ],
+    encourage: [
+        "Don't worry! Even I make mistakes. Let's try the next one!",
+        "That's okay! Learning means trying. You're doing great!",
+        "Hmm, tricky one! But I know you'll get the next one!",
+        "No worries, friend! That's how we learn. Keep going!",
+        "Almost! You're so close. I believe in you!"
+    ],
+    checkin: [
+        "How are we feeling today? I'm here for you no matter what.",
+        "Let's check in! How's your heart feeling right now?",
+        "I care about how you feel. Want to tell me about your day?",
+        "Every feeling is okay. What's going on inside today?",
+        "I'm listening! How are you doing, friend?"
+    ],
+    calm: [
+        "Let's breathe together. In... and out... You're doing great.",
+        "It's okay to feel big feelings. I'm right here with you.",
+        "You're safe. Let's take a moment to feel calm together.",
+        "Close your eyes if you want. I'll be here when you open them.",
+        "You're so brave for taking care of your feelings."
+    ],
+    badge: [
+        "is doing a happy dance! You earned a new badge!",
+        "is SO proud of you! Look at that shiny new badge!",
+        "can't believe it! You're collecting badges like a champion!",
+        "says: You deserve this! You worked so hard!",
+        "is cheering for you! What an achievement!"
+    ],
+    complete: [
+        "You finished! That was amazing! I'm so proud of us!",
+        "We did it together! You're getting stronger every day!",
+        "Incredible! You should feel really proud right now!",
+        "What a superstar! Ready for the next adventure?",
+        "You're unstoppable! That was brilliant!"
+    ],
+    sleep: [
+        "Time to rest your amazing brain. You did so well today.",
+        "Close your eyes and think of your favourite place. Goodnight!",
+        "Tomorrow is a new day full of possibilities. Sweet dreams!",
+        "You're safe, you're loved, and you did your best today.",
+        "Let's count some slow breaths together... 1... 2... 3..."
+    ]
+};
+
+function getBuddyMsg(category) {
+    var msgs = BUDDY_MESSAGES[category] || BUDDY_MESSAGES.welcome;
+    return msgs[Math.floor(Math.random() * msgs.length)];
+}
+
+/* ===== DAILY SURPRISES ===== */
+var DAILY_SURPRISES = [
+    { type:"compliment", emoji:"\u{1F31F}", text:"You make the world a better place just by being you." },
+    { type:"compliment", emoji:"\u{1F49C}", text:"Your kindness is like a superpower." },
+    { type:"compliment", emoji:"\u{1F308}", text:"You are braver than you think." },
+    { type:"compliment", emoji:"\u{1F33B}", text:"Your smile can brighten someone's whole day." },
+    { type:"compliment", emoji:"\u{2B50}", text:"You are enough, exactly as you are." },
+    { type:"compliment", emoji:"\u{1F4AA}", text:"Every day you're getting stronger and wiser." },
+    { type:"compliment", emoji:"\u{1F338}", text:"The world needs people like you." },
+    { type:"fact", emoji:"\u{1F9E0}", text:"Your brain makes about 70,000 thoughts every day!" },
+    { type:"fact", emoji:"\u{1F42C}", text:"Dolphins call each other by name using special whistles!" },
+    { type:"fact", emoji:"\u{1F60A}", text:"Smiling actually makes your brain feel happier, even if you weren't happy before!" },
+    { type:"fact", emoji:"\u{1F333}", text:"Trees talk to each other underground through their roots!" },
+    { type:"fact", emoji:"\u{1F31F}", text:"Every person on Earth is made of atoms that were once inside a star!" },
+    { type:"fact", emoji:"\u{1F98B}", text:"Butterflies taste with their feet!" },
+    { type:"fact", emoji:"\u{1F9CA}", text:"No two snowflakes are exactly the same, just like no two people are!" },
+    { type:"joke", emoji:"\u{1F602}", text:"Why did the scarecrow win an award? Because he was outstanding in his field!" },
+    { type:"joke", emoji:"\u{1F923}", text:"What do you call a bear with no teeth? A gummy bear!" },
+    { type:"joke", emoji:"\u{1F606}", text:"Why can't you give Elsa a balloon? Because she'll let it go!" },
+    { type:"joke", emoji:"\u{1F602}", text:"What do you call a sleeping dinosaur? A dino-snore!" },
+    { type:"joke", emoji:"\u{1F923}", text:"Why did the cookie go to the doctor? Because it felt crummy!" },
+    { type:"joke", emoji:"\u{1F606}", text:"What do you call a fish without eyes? A fsh!" },
+    { type:"tip", emoji:"\u{1F4A1}", text:"If you're feeling nervous, try wiggling your toes. It distracts your brain!" },
+    { type:"tip", emoji:"\u{1F4A1}", text:"Drinking cold water can help calm you down when you're upset." },
+    { type:"tip", emoji:"\u{1F4A1}", text:"If a room feels too loud, it's okay to step outside for a minute." },
+    { type:"tip", emoji:"\u{1F4A1}", text:"Counting backwards from 10 gives your brain time to switch from 'react' to 'think' mode." },
+    { type:"tip", emoji:"\u{1F4A1}", text:"If you don't know what to say, 'That's interesting!' is always a safe response." },
+    { type:"challenge", emoji:"\u{1F3AF}", text:"Today's mini challenge: Give someone a genuine compliment!" },
+    { type:"challenge", emoji:"\u{1F3AF}", text:"Today's mini challenge: Notice 3 things that make you smile!" },
+    { type:"challenge", emoji:"\u{1F3AF}", text:"Today's mini challenge: Say 'thank you' to someone you usually forget to thank!" },
+    { type:"challenge", emoji:"\u{1F3AF}", text:"Today's mini challenge: Take 5 deep breaths before lunch!" },
+    { type:"challenge", emoji:"\u{1F3AF}", text:"Today's mini challenge: Ask someone 'How are you?' and really listen to their answer!" }
+];
+
+/* ===== IDIOM EXPLAINER ===== */
+var IDIOMS = [
+    { idiom:"It's raining cats and dogs", meaning:"It's raining very heavily", literal:"\u{1F431}\u{1F436}\u{1F327}\uFE0F No actual animals are falling from the sky!" },
+    { idiom:"Break a leg", meaning:"Good luck! (usually said before a performance)", literal:"\u{1F9B5} Nobody wants you to actually break your leg!" },
+    { idiom:"Piece of cake", meaning:"Something very easy to do", literal:"\u{1F370} There's no actual cake involved (sadly)" },
+    { idiom:"Hit the nail on the head", meaning:"To be exactly right about something", literal:"\u{1F528} No hammers needed \u2014 it means you got it perfectly right!" },
+    { idiom:"Feeling under the weather", meaning:"Feeling sick or unwell", literal:"\u{1F327}\uFE0F You're not literally under a cloud \u2014 it means you don't feel well" },
+    { idiom:"Cost an arm and a leg", meaning:"Very expensive", literal:"\u{1F4B0} Don't worry, you keep all your limbs! It just means it costs a lot" },
+    { idiom:"Let the cat out of the bag", meaning:"To accidentally reveal a secret", literal:"\u{1F431} No cats in bags! It means someone told a secret by accident" },
+    { idiom:"Bite the bullet", meaning:"To do something difficult or unpleasant that you've been avoiding", literal:"\u{1F62C} Please don't bite any bullets! It means being brave and doing the hard thing" },
+    { idiom:"Butterflies in my stomach", meaning:"Feeling nervous or excited", literal:"\u{1F98B} There aren't real butterflies inside you \u2014 it's that fluttery nervous feeling" },
+    { idiom:"The ball is in your court", meaning:"It's your turn to make a decision or take action", literal:"\u{1F3BE} No actual tennis! It means it's up to you now" },
+    { idiom:"Spill the beans", meaning:"To tell a secret or share information", literal:"\u{1FAD8} No beans were harmed! It means to reveal something that was supposed to be secret" },
+    { idiom:"On cloud nine", meaning:"Extremely happy", literal:"\u{2601}\uFE0F You can't actually stand on clouds, but it means you're feeling amazing!" },
+    { idiom:"Hold your horses", meaning:"Wait, slow down, be patient", literal:"\u{1F40E} No horses to hold! It means 'please wait a moment'" },
+    { idiom:"It's not rocket science", meaning:"It's not that complicated", literal:"\u{1F680} Nobody's building rockets! It means something is actually pretty simple" },
+    { idiom:"Pulling my leg", meaning:"Joking with me, not being serious", literal:"\u{1F9B5} Nobody's grabbing your leg! It means someone is teasing or joking" }
+];
+
+/* ===== HIDDEN RULES OF SCHOOL ===== */
+var HIDDEN_RULES = [
+    { rule:"If the teacher says 'I'll wait', it means be quiet now", emoji:"\u{1F9D1}\u200D\u{1F3EB}", detail:"This is a polite way of saying 'stop talking.' When you hear this, it's time to be quiet and listen." },
+    { rule:"Don't sit in someone's usual seat", emoji:"\u{1F4BA}", detail:"Even though seats aren't assigned, people get attached to 'their' spot. If someone always sits there, it's kind to let them have it." },
+    { rule:"When the teacher turns off the lights, stop talking", emoji:"\u{1F4A1}", detail:"This is a signal that means 'quiet down and pay attention.' It's not a power cut!" },
+    { rule:"Raise your hand before speaking in class", emoji:"\u{270B}", detail:"Even if you know the answer, wait to be called on. Shouting out can seem rude, even if you're excited." },
+    { rule:"If someone says 'See you later', they don't mean a specific time", emoji:"\u{1F44B}", detail:"It's just a friendly way of saying goodbye. You don't need to ask 'What time?'" },
+    { rule:"When someone asks 'How are you?', they usually expect 'Good, thanks'", emoji:"\u{1F60A}", detail:"It's a greeting, not a real question most of the time. A short answer is fine unless it's a close friend." },
+    { rule:"Don't stand too close to people in line", emoji:"\u{1F9CD}", detail:"Leave about an arm's length of space. Standing too close makes people uncomfortable." },
+    { rule:"If the teacher is helping someone else, wait your turn", emoji:"\u{23F3}", detail:"Raise your hand or wait quietly. Interrupting when they're helping someone else isn't fair to that person." },
+    { rule:"Laughing when someone gets in trouble is unkind", emoji:"\u{1F910}", detail:"Even if it seems funny, the person getting in trouble feels bad. Being quiet shows respect." },
+    { rule:"'Maybe' from an adult often means 'probably not'", emoji:"\u{1F914}", detail:"When adults say 'maybe' or 'we'll see', they often mean no but don't want to say it directly." },
+    { rule:"If everyone is being quiet, you should be quiet too", emoji:"\u{1F910}", detail:"Look around \u2014 if the room is silent, that's a clue that it's not a talking time." },
+    { rule:"When the bell rings, stop what you're doing", emoji:"\u{1F514}", detail:"The bell means it's time to transition. Finish your sentence, then pack up or move to the next thing." }
+];
+
+/* ===== SOCIAL SCRIPTS ===== */
+var SOCIAL_SCRIPTS_DATA = [
+    { situation:"Joining a game", emoji:"\u{1F3AE}", scripts:["Can I play too?","Is there room for one more?","What are you playing? Can I join?"] },
+    { situation:"Asking for help", emoji:"\u{1F64B}", scripts:["Excuse me, can you help me with this?","I'm stuck on this part. Could you show me?","I don't understand. Can you explain it again?"] },
+    { situation:"Saying no politely", emoji:"\u{1F645}", scripts:["No thank you, I don't want to do that.","I'd rather not, but thanks for asking.","That's not something I'm comfortable with."] },
+    { situation:"Starting a conversation", emoji:"\u{1F44B}", scripts:["Hi! What's your name?","I like your [shirt/bag/drawing]! Where did you get it?","What did you do this weekend?"] },
+    { situation:"Expressing feelings", emoji:"\u{1F4AC}", scripts:["I feel [sad/angry/worried] because...","When you did that, it made me feel...","I need some space right now, please."] },
+    { situation:"Apologising", emoji:"\u{1F614}", scripts:["I'm sorry for [what I did]. I didn't mean to hurt you.","I made a mistake. Can we start over?","I'm sorry. What can I do to make it better?"] },
+    { situation:"Disagreeing respectfully", emoji:"\u{1F91D}", scripts:["I see it differently. I think...","I respect your opinion, but I think...","Can we find a compromise?"] },
+    { situation:"Asking to be included", emoji:"\u{1F465}", scripts:["Can I sit with you?","I'd love to join if that's okay.","Is it alright if I come too?"] },
+    { situation:"When someone is upset", emoji:"\u{1F622}", scripts:["Are you okay? Do you want to talk about it?","I'm here if you need me.","Is there anything I can do to help?"] },
+    { situation:"Ending a conversation", emoji:"\u{1F44B}", scripts:["It was nice talking to you!","I have to go now, but let's talk again soon!","See you later! Have a great day!"] }
+];
+
+/* ===== FEELINGS FLASHCARDS ===== */
+var FEELINGS_FLASHCARDS = [
+    { feeling:"Happy", emoji:"\u{1F604}", color:"#4caf50", show:"I feel happy" },
+    { feeling:"Sad", emoji:"\u{1F622}", color:"#2196f3", show:"I feel sad" },
+    { feeling:"Angry", emoji:"\u{1F621}", color:"#f44336", show:"I feel angry" },
+    { feeling:"Scared", emoji:"\u{1F628}", color:"#9c27b0", show:"I feel scared" },
+    { feeling:"Worried", emoji:"\u{1F630}", color:"#ff9800", show:"I feel worried" },
+    { feeling:"Confused", emoji:"\u{1F914}", color:"#795548", show:"I feel confused" },
+    { feeling:"Tired", emoji:"\u{1F634}", color:"#607d8b", show:"I feel tired" },
+    { feeling:"Overwhelmed", emoji:"\u{1F635}", color:"#e91e63", show:"Everything feels like too much" },
+    { feeling:"Need space", emoji:"\u{1F6D1}", color:"#f44336", show:"I need some space please" },
+    { feeling:"Need help", emoji:"\u{1F64B}", color:"#2196f3", show:"I need help" },
+    { feeling:"Proud", emoji:"\u{1F929}", color:"#ffc107", show:"I feel proud of myself" },
+    { feeling:"Grateful", emoji:"\u{1F64F}", color:"#4caf50", show:"I feel thankful" }
+];
+
+/* ===== WAITING STRATEGIES ===== */
+var WAITING_STRATEGIES = [
+    { emoji:"\u{1F9EE}", title:"Count Things", text:"Count how many blue things you can see. Then red things. Then green. It makes time go faster!" },
+    { emoji:"\u{1F4AD}", title:"Tell Yourself a Story", text:"Make up a story in your head. What would happen if you could fly? Or if your pet could talk?" },
+    { emoji:"\u{270B}", title:"Finger Games", text:"Touch each finger to your thumb, one at a time. Go forward, then backward. Try going faster!" },
+    { emoji:"\u{1F4A8}", title:"Slow Breathing", text:"Breathe in for 4 counts, hold for 4, out for 4. This makes waiting feel calmer." },
+    { emoji:"\u{1F440}", title:"I Spy (in your head)", text:"Look around and find things that start with each letter of the alphabet. A... B... C..." },
+    { emoji:"\u{1F3B5}", title:"Hum a Song", text:"Pick your favourite song and hum it quietly. Music makes time feel shorter." },
+    { emoji:"\u{1F9D8}", title:"Squeeze and Release", text:"Squeeze your hands tight for 5 seconds, then release. Feel the difference. Repeat with your toes." },
+    { emoji:"\u{1F4DA}", title:"Remember Something Fun", text:"Think about your favourite memory. Where were you? What did you see, hear, and feel?" }
+];
+
+/* ===== WHAT DO I DO IF... CARDS ===== */
+var WHAT_DO_I_DO = [
+    { situation:"The fire alarm goes off", emoji:"\u{1F6A8}", steps:["Stay calm","Follow your teacher or the nearest adult","Walk (don't run) to the meeting point","Wait there until an adult says it's safe"] },
+    { situation:"A stranger talks to me", emoji:"\u{26A0}\uFE0F", steps:["Don't go with them","Say 'No thank you' firmly","Walk to a trusted adult nearby","Tell your parent or teacher what happened"] },
+    { situation:"I feel sick at school", emoji:"\u{1F912}", steps:["Tell your teacher: 'I don't feel well'","Go to the school nurse or office","They will call your parent if needed","Rest until you feel better or go home"] },
+    { situation:"I lost something important", emoji:"\u{1F50D}", steps:["Think about where you last had it","Check those places carefully","Ask people nearby if they've seen it","Tell a teacher or go to lost and found"] },
+    { situation:"Someone is bullying me", emoji:"\u{1F6D1}", steps:["Walk away if you can","Don't fight back or say mean things","Tell a trusted adult (teacher, parent)","It's NOT your fault and you deserve help"] },
+    { situation:"I'm lost in a public place", emoji:"\u{1F4CD}", steps:["Stay where you are (don't wander)","Look for a shop worker, security guard, or police officer","Tell them your name and your parent's phone number","Wait with them until your parent comes"] },
+    { situation:"I see someone get hurt", emoji:"\u{1F3E5}", steps:["Stay calm","Ask if they're okay","Get an adult to help","Stay with them until help arrives if it's safe"] },
+    { situation:"The power goes out", emoji:"\u{1F50C}", steps:["Stay where you are","Don't panic \u2014 it will come back on","Use a torch or phone light if you have one","Wait for an adult to help"] }
+];
+
+/* ===== PROBLEM SOLVING STEPS ===== */
+var PROBLEM_STEPS = [
+    { step:1, emoji:"\u{1F914}", title:"What's the problem?", prompt:"Describe what happened in one sentence." },
+    { step:2, emoji:"\u{1F4AD}", title:"How do I feel?", prompt:"Name the feeling. It's okay to feel this way." },
+    { step:3, emoji:"\u{1F4A1}", title:"What can I do?", prompt:"Think of 3 possible solutions. Even silly ones count!" },
+    { step:4, emoji:"\u{1F3AF}", title:"Pick the best one", prompt:"Which solution is safest, kindest, and most likely to work?" },
+    { step:5, emoji:"\u{1F680}", title:"Try it!", prompt:"Be brave and give it a go. You've got this!" },
+    { step:6, emoji:"\u{2705}", title:"Did it work?", prompt:"If yes \u2014 great! If not \u2014 try another solution from step 3. It's okay to try again." }
+];
+
+/* ===== CONVERSATION STARTERS ===== */
+var CONVERSATION_STARTERS = [
+    "What's your favourite animal and why?",
+    "If you could have any superpower, what would it be?",
+    "What's the best thing that happened to you this week?",
+    "Do you have any pets? Tell me about them!",
+    "What's your favourite thing to do after school?",
+    "If you could visit anywhere in the world, where would you go?",
+    "What's your favourite food?",
+    "Have you watched any good movies or shows lately?",
+    "What do you like to do on weekends?",
+    "If you could be any animal for a day, which would you pick?",
+    "What's your favourite subject at school?",
+    "Do you like to draw or make things?",
+    "What's the funniest thing that ever happened to you?",
+    "If you could have dinner with anyone, who would it be?",
+    "What makes you laugh the most?",
+    "Do you play any sports or instruments?",
+    "What's your favourite season and why?",
+    "If you could invent something, what would it be?",
+    "What's your favourite book or story?",
+    "What do you want to be when you grow up?"
+];
+
+/* ===== FRIENDSHIP CHALLENGES ===== */
+var FRIENDSHIP_CHALLENGES_DATA = [
+    { emoji:"\u{1F44B}", challenge:"Say hi to someone you don't usually talk to", stars:3 },
+    { emoji:"\u{1F4AC}", challenge:"Give someone a genuine compliment", stars:3 },
+    { emoji:"\u{1F442}", challenge:"Really listen to someone today \u2014 ask them a follow-up question", stars:3 },
+    { emoji:"\u{1F91D}", challenge:"Invite someone to play or sit with you", stars:5 },
+    { emoji:"\u{1F4DD}", challenge:"Write a kind note for someone", stars:5 },
+    { emoji:"\u{1F60A}", challenge:"Smile at 5 people today", stars:2 },
+    { emoji:"\u{1F64F}", challenge:"Say 'thank you' to 3 different people", stars:2 },
+    { emoji:"\u{1F9F9}", challenge:"Help someone without being asked", stars:5 },
+    { emoji:"\u{1F3AE}", challenge:"Let someone else choose the game or activity", stars:3 },
+    { emoji:"\u{1F917}", challenge:"Ask someone 'How are you?' and really listen", stars:3 },
+    { emoji:"\u{1F4AA}", challenge:"Say sorry for something, even if it's small", stars:3 },
+    { emoji:"\u{1F31F}", challenge:"Tell someone what you appreciate about them", stars:5 }
+];

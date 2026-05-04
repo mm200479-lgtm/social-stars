@@ -557,6 +557,43 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     from { transform: translateY(-100%); } to { transform: translateY(0); }
 }
 
+/* ===== Safe Space & Help Buttons ===== */
+.safe-space-btn {
+    position: fixed; bottom: 20px; left: 20px; width: 52px; height: 52px;
+    border-radius: 50%; border: 2px solid #a5d6a7; background: #e8f5e9;
+    font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow); z-index: 100;
+    touch-action: manipulation; display: flex; align-items: center; justify-content: center;
+}
+.safe-space-btn:active { transform: scale(0.9); }
+.need-help-btn {
+    position: fixed; bottom: 80px; left: 20px; width: 52px; height: 52px;
+    border-radius: 50%; border: 2px solid #ef9a9a; background: #ffebee;
+    font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow); z-index: 100;
+    touch-action: manipulation; display: flex; align-items: center; justify-content: center;
+}
+.need-help-btn:active { transform: scale(0.9); }
+
+/* ===== Flashcard Display ===== */
+.flashcard-display {
+    text-align: center; padding: 40px 20px; border-radius: var(--radius);
+    margin-top: 20px; animation: fadeIn 0.3s ease;
+}
+.flashcard-display .fc-emoji { font-size: 5rem; display: block; margin-bottom: 12px; }
+.flashcard-display .fc-text { font-size: 2rem; font-weight: 800; color: white; }
+
+/* ===== Kindness Jar ===== */
+.kindness-jar-display {
+    text-align: center; font-size: 2rem; padding: 16px; margin: 12px 0;
+    letter-spacing: 2px; line-height: 1.8;
+}
+
+/* ===== Gratitude Garden ===== */
+.gratitude-garden {
+    text-align: center; font-size: 2rem; padding: 16px; margin: 12px 0;
+    letter-spacing: 4px; line-height: 2; min-height: 60px;
+    background: var(--color-card); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+
 /* ===== Delete Modal ===== */
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;

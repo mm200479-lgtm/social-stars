@@ -77,7 +77,7 @@ function freshState(name) {
         levelsDone: { em: 1, tone: 1, persp: 1, hf: 1 },
         vouchers: [],
         activeCelebration: "confetti",
-        avatar: { face: "f2", hair: "h0", accessory: "a0", pet: "p0" }
+        avatar: { skinTone: "s3", face: "f2", outfit: "o2", hair: "h0", accessory: "a0", pet: "p0" }
     };
 }
 
@@ -1767,21 +1767,34 @@ $("#chores-back-btn").addEventListener("click", function() { showScreen("menu-sc
 
 // ===== AVATAR BUILDER =====
 function getAvatarDisplay() {
-    if (!state.avatar) state.avatar = { face:"f2", hair:"h0", accessory:"a0", pet:"p0" };
+    if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };
     var av = state.avatar;
     var result = "";
+
+    // Get skin tone modifier
+    var skinTone = AVATAR_PARTS.skinTone.find(function(s) { return s.id === av.skinTone; });
+    var toneModifier = skinTone ? skinTone.emoji : "\u{1F3FD}";
+
     // Hair/hat on top
     var hair = AVATAR_PARTS.hair.find(function(h) { return h.id === av.hair; });
     if (hair && hair.emoji) result += hair.emoji;
-    // Face
+
+    // Face with skin tone
     var face = AVATAR_PARTS.face.find(function(f) { return f.id === av.face; });
-    if (face) result += face.emoji;
+    if (face) result += face.base + toneModifier;
+
+    // Outfit
+    var outfit = AVATAR_PARTS.outfit.find(function(o) { return o.id === av.outfit; });
+    if (outfit && outfit.emoji) result += outfit.emoji;
+
     // Accessory
     var acc = AVATAR_PARTS.accessory.find(function(a) { return a.id === av.accessory; });
     if (acc && acc.emoji) result += acc.emoji;
+
     // Pet
     var pet = AVATAR_PARTS.pet.find(function(p) { return p.id === av.pet; });
     if (pet && pet.emoji) result += pet.emoji;
+
     return result || "\u{1F9D1}";
 }
 
@@ -1789,8 +1802,14 @@ function renderAvatar() {
     // Preview
     $("#avatar-preview").textContent = getAvatarDisplay();
 
+    // Get current skin tone for face preview
+    if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };
+    var skinTone = AVATAR_PARTS.skinTone.find(function(s) { return s.id === state.avatar.skinTone; });
+    var toneModifier = skinTone ? skinTone.emoji : "\u{1F3FD}";
+
     // Render each category
-    ["face","hair","accessory","pet"].forEach(function(cat) {
+    var categories = ["skinTone","face","outfit","hair","accessory","pet"];
+    categories.forEach(function(cat) {
         var grid = $("#avatar-" + cat + "-grid");
         if (!grid) return;
         grid.innerHTML = "";
@@ -1799,13 +1818,24 @@ function renderAvatar() {
             var selected = state.avatar && state.avatar[cat] === item.id;
             var btn = document.createElement("button");
             btn.className = "avatar-option" + (selected ? " selected" : "") + (unlocked ? "" : " locked");
-            btn.innerHTML = (item.emoji || "\u274C") +
-                (unlocked ? "" : '<span class="av-lock">\u{1F512}</span>');
+
+            // For skin tone, show a coloured circle with the tone emoji
+            // For face, show with current skin tone applied
+            var displayEmoji;
+            if (cat === "skinTone") {
+                displayEmoji = "\u{1F9D1}" + item.emoji;
+            } else if (cat === "face") {
+                displayEmoji = item.base + toneModifier;
+            } else {
+                displayEmoji = item.emoji || "\u274C";
+            }
+
+            btn.innerHTML = displayEmoji + (unlocked ? "" : '<span class="av-lock">\u{1F512}</span>');
             btn.title = item.name + (unlocked ? "" : " (" + item.starsNeeded + " stars)");
 
             if (unlocked) {
                 btn.addEventListener("click", function() {
-                    if (!state.avatar) state.avatar = { face:"f2", hair:"h0", accessory:"a0", pet:"p0" };
+                    if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };
                     state.avatar[cat] = item.id;
                     saveProfile();
                     renderAvatar();
@@ -1819,7 +1849,6 @@ function renderAvatar() {
 
 function updateAvatarDisplays() {
     var avatarStr = getAvatarDisplay();
-    // Update profile picker avatar
     var greeting = $("#player-greeting");
     if (greeting) greeting.textContent = avatarStr + " Hi, " + state.playerName + "!";
 }

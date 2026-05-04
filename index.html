@@ -172,6 +172,76 @@
                         <span class="card-title">My Chores</span>
                         <span class="card-desc">Complete tasks &amp; earn stars</span>
                     </button>
+                    <button class="menu-card" id="menu-routine" role="listitem">
+                        <span class="card-emoji">📋</span>
+                        <span class="card-title">My Routine</span>
+                        <span class="card-desc">Morning &amp; evening steps</span>
+                    </button>
+                    <button class="menu-card" id="menu-scripts" role="listitem">
+                        <span class="card-emoji">💬</span>
+                        <span class="card-title">Social Scripts</span>
+                        <span class="card-desc">What to say in situations</span>
+                    </button>
+                    <button class="menu-card" id="menu-flashcards" role="listitem">
+                        <span class="card-emoji">🃏</span>
+                        <span class="card-title">Feelings Flashcards</span>
+                        <span class="card-desc">Show how you feel</span>
+                    </button>
+                    <button class="menu-card" id="menu-idioms" role="listitem">
+                        <span class="card-emoji">🗣️</span>
+                        <span class="card-title">Idiom Explainer</span>
+                        <span class="card-desc">What do phrases really mean?</span>
+                    </button>
+                    <button class="menu-card" id="menu-hidden" role="listitem">
+                        <span class="card-emoji">🏫</span>
+                        <span class="card-title">Hidden Rules</span>
+                        <span class="card-desc">Unwritten rules of school</span>
+                    </button>
+                    <button class="menu-card" id="menu-whatif" role="listitem">
+                        <span class="card-emoji">🆘</span>
+                        <span class="card-title">What Do I Do If...</span>
+                        <span class="card-desc">Emergency &amp; tricky situations</span>
+                    </button>
+                    <button class="menu-card" id="menu-convo" role="listitem">
+                        <span class="card-emoji">🎲</span>
+                        <span class="card-title">Conversation Starters</span>
+                        <span class="card-desc">Things to say to make friends</span>
+                    </button>
+                    <button class="menu-card" id="menu-friendship" role="listitem">
+                        <span class="card-emoji">🌟</span>
+                        <span class="card-title">Friendship Challenges</span>
+                        <span class="card-desc">Real-world kindness tasks</span>
+                    </button>
+                    <button class="menu-card" id="menu-waiting" role="listitem">
+                        <span class="card-emoji">⏳</span>
+                        <span class="card-title">Waiting Strategies</span>
+                        <span class="card-desc">Things to do while waiting</span>
+                    </button>
+                    <button class="menu-card" id="menu-problem" role="listitem">
+                        <span class="card-emoji">🧩</span>
+                        <span class="card-title">Problem Solving</span>
+                        <span class="card-desc">Step-by-step problem fixer</span>
+                    </button>
+                    <button class="menu-card" id="menu-kindness" role="listitem">
+                        <span class="card-emoji">🫙</span>
+                        <span class="card-title">Kindness Jar</span>
+                        <span class="card-desc">Collect your kind acts</span>
+                    </button>
+                    <button class="menu-card" id="menu-gratitude" role="listitem">
+                        <span class="card-emoji">🌻</span>
+                        <span class="card-title">Gratitude Garden</span>
+                        <span class="card-desc">Grow flowers of thankfulness</span>
+                    </button>
+                    <button class="menu-card" id="menu-sleep" role="listitem">
+                        <span class="card-emoji">🌙</span>
+                        <span class="card-title">Sleep Helper</span>
+                        <span class="card-desc">Wind down for bedtime</span>
+                    </button>
+                    <button class="menu-card" id="menu-surprise" role="listitem">
+                        <span class="card-emoji">🎁</span>
+                        <span class="card-title">Daily Surprise</span>
+                        <span class="card-desc">A fun surprise just for you!</span>
+                    </button>
                     <button class="menu-card" id="menu-settings" role="listitem">
                         <span class="card-emoji">⚙️</span>
                         <span class="card-title">Settings</span>
@@ -730,8 +800,16 @@
                 <div id="avatar-preview" class="avatar-preview"></div>
                 <div class="avatar-categories">
                     <div class="avatar-cat">
+                        <h3>Skin Tone</h3>
+                        <div id="avatar-skinTone-grid" class="avatar-grid"></div>
+                    </div>
+                    <div class="avatar-cat">
                         <h3>Face</h3>
                         <div id="avatar-face-grid" class="avatar-grid"></div>
+                    </div>
+                    <div class="avatar-cat">
+                        <h3>Outfit</h3>
+                        <div id="avatar-outfit-grid" class="avatar-grid"></div>
                     </div>
                     <div class="avatar-cat">
                         <h3>Hair / Hat</h3>
@@ -844,6 +922,183 @@
                 </div>
             </div>
         </div>
+
+        <!-- ========== Generic Card Viewer Screens ========== -->
+        <div id="scripts-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="scripts-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">💬 Social Scripts</h2>
+                <p class="section-subtitle">Ready-made phrases for common situations</p>
+                <div id="scripts-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <div id="flashcards-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="flashcards-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🃏 Feelings Flashcards</h2>
+                <p class="section-subtitle">Tap a card to show someone how you feel</p>
+                <div id="flashcards-grid" class="ci-picker"></div>
+                <div id="flashcard-display" class="flashcard-display hidden"></div>
+            </div>
+        </div>
+
+        <div id="idioms-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="idioms-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🗣️ Idiom Explainer</h2>
+                <p class="section-subtitle">What do these phrases REALLY mean?</p>
+                <div id="idioms-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <div id="hidden-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="hidden-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🏫 Hidden Rules of School</h2>
+                <p class="section-subtitle">Things nobody tells you but everyone expects</p>
+                <div id="hidden-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <div id="whatif-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="whatif-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🆘 What Do I Do If...</h2>
+                <p class="section-subtitle">Step-by-step guides for tricky situations</p>
+                <div id="whatif-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <div id="convo-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="convo-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🎲 Conversation Starters</h2>
+                <p class="section-subtitle">Tap for a question to ask someone!</p>
+                <div id="convo-card" class="coping-card">
+                    <div id="convo-emoji" class="coping-card-emoji">💬</div>
+                    <p id="convo-text" class="coping-card-title"></p>
+                </div>
+                <button id="convo-next" class="btn btn-primary">🔀 Another one!</button>
+            </div>
+        </div>
+
+        <div id="friendship-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="friendship-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🌟 Friendship Challenges</h2>
+                <p class="section-subtitle">Real-world kindness tasks — check them off!</p>
+                <div id="friendship-list" class="chores-list"></div>
+            </div>
+        </div>
+
+        <div id="waiting-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="waiting-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">⏳ Waiting Strategies</h2>
+                <p class="section-subtitle">Things to do when you have to wait</p>
+                <div id="waiting-card" class="coping-card">
+                    <div id="waiting-emoji" class="coping-card-emoji"></div>
+                    <h3 id="waiting-title" class="coping-card-title"></h3>
+                    <p id="waiting-text" class="coping-card-text"></p>
+                </div>
+                <div class="story-nav">
+                    <button id="waiting-prev" class="btn btn-secondary btn-small">← Previous</button>
+                    <button id="waiting-next" class="btn btn-primary btn-small">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="problem-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="problem-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🧩 Problem Solving</h2>
+                <div id="problem-step" class="scenario-area">
+                    <div id="problem-emoji" class="scenario-emoji"></div>
+                    <h3 id="problem-title" class="coping-card-title"></h3>
+                    <p id="problem-prompt" class="scenario-text"></p>
+                </div>
+                <div class="story-nav">
+                    <button id="problem-prev" class="btn btn-secondary btn-small">← Previous</button>
+                    <button id="problem-next" class="btn btn-primary btn-small">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="kindness-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="kindness-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🫙 Kindness Jar</h2>
+                <p class="section-subtitle">Add a kind thing you did today!</p>
+                <div class="chore-add-row">
+                    <input type="text" id="kindness-input" class="ci-note-input" placeholder="I was kind when I..." maxlength="100">
+                    <button id="kindness-add" class="btn btn-primary btn-small">Add +3⭐</button>
+                </div>
+                <div id="kindness-jar-display" class="kindness-jar-display"></div>
+                <div id="kindness-list" class="ci-history"></div>
+            </div>
+        </div>
+
+        <div id="gratitude-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="gratitude-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🌻 Gratitude Garden</h2>
+                <p class="section-subtitle">Plant a flower by naming something you're grateful for!</p>
+                <div class="chore-add-row">
+                    <input type="text" id="gratitude-input" class="ci-note-input" placeholder="I'm grateful for..." maxlength="100">
+                    <button id="gratitude-add" class="btn btn-primary btn-small">Plant 🌸 +2⭐</button>
+                </div>
+                <div id="gratitude-garden" class="gratitude-garden"></div>
+                <div id="gratitude-list" class="ci-history"></div>
+            </div>
+        </div>
+
+        <div id="sleep-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="sleep-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🌙 Sleep Helper</h2>
+                <div id="sleep-buddy-msg" class="ci-response" style="margin-bottom:20px;background:#e8eaf6;"></div>
+                <div id="sleep-step" class="scenario-area">
+                    <div id="sleep-emoji" class="scenario-emoji"></div>
+                    <p id="sleep-text" class="scenario-text"></p>
+                </div>
+                <div class="story-nav">
+                    <button id="sleep-prev" class="btn btn-secondary btn-small">← Previous</button>
+                    <button id="sleep-next" class="btn btn-primary btn-small">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="surprise-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="surprise-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🎁 Daily Surprise</h2>
+                <div id="surprise-card" class="coping-card">
+                    <div id="surprise-emoji" class="coping-card-emoji"></div>
+                    <p id="surprise-type" class="section-subtitle" style="margin-bottom:8px;"></p>
+                    <p id="surprise-text" class="coping-card-title" style="font-size:1.1rem;line-height:1.6;"></p>
+                </div>
+                <button id="surprise-star" class="btn btn-primary hidden">Collect +1 ⭐</button>
+            </div>
+        </div>
+
+        <div id="routine-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="routine-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">📋 My Routine</h2>
+                <p class="section-subtitle">Follow your steps!</p>
+                <h3 style="margin:12px 0 8px;">☀️ Morning</h3>
+                <div id="routine-morning" class="chores-list"></div>
+                <h3 style="margin:16px 0 8px;">🌙 Evening</h3>
+                <div id="routine-evening" class="chores-list"></div>
+            </div>
+        </div>
+
+        <!-- Safe Space Button (always visible) -->
+        <button id="safe-space-btn" class="safe-space-btn" aria-label="Go to Calm Down Corner" title="Calm Down Corner">🧘</button>
+
+        <!-- I Need Help Button -->
+        <button id="need-help-btn" class="need-help-btn" aria-label="I need help" title="I need help">🆘</button>
 
         <!-- Confetti Canvas -->
         <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
