@@ -531,18 +531,13 @@ function startDotsBoxes() {
     dbLines = {}; dbBoxes = {}; dbTurn = 1;
     var grid = document.getElementById("db-grid"); if(!grid) return;
     grid.innerHTML = "";
-    var totalCols = dbCols * 2 + 1;
-    var colTemplate = "";
-    for (var ci = 0; ci < totalCols; ci++) {
-        colTemplate += (ci % 2 === 0) ? "28px " : "1fr ";
-    }
-    grid.style.gridTemplateColumns = colTemplate.trim();
-    var totalRows = dbRows * 2 + 1;
-    var rowTemplate = "";
-    for (var ri = 0; ri < totalRows; ri++) {
-        rowTemplate += (ri % 2 === 0) ? "28px " : "1fr ";
-    }
-    grid.style.gridTemplateRows = rowTemplate.trim();
+    // Build grid template: dot columns are 28px, line/box columns are 1fr
+    var cols = [];
+    for (var ci = 0; ci <= dbCols * 2; ci++) cols.push(ci % 2 === 0 ? "28px" : "1fr");
+    grid.style.gridTemplateColumns = cols.join(" ");
+    var rows = [];
+    for (var ri = 0; ri <= dbRows * 2; ri++) rows.push(ri % 2 === 0 ? "28px" : "1fr");
+    grid.style.gridTemplateRows = rows.join(" ");
 
     for(var r=0; r<=dbRows*2; r++) {
         for(var c=0; c<=dbCols*2; c++) {
