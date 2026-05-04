@@ -183,14 +183,30 @@ function applyTheme() {
 
 function checkBadges() {
     var newBadge = null;
+    var starsEarned = 0;
     BADGES.forEach(function(b) {
         if (state.earnedBadges.indexOf(b.id) === -1 && b.condition(state)) {
             state.earnedBadges.push(b.id);
             newBadge = b;
+            starsEarned += 3;
         }
     });
+    if (starsEarned > 0) {
+        state.totalStars += starsEarned;
+    }
     saveProfile(); updateStars();
     return newBadge;
+}
+
+function showBadgeResult(badge) {
+    var rb = $("#results-badge");
+    if (!rb) return;
+    if (badge) {
+        rb.classList.remove("hidden");
+        rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "! +3 \u2B50";
+    } else {
+        rb.classList.add("hidden");
+    }
 }
 
 // ===== Profile Picker Screen =====
@@ -479,9 +495,7 @@ function finishRound() {
     var si = ""; for (var i = 0; i < total; i++) si += i < stars ? "\u2B50" : "\u2606";
     $("#results-stars").textContent = si;
     var badge = checkBadges();
-    var rb = $("#results-badge");
-    if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
-    else { rb.classList.add("hidden"); }
+    showBadgeResult(badge);
     updateStars(); showScreen("results-screen");
 }
 
@@ -545,9 +559,7 @@ $("#em-next-btn").addEventListener("click", function() {
         $("#results-message").textContent = "You matched " + stars + " out of " + total + " faces correctly! Great job, " + state.playerName + "!";
         var si = ""; for (var i = 0; i < total; i++) si += i < stars ? "\u2B50" : "\u2606";
         $("#results-stars").textContent = si;
-        var badge = checkBadges(); var rb = $("#results-badge");
-        if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
-        else { rb.classList.add("hidden"); }
+        showBadgeResult(checkBadges());
         showScreen("results-screen");
     } else { showEmRound(); }
 });
@@ -1160,9 +1172,7 @@ $("#tone-next-btn").addEventListener("click", function() {
         $("#results-message").textContent = "You identified " + toneState.stars + " out of " + toneState.items.length + " tones correctly! Great listening, " + state.playerName + "!";
         var si = ""; for (var i = 0; i < toneState.items.length; i++) si += i < toneState.stars ? "\u2B50" : "\u2606";
         $("#results-stars").textContent = si;
-        var badge = checkBadges(); var rb = $("#results-badge");
-        if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
-        else { rb.classList.add("hidden"); }
+        showBadgeResult(checkBadges());
         showScreen("results-screen");
     } else { showToneRound(); }
 });
@@ -1233,9 +1243,7 @@ $("#persp-next-btn").addEventListener("click", function() {
         $("#results-message").textContent = "You understood " + perspState.stars + " out of " + perspState.items.length + " perspectives! Amazing, " + state.playerName + "!";
         var si = ""; for (var i = 0; i < perspState.items.length; i++) si += i < perspState.stars ? "\u2B50" : "\u2606";
         $("#results-stars").textContent = si;
-        var badge = checkBadges(); var rb = $("#results-badge");
-        if (badge) { rb.classList.remove("hidden"); rb.textContent = "\u{1F389} New Badge: " + badge.emoji + " " + badge.name + "!"; }
-        else { rb.classList.add("hidden"); }
+        showBadgeResult(checkBadges());
         showScreen("results-screen");
     } else { showPerspRound(); }
 });
