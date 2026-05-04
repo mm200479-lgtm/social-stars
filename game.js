@@ -387,6 +387,20 @@ function initMenu() {
         "menu-rules": function() { renderRules(); showScreen("rules-screen"); },
         "menu-settings": function() { initSettings(); showScreen("settings-screen"); },
         "menu-chores": function() { renderChores(); showScreen("chores-screen"); },
+        "menu-routine": function() { renderRoutine(); showScreen("routine-screen"); },
+        "menu-scripts": function() { renderScripts(); showScreen("scripts-screen"); },
+        "menu-flashcards": function() { renderFlashcards(); showScreen("flashcards-screen"); },
+        "menu-idioms": function() { renderIdioms(); showScreen("idioms-screen"); },
+        "menu-hidden": function() { renderHiddenRules(); showScreen("hidden-screen"); },
+        "menu-whatif": function() { renderWhatIf(); showScreen("whatif-screen"); },
+        "menu-convo": function() { showConvoStarter(); showScreen("convo-screen"); },
+        "menu-friendship": function() { renderFriendship(); showScreen("friendship-screen"); },
+        "menu-waiting": function() { waitingIdx=0; showWaitingCard(); showScreen("waiting-screen"); },
+        "menu-problem": function() { problemIdx=0; showProblemStep(); showScreen("problem-screen"); },
+        "menu-kindness": function() { renderKindness(); showScreen("kindness-screen"); },
+        "menu-gratitude": function() { renderGratitude(); showScreen("gratitude-screen"); },
+        "menu-sleep": function() { sleepIdx=0; showSleepStep(); showScreen("sleep-screen"); },
+        "menu-surprise": function() { showDailySurprise(); showScreen("surprise-screen"); },
         "menu-wall": function() { renderWall(); showScreen("wall-screen"); },
         "menu-avatar": function() { renderAvatar(); showScreen("avatar-screen"); },
         "menu-vouchers": function() { renderVouchers(); showScreen("vouchers-screen"); },
@@ -403,7 +417,11 @@ function initMenu() {
     // Back buttons to menu
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
      "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results",
-     "#wall-back-btn","#vouchers-back-btn","#avatar-back-btn"].forEach(function(s) {
+     "#wall-back-btn","#vouchers-back-btn","#avatar-back-btn",
+     "#scripts-back-btn","#flashcards-back-btn","#idioms-back-btn","#hidden-back-btn",
+     "#whatif-back-btn","#convo-back-btn","#friendship-back-btn","#waiting-back-btn",
+     "#problem-back-btn","#kindness-back-btn","#gratitude-back-btn","#sleep-back-btn",
+     "#surprise-back-btn","#routine-back-btn"].forEach(function(s) {
         var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
     });
 
@@ -1764,6 +1782,309 @@ function renderChoreManage() {
 }
 
 $("#chores-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// ===== SOCIAL SCRIPTS =====
+function renderScripts() {
+    var list = $("#scripts-list"); list.innerHTML = "";
+    SOCIAL_SCRIPTS_DATA.forEach(function(s) {
+        var card = document.createElement("div"); card.className = "story-card"; card.style.cursor = "default";
+        card.innerHTML = '<span class="story-icon">' + s.emoji + '</span>' +
+            '<div class="story-info"><div class="story-title">' + s.situation + '</div>' +
+            '<div class="story-desc">' + s.scripts.map(function(sc) { return '\u{1F4AC} "' + sc + '"'; }).join('<br>') + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+// ===== FEELINGS FLASHCARDS =====
+function renderFlashcards() {
+    var grid = $("#flashcards-grid"); grid.innerHTML = "";
+    var display = $("#flashcard-display"); display.classList.add("hidden");
+    FEELINGS_FLASHCARDS.forEach(function(f) {
+        var btn = document.createElement("button"); btn.className = "ci-face";
+        btn.innerHTML = '<span class="ci-face-emoji">' + f.emoji + '</span><span class="ci-face-label">' + f.feeling + '</span>';
+        btn.addEventListener("click", function() {
+            display.classList.remove("hidden");
+            display.style.background = f.color;
+            display.innerHTML = '<span class="fc-emoji">' + f.emoji + '</span><span class="fc-text">' + f.show + '</span>';
+        });
+        grid.appendChild(btn);
+    });
+}
+
+// ===== IDIOM EXPLAINER =====
+function renderIdioms() {
+    var list = $("#idioms-list"); list.innerHTML = "";
+    IDIOMS.forEach(function(idiom) {
+        var card = document.createElement("div"); card.className = "story-card"; card.style.cursor = "default";
+        card.innerHTML = '<span class="story-icon">\u{1F4AC}</span>' +
+            '<div class="story-info"><div class="story-title">"' + idiom.idiom + '"</div>' +
+            '<div class="story-desc"><strong>Means:</strong> ' + idiom.meaning + '<br>' + idiom.literal + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+// ===== HIDDEN RULES =====
+function renderHiddenRules() {
+    var list = $("#hidden-list"); list.innerHTML = "";
+    HIDDEN_RULES.forEach(function(r) {
+        var card = document.createElement("div"); card.className = "story-card"; card.style.cursor = "default";
+        card.innerHTML = '<span class="story-icon">' + r.emoji + '</span>' +
+            '<div class="story-info"><div class="story-title">' + r.rule + '</div>' +
+            '<div class="story-desc">' + r.detail + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+// ===== WHAT DO I DO IF =====
+function renderWhatIf() {
+    var list = $("#whatif-list"); list.innerHTML = "";
+    WHAT_DO_I_DO.forEach(function(w) {
+        var card = document.createElement("div"); card.className = "story-card"; card.style.cursor = "default";
+        var stepsHtml = w.steps.map(function(s, i) { return (i+1) + ". " + s; }).join("<br>");
+        card.innerHTML = '<span class="story-icon">' + w.emoji + '</span>' +
+            '<div class="story-info"><div class="story-title">' + w.situation + '</div>' +
+            '<div class="story-desc">' + stepsHtml + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+// ===== CONVERSATION STARTERS =====
+function showConvoStarter() {
+    var idx = Math.floor(Math.random() * CONVERSATION_STARTERS.length);
+    $("#convo-text").textContent = CONVERSATION_STARTERS[idx];
+}
+var cnBtn = $("#convo-next");
+if (cnBtn) cnBtn.addEventListener("click", showConvoStarter);
+
+// ===== FRIENDSHIP CHALLENGES =====
+function renderFriendship() {
+    if (!state.friendshipDone) state.friendshipDone = {};
+    var today = todayStr();
+    if (!state.friendshipDone[today]) state.friendshipDone[today] = [];
+    var list = $("#friendship-list"); list.innerHTML = "";
+    FRIENDSHIP_CHALLENGES_DATA.forEach(function(fc, idx) {
+        var done = state.friendshipDone[today].indexOf(idx) !== -1;
+        var item = document.createElement("div");
+        item.className = "chore-item" + (done ? " completed" : "");
+        item.innerHTML = '<span class="chore-check">' + (done ? "\u2705" : "\u2B1C") + '</span>' +
+            '<div class="chore-info"><div class="chore-name">' + fc.emoji + " " + fc.challenge + '</div></div>' +
+            '<span class="chore-stars-value">' + (done ? "Done!" : "+" + fc.stars + " \u2B50") + '</span>';
+        if (!done) {
+            item.addEventListener("click", function() {
+                state.friendshipDone[today].push(idx);
+                state.totalStars += fc.stars; saveProfile(); updateStars(); playChime(); checkBadges();
+                renderFriendship();
+            });
+        }
+        list.appendChild(item);
+    });
+}
+
+// ===== WAITING STRATEGIES =====
+var waitingIdx = 0;
+function showWaitingCard() {
+    var w = WAITING_STRATEGIES[waitingIdx];
+    $("#waiting-emoji").textContent = w.emoji;
+    $("#waiting-title").textContent = w.title;
+    $("#waiting-text").textContent = w.text;
+}
+var wpBtn = $("#waiting-prev"), wnBtn = $("#waiting-next");
+if (wpBtn) wpBtn.addEventListener("click", function() { if (waitingIdx > 0) { waitingIdx--; showWaitingCard(); } });
+if (wnBtn) wnBtn.addEventListener("click", function() { if (waitingIdx < WAITING_STRATEGIES.length-1) { waitingIdx++; showWaitingCard(); } else { waitingIdx = 0; showWaitingCard(); } });
+
+// ===== PROBLEM SOLVING =====
+var problemIdx = 0;
+function showProblemStep() {
+    var p = PROBLEM_STEPS[problemIdx];
+    $("#problem-emoji").textContent = p.emoji;
+    $("#problem-title").textContent = "Step " + p.step + ": " + p.title;
+    $("#problem-prompt").textContent = p.prompt;
+}
+var ppBtn = $("#problem-prev"), pnBtn = $("#problem-next");
+if (ppBtn) ppBtn.addEventListener("click", function() { if (problemIdx > 0) { problemIdx--; showProblemStep(); } });
+if (pnBtn) pnBtn.addEventListener("click", function() {
+    if (problemIdx < PROBLEM_STEPS.length-1) { problemIdx++; showProblemStep(); }
+    else { state.totalStars += 2; saveProfile(); updateStars(); playChime(); showScreen("menu-screen"); }
+});
+
+// ===== KINDNESS JAR =====
+function renderKindness() {
+    if (!state.kindnessJar) state.kindnessJar = [];
+    var list = $("#kindness-list"); list.innerHTML = "";
+    var jarDisplay = $("#kindness-jar-display");
+    // Show hearts for each kind act
+    var hearts = "";
+    for (var i = 0; i < Math.min(state.kindnessJar.length, 50); i++) hearts += "\u{1F49C}";
+    jarDisplay.textContent = hearts || "\u{1FAD9} Empty jar \u2014 add your first kind act!";
+    // Show entries
+    state.kindnessJar.slice(-10).reverse().forEach(function(k) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">\u{1F49C}</span>' +
+            '<div class="ci-entry-info"><div class="ci-entry-mood">' + escHtml(k.text) + '</div>' +
+            '<div class="ci-entry-date">' + friendlyDate(k.date) + '</div></div>';
+        list.appendChild(div);
+    });
+}
+var kaBtn = $("#kindness-add");
+if (kaBtn) kaBtn.addEventListener("click", function() {
+    var inp = $("#kindness-input"); var text = inp.value.trim(); if (!text) return;
+    if (!state.kindnessJar) state.kindnessJar = [];
+    state.kindnessJar.push({ text: text, date: todayStr() });
+    state.totalStars += 3; saveProfile(); updateStars(); playChime(); checkBadges();
+    inp.value = ""; renderKindness();
+});
+
+// ===== GRATITUDE GARDEN =====
+function renderGratitude() {
+    if (!state.gratitudeGarden) state.gratitudeGarden = [];
+    var list = $("#gratitude-list"); list.innerHTML = "";
+    var garden = $("#gratitude-garden");
+    var flowers = ["\u{1F33B}","\u{1F337}","\u{1F33A}","\u{1F338}","\u{1F33C}","\u{1F940}","\u{1F490}","\u{2618}\uFE0F"];
+    var gardenText = "";
+    state.gratitudeGarden.forEach(function(g, i) { gardenText += flowers[i % flowers.length]; });
+    garden.textContent = gardenText || "\u{1F331} Plant your first flower!";
+    state.gratitudeGarden.slice(-10).reverse().forEach(function(g) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">\u{1F33B}</span>' +
+            '<div class="ci-entry-info"><div class="ci-entry-mood">' + escHtml(g.text) + '</div>' +
+            '<div class="ci-entry-date">' + friendlyDate(g.date) + '</div></div>';
+        list.appendChild(div);
+    });
+}
+var gaBtn = $("#gratitude-add");
+if (gaBtn) gaBtn.addEventListener("click", function() {
+    var inp = $("#gratitude-input"); var text = inp.value.trim(); if (!text) return;
+    if (!state.gratitudeGarden) state.gratitudeGarden = [];
+    state.gratitudeGarden.push({ text: text, date: todayStr() });
+    state.totalStars += 2; saveProfile(); updateStars(); playChime(); checkBadges();
+    inp.value = ""; renderGratitude();
+});
+
+// ===== SLEEP HELPER =====
+var sleepIdx = 0;
+var SLEEP_STEPS = [
+    { emoji:"\u{1F319}", text:"Let's get ready for sleep. First, take a big stretch \u2014 reach your arms up high, then let them flop down." },
+    { emoji:"\u{1F4A8}", text:"Now let's do some slow breathing. Breathe in through your nose for 4 counts... hold for 2... breathe out through your mouth for 6 counts. Do this 5 times." },
+    { emoji:"\u{1F30C}", text:"Close your eyes. Imagine you're in your favourite peaceful place. Maybe a beach, a forest, or floating on a cloud. What do you see there?" },
+    { emoji:"\u{1F442}", text:"What sounds can you hear in your peaceful place? Waves? Birds? Wind in the trees? Listen carefully..." },
+    { emoji:"\u{1F4AD}", text:"Think of 3 good things that happened today. They can be small \u2014 a nice meal, a funny moment, someone being kind." },
+    { emoji:"\u{1F31F}", text:"You did your best today. Tomorrow is a new day full of possibilities. You are safe, you are loved, and you are enough. Goodnight. \u{1F49C}" }
+];
+function showSleepStep() {
+    var s = SLEEP_STEPS[sleepIdx];
+    $("#sleep-emoji").textContent = s.emoji;
+    $("#sleep-text").textContent = s.text;
+    var buddyMsg = $("#sleep-buddy-msg");
+    if (buddyMsg) buddyMsg.innerHTML = '<p class="ci-response-text">' + getAvatarDisplay() + " " + getBuddyMsg("sleep") + '</p>';
+}
+var slpBtn = $("#sleep-prev"), slnBtn = $("#sleep-next");
+if (slpBtn) slpBtn.addEventListener("click", function() { if (sleepIdx > 0) { sleepIdx--; showSleepStep(); } });
+if (slnBtn) slnBtn.addEventListener("click", function() {
+    if (sleepIdx < SLEEP_STEPS.length-1) { sleepIdx++; showSleepStep(); }
+    else { state.totalStars++; saveProfile(); updateStars(); showScreen("menu-screen"); }
+});
+
+// ===== DAILY SURPRISE =====
+function showDailySurprise() {
+    var today = todayStr();
+    var seed = 0; for (var i = 0; i < today.length; i++) seed += today.charCodeAt(i);
+    var surprise = DAILY_SURPRISES[seed % DAILY_SURPRISES.length];
+    $("#surprise-emoji").textContent = surprise.emoji;
+    var typeLabels = { compliment:"Compliment", fact:"Fun Fact", joke:"Joke", tip:"Helpful Tip", challenge:"Mini Challenge" };
+    $("#surprise-type").textContent = typeLabels[surprise.type] || "Surprise";
+    $("#surprise-text").textContent = surprise.text;
+    var starBtn = $("#surprise-star");
+    if (state._surpriseDate !== today) {
+        starBtn.classList.remove("hidden");
+        starBtn.onclick = function() {
+            state._surpriseDate = today;
+            state.totalStars++; saveProfile(); updateStars(); playChime();
+            starBtn.textContent = "Collected! \u2714";
+            starBtn.disabled = true;
+        };
+    } else {
+        starBtn.classList.add("hidden");
+    }
+}
+
+// ===== ROUTINE BUILDER =====
+var DEFAULT_MORNING = [
+    { name:"Wake up", emoji:"\u{23F0}" },
+    { name:"Brush teeth", emoji:"\u{1FAA5}" },
+    { name:"Get dressed", emoji:"\u{1F455}" },
+    { name:"Eat breakfast", emoji:"\u{1F95E}" },
+    { name:"Pack school bag", emoji:"\u{1F392}" },
+    { name:"Put shoes on", emoji:"\u{1F45F}" },
+    { name:"Say goodbye", emoji:"\u{1F44B}" }
+];
+var DEFAULT_EVENING = [
+    { name:"Eat dinner", emoji:"\u{1F37D}\uFE0F" },
+    { name:"Bath or shower", emoji:"\u{1F6BF}" },
+    { name:"Brush teeth", emoji:"\u{1FAA5}" },
+    { name:"Put on pyjamas", emoji:"\u{1F319}" },
+    { name:"Read or quiet time", emoji:"\u{1F4DA}" },
+    { name:"Goodnight!", emoji:"\u{1F31C}" }
+];
+
+function renderRoutine() {
+    if (!state.routineMorning) state.routineMorning = DEFAULT_MORNING.slice();
+    if (!state.routineEvening) state.routineEvening = DEFAULT_EVENING.slice();
+    if (!state.routineDone) state.routineDone = {};
+    var today = todayStr();
+    if (!state.routineDone[today]) state.routineDone[today] = { morning: [], evening: [] };
+
+    renderRoutineList("routine-morning", state.routineMorning, state.routineDone[today].morning, "morning");
+    renderRoutineList("routine-evening", state.routineEvening, state.routineDone[today].evening, "evening");
+}
+
+function renderRoutineList(containerId, items, done, period) {
+    var list = $("#" + containerId); list.innerHTML = "";
+    items.forEach(function(item, idx) {
+        var isDone = done.indexOf(idx) !== -1;
+        var el = document.createElement("div");
+        el.className = "chore-item" + (isDone ? " completed" : "");
+        el.innerHTML = '<span class="chore-check">' + (isDone ? "\u2705" : "\u2B1C") + '</span>' +
+            '<div class="chore-info"><div class="chore-name">' + item.emoji + " " + escHtml(item.name) + '</div></div>';
+        if (!isDone) {
+            el.addEventListener("click", function() {
+                done.push(idx);
+                state.totalStars++; saveProfile(); updateStars(); playChime();
+                renderRoutine();
+            });
+        }
+        list.appendChild(el);
+    });
+}
+
+// ===== SAFE SPACE BUTTON =====
+var ssBtn = document.getElementById("safe-space-btn");
+if (ssBtn) ssBtn.addEventListener("click", function() {
+    state.calmUsed = true; saveProfile(); checkBadges();
+    showScreen("calm-screen");
+});
+
+// ===== I NEED HELP BUTTON =====
+var nhBtn = document.getElementById("need-help-btn");
+if (nhBtn) nhBtn.addEventListener("click", function() {
+    // Save a help request to state (visible in parent dashboard)
+    if (!state.helpRequests) state.helpRequests = [];
+    state.helpRequests.push({ date: todayStr(), time: new Date().toLocaleTimeString() });
+    saveProfile();
+    // Show calming message
+    showDeleteModal = null; // reuse modal
+    var modal = $("#delete-modal");
+    var text = $("#delete-modal-text");
+    if (modal && text) {
+        text.innerHTML = getAvatarDisplay() + "<br><br><strong>It's okay. You're safe.</strong><br><br>Your parent has been notified that you need help. While you wait, would you like to go to the Calm Down Corner?";
+        var confirmBtn = $("#delete-confirm-btn");
+        var cancelBtn = $("#delete-cancel-btn");
+        confirmBtn.textContent = "Calm Down Corner \u{1F9D8}";
+        cancelBtn.textContent = "I'm okay now";
+        confirmBtn.onclick = function() { modal.classList.add("hidden"); confirmBtn.textContent = "Yes, Delete"; cancelBtn.textContent = "Cancel"; showScreen("calm-screen"); };
+        cancelBtn.onclick = function() { modal.classList.add("hidden"); confirmBtn.textContent = "Yes, Delete"; cancelBtn.textContent = "Cancel"; };
+        modal.classList.remove("hidden");
+    }
+});
 
 // ===== AVATAR BUILDER =====
 function getAvatarDisplay() {
