@@ -2283,43 +2283,48 @@ Object.keys(newRoutes).forEach(function(id) {
 });
 
 // ===== AVATAR BUILDER =====
-function getAvatarDisplay() {
+function getAvatarParts() {
     if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };
     var av = state.avatar;
-    var result = "";
-
-    // Get skin tone modifier
     var skinTone = AVATAR_PARTS.skinTone.find(function(s) { return s.id === av.skinTone; });
     var toneModifier = skinTone ? skinTone.emoji : "\u{1F3FD}";
-
-    // Hair/hat on top
-    var hair = AVATAR_PARTS.hair.find(function(h) { return h.id === av.hair; });
-    if (hair && hair.emoji) result += hair.emoji;
-
-    // Face with skin tone
     var face = AVATAR_PARTS.face.find(function(f) { return f.id === av.face; });
-    if (face) result += face.base + toneModifier;
-
-    // Outfit
+    var hair = AVATAR_PARTS.hair.find(function(h) { return h.id === av.hair; });
     var outfit = AVATAR_PARTS.outfit.find(function(o) { return o.id === av.outfit; });
-    if (outfit && outfit.emoji) result += outfit.emoji;
-
-    // Accessory
     var acc = AVATAR_PARTS.accessory.find(function(a) { return a.id === av.accessory; });
-    if (acc && acc.emoji) result += acc.emoji;
-
-    // Pet
     var pet = AVATAR_PARTS.pet.find(function(p) { return p.id === av.pet; });
-    if (pet && pet.emoji) result += pet.emoji;
+    return {
+        hat: (hair && hair.emoji) || "",
+        face: face ? face.base + toneModifier : "\u{1F9D1}",
+        outfit: (outfit && outfit.emoji) || "",
+        accessory: (acc && acc.emoji) || "",
+        pet: (pet && pet.emoji) || "",
+        tone: toneModifier
+    };
+}
 
-    return result || "\u{1F9D1}";
+function getAvatarDisplay() {
+    var p = getAvatarParts();
+    return p.hat + p.face + p.outfit + p.accessory + p.pet;
+}
+
+function getAvatarHTML() {
+    var p = getAvatarParts();
+    var html = '';
+    if (p.hat) html += '<div class="av-row av-hat">' + p.hat + '</div>';
+    html += '<div class="av-row av-face">' + p.face + '</div>';
+    if (p.outfit) html += '<div class="av-row av-outfit">' + p.outfit + '</div>';
+    var extras = '';
+    if (p.accessory) extras += p.accessory;
+    if (p.pet) extras += p.pet;
+    if (extras) html += '<div class="av-extras">' + extras + '</div>';
+    return html;
 }
 
 function renderAvatar() {
-    // Preview
-    $("#avatar-preview").textContent = getAvatarDisplay();
+    // Preview — stacked layout
+    $("#avatar-preview").innerHTML = getAvatarHTML();
 
-    // Get current skin tone for face preview
     if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };
     var skinTone = AVATAR_PARTS.skinTone.find(function(s) { return s.id === state.avatar.skinTone; });
     var toneModifier = skinTone ? skinTone.emoji : "\u{1F3FD}";

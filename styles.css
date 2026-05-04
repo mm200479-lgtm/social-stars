@@ -745,12 +745,17 @@ input, textarea { -webkit-user-select: text; user-select: text; }
 
 /* ===== Avatar Builder ===== */
 .avatar-preview {
-    text-align: center; font-size: 4rem; padding: 20px;
+    text-align: center; padding: 20px;
     background: var(--color-card); border-radius: var(--radius);
-    box-shadow: var(--shadow); margin-bottom: 20px; min-height: 100px;
-    display: flex; align-items: center; justify-content: center; gap: 4px;
-    letter-spacing: 2px;
+    box-shadow: var(--shadow); margin-bottom: 20px; min-height: 160px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0; line-height: 1.2;
 }
+.avatar-preview .av-row { display: flex; align-items: center; justify-content: center; gap: 2px; }
+.avatar-preview .av-hat { font-size: 2rem; }
+.avatar-preview .av-face { font-size: 4rem; }
+.avatar-preview .av-outfit { font-size: 2.5rem; }
+.avatar-preview .av-extras { font-size: 1.8rem; display: flex; gap: 4px; margin-top: 4px; }
 .avatar-categories { display: flex; flex-direction: column; gap: 16px; }
 .avatar-cat h3 { font-size: 1rem; margin-bottom: 8px; color: var(--color-text); }
 .avatar-grid {
