@@ -115,6 +115,13 @@ function loadProfile(id) {
         state = freshState("");
         Object.keys(p).forEach(function(k) { state[k] = p[k]; });
         currentProfileId = id;
+        // Inject custom scenarios into the game
+        if (state.customScenarios && state.customScenarios.length > 0 && SCENARIOS.emotions) {
+            state.customScenarios.forEach(function(cs) {
+                var exists = SCENARIOS.emotions.some(function(s) { return s.text === cs.text; });
+                if (!exists) SCENARIOS.emotions.push(cs);
+            });
+        }
     }
 }
 
@@ -952,6 +959,16 @@ function updateTherm() {
     $("#therm-tip").textContent = level.tip;
     if (val >= 3) $("#therm-calm-btn").classList.remove("hidden");
     else $("#therm-calm-btn").classList.add("hidden");
+    // Save to history (once per day per value change)
+    if (!state.thermHistory) state.thermHistory = [];
+    var today = todayStr();
+    var lastEntry = state.thermHistory.length > 0 ? state.thermHistory[state.thermHistory.length - 1] : null;
+    if (!lastEntry || lastEntry.date !== today || lastEntry.value !== val) {
+        // Only save if different from last entry today
+        state.thermHistory = state.thermHistory.filter(function(t) { return t.date !== today; });
+        state.thermHistory.push({ date: today, value: val });
+        saveProfile();
+    }
 }
 $("#therm-slider").addEventListener("input", updateTherm);
 $("#therm-calm-btn").addEventListener("click", function() { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); });
@@ -1127,6 +1144,133 @@ function renderParent() {
     if (state.totalStars >= 25 && state.difficulty < 3) suggestions.push("Your child is doing well! Consider Level 2 or 3 for more challenge.");
     if (suggestions.length === 0) suggestions.push("Great progress across all areas! Keep up the wonderful work. \u{1F31F}");
     sugDiv.innerHTML = suggestions.map(function(s) { return "\u2022 " + s; }).join("<br><br>");
+
+    // Thermometer History
+    var thermDiv = $("#parent-therm-history"); if (thermDiv) {
+        thermDiv.innerHTML = "";
+        if (state.thermHistory && state.thermHistory.length > 0) {
+            state.thermHistory.slice(-14).reverse().forEach(function(t) {
+                var level = THERM_LEVELS[t.value] || { emoji:"\u{1F60A}", label:"Unknown" };
+                var div = document.createElement("div"); div.className = "ci-entry";
+                div.innerHTML = '<span class="ci-entry-emoji">' + level.emoji + '</span>' +
+                    '<div class="ci-entry-info"><div class="ci-entry-mood">' + level.label + '</div>' +
+                    '<div class="ci-entry-date">' + friendlyDate(t.date) + '</div></div>';
+                thermDiv.appendChild(div);
+            });
+        } else {
+            thermDiv.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No thermometer readings yet.</p>';
+        }
+    }
+
+    // Meltdown list
+    renderMeltdownList();
+
+    // Custom scenario list
+    renderCustomScenarioList();
+}
+
+// ===== MELTDOWN TRACKER =====
+var meltdownAddBtn = $("#meltdown-add");
+if (meltdownAddBtn) meltdownAddBtn.addEventListener("click", function() {
+    var trigger = $("#meltdown-trigger"); var severity = $("#meltdown-severity");
+    var text = trigger ? trigger.value.trim() : "";
+    if (!text) return;
+    if (!state.meltdowns) state.meltdowns = [];
+    state.meltdowns.push({
+        date: todayStr(),
+        time: new Date().toLocaleTimeString(),
+        trigger: text,
+        severity: severity ? severity.value : "moderate"
+    });
+    saveProfile();
+    if (trigger) trigger.value = "";
+    renderMeltdownList();
+});
+
+function renderMeltdownList() {
+    var list = $("#meltdown-list"); if (!list) return;
+    list.innerHTML = "";
+    if (!state.meltdowns || state.meltdowns.length === 0) {
+        list.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No meltdowns logged. (That\'s good!)</p>';
+        return;
+    }
+    var severityEmoji = { mild: "\u{1F7E1}", moderate: "\u{1F7E0}", severe: "\u{1F534}" };
+    state.meltdowns.slice(-10).reverse().forEach(function(m) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">' + (severityEmoji[m.severity] || "\u{1F7E0}") + '</span>' +
+            '<div class="ci-entry-info"><div class="ci-entry-mood">' + escHtml(m.trigger) + ' (' + capitalize(m.severity) + ')</div>' +
+            '<div class="ci-entry-date">' + friendlyDate(m.date) + ' ' + (m.time || '') + '</div></div>';
+        list.appendChild(div);
+    });
+}
+
+// ===== CUSTOM SCENARIO BUILDER =====
+var customAddBtn = $("#custom-scenario-add");
+if (customAddBtn) customAddBtn.addEventListener("click", function() {
+    var text = ($("#custom-scenario-text") || {}).value || "";
+    var correct = ($("#custom-correct") || {}).value || "";
+    var wrong1 = ($("#custom-wrong1") || {}).value || "";
+    var wrong2 = ($("#custom-wrong2") || {}).value || "";
+    var feedback = ($("#custom-feedback") || {}).value || "";
+
+    if (!text.trim() || !correct.trim() || !wrong1.trim()) return;
+
+    if (!state.customScenarios) state.customScenarios = [];
+    state.customScenarios.push({
+        emoji: "\u{2B50}",
+        text: text.trim(),
+        choices: [
+            { text: correct.trim(), correct: true },
+            { text: wrong1.trim(), correct: false },
+            { text: wrong2.trim() || "I don't know", correct: false }
+        ],
+        correctFeedback: feedback.trim() || "Great job! That's the right approach!",
+        encourageFeedback: "Good try! The best answer here is: " + correct.trim(),
+        difficulty: 1
+    });
+    saveProfile();
+
+    // Add to the actual scenarios so they appear in Learn & Play
+    if (SCENARIOS.emotions) {
+        state.customScenarios.forEach(function(cs) {
+            // Check if already added (by text)
+            var exists = SCENARIOS.emotions.some(function(s) { return s.text === cs.text; });
+            if (!exists) SCENARIOS.emotions.push(cs);
+        });
+    }
+
+    // Clear inputs
+    if ($("#custom-scenario-text")) $("#custom-scenario-text").value = "";
+    if ($("#custom-correct")) $("#custom-correct").value = "";
+    if ($("#custom-wrong1")) $("#custom-wrong1").value = "";
+    if ($("#custom-wrong2")) $("#custom-wrong2").value = "";
+    if ($("#custom-feedback")) $("#custom-feedback").value = "";
+
+    customAddBtn.textContent = "Added! \u2714";
+    setTimeout(function() { customAddBtn.textContent = "Add Custom Scenario"; }, 2000);
+    renderCustomScenarioList();
+});
+
+function renderCustomScenarioList() {
+    var list = $("#custom-scenario-list"); if (!list) return;
+    list.innerHTML = "";
+    if (!state.customScenarios || state.customScenarios.length === 0) {
+        list.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No custom scenarios yet.</p>';
+        return;
+    }
+    state.customScenarios.forEach(function(cs, idx) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">\u{2B50}</span>' +
+            '<div class="ci-entry-info"><div class="ci-entry-mood">' + escHtml(cs.text.substring(0, 60)) + (cs.text.length > 60 ? "..." : "") + '</div>' +
+            '<div class="ci-entry-date">Correct: ' + escHtml(cs.choices[0].text) + '</div></div>' +
+            '<button class="chore-remove-btn" data-idx="' + idx + '">\u274C</button>';
+        div.querySelector(".chore-remove-btn").addEventListener("click", function() {
+            state.customScenarios.splice(idx, 1);
+            saveProfile();
+            renderCustomScenarioList();
+        });
+        list.appendChild(div);
+    });
 }
 
 // ===== Keyboard =====

@@ -490,6 +490,44 @@
                 <div id="parent-categories" class="parent-categories"></div>
                 <h3 style="margin:24px 0 12px;">Recent Feelings Journal</h3>
                 <div id="parent-journal" class="parent-journal"></div>
+                <h3 style="margin:24px 0 12px;">Thermometer History</h3>
+                <div id="parent-therm-history" class="parent-journal"></div>
+                <h3 style="margin:24px 0 12px;">Meltdown Tracker</h3>
+                <p class="section-subtitle" style="margin-bottom:8px;">Log meltdowns to identify patterns over time</p>
+                <div class="chore-add-row">
+                    <input type="text" id="meltdown-trigger" class="ci-note-input" placeholder="What triggered it?" maxlength="100">
+                    <select id="meltdown-severity" class="chore-stars-select">
+                        <option value="mild">Mild</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="severe">Severe</option>
+                    </select>
+                    <button id="meltdown-add" class="btn btn-primary btn-small">Log</button>
+                </div>
+                <div id="meltdown-list" class="ci-history" style="margin-top:12px;"></div>
+                <h3 style="margin:24px 0 12px;">Custom Scenarios</h3>
+                <p class="section-subtitle" style="margin-bottom:8px;">Add scenarios specific to your child's life</p>
+                <div class="settings-group">
+                    <label>Scenario text (the situation)</label>
+                    <textarea id="custom-scenario-text" class="ci-note-input" rows="2" maxlength="300" placeholder="e.g. You're at Grandma's house and she asks you to try a new food..."></textarea>
+                </div>
+                <div class="settings-group">
+                    <label>Correct answer</label>
+                    <input type="text" id="custom-correct" class="ci-note-input" maxlength="100" placeholder="e.g. Say 'No thank you' politely">
+                </div>
+                <div class="settings-group">
+                    <label>Wrong answer 1</label>
+                    <input type="text" id="custom-wrong1" class="ci-note-input" maxlength="100" placeholder="e.g. Say 'That's disgusting!'">
+                </div>
+                <div class="settings-group">
+                    <label>Wrong answer 2</label>
+                    <input type="text" id="custom-wrong2" class="ci-note-input" maxlength="100" placeholder="e.g. Run away from the table">
+                </div>
+                <div class="settings-group">
+                    <label>Feedback for correct answer</label>
+                    <input type="text" id="custom-feedback" class="ci-note-input" maxlength="200" placeholder="e.g. Great job! Being polite about food you don't like is really mature.">
+                </div>
+                <button id="custom-scenario-add" class="btn btn-primary" style="width:100%;margin-top:8px;">Add Custom Scenario</button>
+                <div id="custom-scenario-list" class="ci-history" style="margin-top:12px;"></div>
                 <h3 style="margin:24px 0 12px;">Suggestions</h3>
                 <div id="parent-suggestions" class="parent-suggestions"></div>
             </div>
