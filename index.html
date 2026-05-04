@@ -242,6 +242,26 @@
                         <span class="card-title">Daily Surprise</span>
                         <span class="card-desc">A fun surprise just for you!</span>
                     </button>
+                    <button class="menu-card" id="menu-wyr" role="listitem">
+                        <span class="card-emoji">🤔</span>
+                        <span class="card-title">Would You Rather?</span>
+                        <span class="card-desc">Fun choices to discuss!</span>
+                    </button>
+                    <button class="menu-card" id="menu-sensory" role="listitem">
+                        <span class="card-emoji">🧠</span>
+                        <span class="card-title">My Sensory Card</span>
+                        <span class="card-desc">What bothers me &amp; what helps</span>
+                    </button>
+                    <button class="menu-card" id="menu-emergency" role="listitem">
+                        <span class="card-emoji">🆔</span>
+                        <span class="card-title">Emergency Card</span>
+                        <span class="card-desc">Important info for emergencies</span>
+                    </button>
+                    <button class="menu-card" id="menu-volume" role="listitem">
+                        <span class="card-emoji">🔊</span>
+                        <span class="card-title">Volume Check</span>
+                        <span class="card-desc">Which voice should I use?</span>
+                    </button>
                     <button class="menu-card" id="menu-settings" role="listitem">
                         <span class="card-emoji">⚙️</span>
                         <span class="card-title">Settings</span>
@@ -427,6 +447,26 @@
                         <span class="card-emoji">🟣</span>
                         <span class="card-title">Squeeze &amp; Release</span>
                         <span class="card-desc">Press and hold, then let go</span>
+                    </button>
+                    <button class="calm-tool-card" id="calm-bodyscan">
+                        <span class="card-emoji">🧍</span>
+                        <span class="card-title">Body Scan</span>
+                        <span class="card-desc">Find feelings in your body</span>
+                    </button>
+                    <button class="calm-tool-card" id="calm-iceberg">
+                        <span class="card-emoji">🧊</span>
+                        <span class="card-title">Anger Iceberg</span>
+                        <span class="card-desc">What's under the anger?</span>
+                    </button>
+                    <button class="calm-tool-card" id="calm-color">
+                        <span class="card-emoji">🎨</span>
+                        <span class="card-title">Colour Breathing</span>
+                        <span class="card-desc">Breathe with colours</span>
+                    </button>
+                    <button class="calm-tool-card" id="calm-fidget">
+                        <span class="card-emoji">🫧</span>
+                        <span class="card-title">Pop Bubbles</span>
+                        <span class="card-desc">Tap to pop!</span>
                     </button>
                 </div>
             </div>
@@ -1091,6 +1131,139 @@
                 <div id="routine-morning" class="chores-list"></div>
                 <h3 style="margin:16px 0 8px;">🌙 Evening</h3>
                 <div id="routine-evening" class="chores-list"></div>
+            </div>
+        </div>
+
+        <!-- ========== Body Scan Screen ========== -->
+        <div id="bodyscan-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="bodyscan-back-btn" class="btn btn-small btn-back">← Back</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🧍 Body Scan</h2>
+                <p class="section-subtitle">Where do you feel the feeling in your body?</p>
+                <div id="bodyscan-step" class="scenario-area">
+                    <div id="bodyscan-emoji" class="scenario-emoji"></div>
+                    <p id="bodyscan-text" class="scenario-text"></p>
+                </div>
+                <div class="story-nav">
+                    <button id="bodyscan-prev" class="btn btn-secondary btn-small">← Previous</button>
+                    <button id="bodyscan-next" class="btn btn-primary btn-small">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Anger Iceberg Screen ========== -->
+        <div id="iceberg-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="iceberg-back-btn" class="btn btn-small btn-back">← Back</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🧊 Anger Iceberg</h2>
+                <p class="section-subtitle">Anger is just the tip — what's underneath?</p>
+                <div class="iceberg-visual">
+                    <div class="iceberg-top">😠 ANGER<br><span style="font-size:0.8rem;">What people see</span></div>
+                    <div class="iceberg-bottom">
+                        <div id="iceberg-feelings" class="iceberg-feelings"></div>
+                        <p style="font-size:0.85rem;color:var(--color-text-light);margin-top:12px;">Tap the feelings that might be hiding under YOUR anger</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Colour Breathing Screen ========== -->
+        <div id="colorbreathe-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="colorbreathe-back-btn" class="btn btn-small btn-back">← Back</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🎨 Colour Breathing</h2>
+                <p class="section-subtitle">Watch the colours and breathe along</p>
+                <div id="color-breathe-box" class="color-breathe-box">
+                    <span id="color-breathe-label" class="breathing-label">Tap to start</span>
+                </div>
+                <p id="color-breathe-counter" class="breathing-counter"></p>
+                <button id="color-breathe-start" class="btn btn-primary">Start</button>
+            </div>
+        </div>
+
+        <!-- ========== Fidget Tools Screen ========== -->
+        <div id="fidget-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="fidget-back-btn" class="btn btn-small btn-back">← Back</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🫧 Fidget Tools</h2>
+                <p class="section-subtitle">Tap the bubbles to pop them!</p>
+                <div id="fidget-grid" class="fidget-grid"></div>
+                <button id="fidget-reset" class="btn btn-secondary btn-small" style="margin-top:16px;">Reset Bubbles</button>
+            </div>
+        </div>
+
+        <!-- ========== Would You Rather Screen ========== -->
+        <div id="wyr-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="wyr-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🤔 Would You Rather?</h2>
+                <div class="wyr-card">
+                    <button id="wyr-option-a" class="btn btn-primary wyr-btn"></button>
+                    <span class="wyr-or">OR</span>
+                    <button id="wyr-option-b" class="btn btn-secondary wyr-btn"></button>
+                </div>
+                <button id="wyr-next" class="btn btn-primary" style="margin-top:20px;">Next Question 🔀</button>
+            </div>
+        </div>
+
+        <!-- ========== Sensory Preferences Screen ========== -->
+        <div id="sensory-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="sensory-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🧠 My Sensory Card</h2>
+                <p class="section-subtitle">Things that bother me and things that help</p>
+                <div class="sensory-section">
+                    <h3>🔴 Things that bother me</h3>
+                    <div id="sensory-bother" class="ci-history"></div>
+                    <div class="chore-add-row">
+                        <input type="text" id="sensory-bother-input" class="ci-note-input" placeholder="e.g. Loud noises..." maxlength="60">
+                        <button id="sensory-bother-add" class="btn btn-primary btn-small">Add</button>
+                    </div>
+                </div>
+                <div class="sensory-section" style="margin-top:20px;">
+                    <h3>🟢 Things that help me</h3>
+                    <div id="sensory-help" class="ci-history"></div>
+                    <div class="chore-add-row">
+                        <input type="text" id="sensory-help-input" class="ci-note-input" placeholder="e.g. Weighted blanket..." maxlength="60">
+                        <button id="sensory-help-add" class="btn btn-primary btn-small">Add</button>
+                    </div>
+                </div>
+                <p class="section-subtitle" style="margin-top:16px;">You can show this card to teachers or new people to help them understand you!</p>
+            </div>
+        </div>
+
+        <!-- ========== Emergency Info Card Screen ========== -->
+        <div id="emergency-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="emergency-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🆔 My Emergency Card</h2>
+                <p class="section-subtitle">Important info to show an adult if you need help</p>
+                <div class="settings-group">
+                    <label>My Name</label><input type="text" id="emer-name" class="ci-note-input" maxlength="40">
+                </div>
+                <div class="settings-group">
+                    <label>Parent's Phone Number</label><input type="tel" id="emer-phone" class="ci-note-input" maxlength="20">
+                </div>
+                <div class="settings-group">
+                    <label>My Address</label><input type="text" id="emer-address" class="ci-note-input" maxlength="80">
+                </div>
+                <div class="settings-group">
+                    <label>Allergies</label><input type="text" id="emer-allergies" class="ci-note-input" maxlength="80" placeholder="None / list them">
+                </div>
+                <div class="settings-group">
+                    <label>Things that help me calm down</label><input type="text" id="emer-calm" class="ci-note-input" maxlength="80">
+                </div>
+                <button id="emer-save" class="btn btn-primary" style="width:100%;margin-top:12px;">Save Card</button>
+            </div>
+        </div>
+
+        <!-- ========== Volume Check Screen ========== -->
+        <div id="volume-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="volume-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🔊 Volume Check</h2>
+                <p class="section-subtitle">Which voice should I use right now?</p>
+                <div id="volume-levels" class="story-list"></div>
             </div>
         </div>
 

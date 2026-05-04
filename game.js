@@ -2086,6 +2086,202 @@ if (nhBtn) nhBtn.addEventListener("click", function() {
     }
 });
 
+// ===== CALM DOWN CORNER — NEW TOOLS =====
+var cbBtn = document.getElementById("calm-bodyscan");
+if (cbBtn) cbBtn.addEventListener("click", function() { bodyscanIdx=0; showBodyscanStep(); showScreen("bodyscan-screen"); });
+var ciBtn = document.getElementById("calm-iceberg");
+if (ciBtn) ciBtn.addEventListener("click", function() { renderIceberg(); showScreen("iceberg-screen"); });
+var ccBtn = document.getElementById("calm-color");
+if (ccBtn) ccBtn.addEventListener("click", function() { showScreen("colorbreathe-screen"); });
+var cfBtn = document.getElementById("calm-fidget");
+if (cfBtn) cfBtn.addEventListener("click", function() { renderFidget(); showScreen("fidget-screen"); });
+
+// Body Scan
+var bodyscanIdx = 0;
+function showBodyscanStep() {
+    var s = BODY_SCAN_STEPS[bodyscanIdx];
+    $("#bodyscan-emoji").textContent = s.emoji;
+    $("#bodyscan-text").textContent = s.text;
+}
+var bspBtn = $("#bodyscan-prev"), bsnBtn = $("#bodyscan-next");
+if (bspBtn) bspBtn.addEventListener("click", function() { if (bodyscanIdx > 0) { bodyscanIdx--; showBodyscanStep(); } });
+if (bsnBtn) bsnBtn.addEventListener("click", function() {
+    if (bodyscanIdx < BODY_SCAN_STEPS.length-1) { bodyscanIdx++; showBodyscanStep(); }
+    else { state.calmUsed = true; state.totalStars++; saveProfile(); updateStars(); checkBadges(); showScreen("calm-screen"); }
+});
+$("#bodyscan-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
+
+// Anger Iceberg
+function renderIceberg() {
+    var grid = $("#iceberg-feelings"); grid.innerHTML = "";
+    ICEBERG_FEELINGS.forEach(function(f) {
+        var btn = document.createElement("button");
+        btn.className = "iceberg-feeling-btn";
+        btn.textContent = f;
+        btn.addEventListener("click", function() { btn.classList.toggle("selected"); });
+        grid.appendChild(btn);
+    });
+}
+$("#iceberg-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
+
+// Colour Breathing
+var cbInterval = null, cbCount = 0;
+var cbBox = $("#color-breathe-box"), cbLabel = $("#color-breathe-label"), cbCounter = $("#color-breathe-counter");
+var cbStartBtn = $("#color-breathe-start");
+if (cbStartBtn) cbStartBtn.addEventListener("click", function() {
+    if (cbInterval) { stopColorBreathe(); return; }
+    cbCount = 0; cbStartBtn.textContent = "Stop"; doColorBreathe();
+});
+if (cbBox) cbBox.addEventListener("click", function() { if (!cbInterval) { cbCount = 0; cbStartBtn.textContent = "Stop"; doColorBreathe(); } });
+
+function doColorBreathe() {
+    cbBox.className = "color-breathe-box cb-inhale"; cbLabel.textContent = "Breathe in...";
+    cbInterval = setTimeout(function() {
+        cbBox.className = "color-breathe-box cb-hold"; cbLabel.textContent = "Hold...";
+        cbInterval = setTimeout(function() {
+            cbBox.className = "color-breathe-box cb-exhale"; cbLabel.textContent = "Breathe out...";
+            cbCount++; cbCounter.textContent = "Breaths: " + cbCount;
+            cbInterval = setTimeout(function() {
+                if (cbCount >= 5) {
+                    cbLabel.textContent = "Great job! \u{1F31F}"; cbCounter.textContent = "You did 5 colour breaths!";
+                    cbStartBtn.textContent = "Start"; cbInterval = null;
+                    state.calmUsed = true; state.totalStars++; saveProfile(); updateStars(); checkBadges();
+                } else { doColorBreathe(); }
+            }, 4000);
+        }, 2000);
+    }, 4000);
+}
+function stopColorBreathe() {
+    if (cbInterval) { clearTimeout(cbInterval); cbInterval = null; }
+    cbBox.className = "color-breathe-box"; cbLabel.textContent = "Tap to start"; cbStartBtn.textContent = "Start";
+}
+$("#colorbreathe-back-btn").addEventListener("click", function() { stopColorBreathe(); showScreen("calm-screen"); });
+
+// Fidget Pop Bubbles
+function renderFidget() {
+    var grid = $("#fidget-grid"); grid.innerHTML = "";
+    for (var i = 0; i < 36; i++) {
+        var bubble = document.createElement("div");
+        bubble.className = "fidget-bubble";
+        bubble.addEventListener("click", function() {
+            if (!this.classList.contains("popped")) {
+                this.classList.add("popped");
+                playChime();
+            }
+        });
+        grid.appendChild(bubble);
+    }
+}
+var frBtn = $("#fidget-reset");
+if (frBtn) frBtn.addEventListener("click", renderFidget);
+$("#fidget-back-btn").addEventListener("click", function() { showScreen("calm-screen"); });
+
+// ===== WOULD YOU RATHER =====
+function showWYR() {
+    var idx = Math.floor(Math.random() * WOULD_YOU_RATHER.length);
+    var q = WOULD_YOU_RATHER[idx];
+    $("#wyr-option-a").textContent = q[0];
+    $("#wyr-option-b").textContent = q[1];
+}
+var wyrNextBtn = $("#wyr-next");
+if (wyrNextBtn) wyrNextBtn.addEventListener("click", showWYR);
+var wyrA = $("#wyr-option-a"), wyrB = $("#wyr-option-b");
+if (wyrA) wyrA.addEventListener("click", function() { playChime(); showWYR(); });
+if (wyrB) wyrB.addEventListener("click", function() { playChime(); showWYR(); });
+
+// ===== SENSORY PREFERENCES =====
+function renderSensory(type) {
+    if (!state.sensory) state.sensory = { bother: [], help: [] };
+    var list = $("#sensory-" + type); list.innerHTML = "";
+    state.sensory[type].forEach(function(item, idx) {
+        var div = document.createElement("div"); div.className = "ci-entry";
+        div.innerHTML = '<span class="ci-entry-emoji">' + (type === "bother" ? "\u{1F534}" : "\u{1F7E2}") + '</span>' +
+            '<div class="ci-entry-info"><div class="ci-entry-mood">' + escHtml(item) + '</div></div>' +
+            '<button class="chore-remove-btn">\u274C</button>';
+        div.querySelector(".chore-remove-btn").addEventListener("click", function() {
+            state.sensory[type].splice(idx, 1); saveProfile(); renderSensory(type);
+        });
+        list.appendChild(div);
+    });
+}
+function initSensory() { renderSensory("bother"); renderSensory("help"); }
+
+var sbAddBtn = $("#sensory-bother-add");
+if (sbAddBtn) sbAddBtn.addEventListener("click", function() {
+    var inp = $("#sensory-bother-input"); var text = inp.value.trim(); if (!text) return;
+    if (!state.sensory) state.sensory = { bother: [], help: [] };
+    state.sensory.bother.push(text); saveProfile(); inp.value = ""; renderSensory("bother");
+});
+var shAddBtn = $("#sensory-help-add");
+if (shAddBtn) shAddBtn.addEventListener("click", function() {
+    var inp = $("#sensory-help-input"); var text = inp.value.trim(); if (!text) return;
+    if (!state.sensory) state.sensory = { bother: [], help: [] };
+    state.sensory.help.push(text); saveProfile(); inp.value = ""; renderSensory("help");
+});
+
+// ===== EMERGENCY INFO CARD =====
+function loadEmergencyCard() {
+    if (!state.emergencyCard) state.emergencyCard = {};
+    var ec = state.emergencyCard;
+    var n = $("#emer-name"); if (n) n.value = ec.name || "";
+    var p = $("#emer-phone"); if (p) p.value = ec.phone || "";
+    var a = $("#emer-address"); if (a) a.value = ec.address || "";
+    var al = $("#emer-allergies"); if (al) al.value = ec.allergies || "";
+    var c = $("#emer-calm"); if (c) c.value = ec.calm || "";
+}
+var emerSaveBtn = $("#emer-save");
+if (emerSaveBtn) emerSaveBtn.addEventListener("click", function() {
+    state.emergencyCard = {
+        name: ($("#emer-name") || {}).value || "",
+        phone: ($("#emer-phone") || {}).value || "",
+        address: ($("#emer-address") || {}).value || "",
+        allergies: ($("#emer-allergies") || {}).value || "",
+        calm: ($("#emer-calm") || {}).value || ""
+    };
+    saveProfile();
+    emerSaveBtn.textContent = "Saved! \u2714";
+    setTimeout(function() { emerSaveBtn.textContent = "Save Card"; }, 2000);
+});
+
+// ===== VOLUME CHECK =====
+function renderVolume() {
+    var list = $("#volume-levels"); list.innerHTML = "";
+    VOLUME_LEVELS.forEach(function(v) {
+        var card = document.createElement("div"); card.className = "story-card"; card.style.cursor = "default";
+        card.innerHTML = '<span class="story-icon">' + v.animal + '</span>' +
+            '<div class="story-info"><div class="story-title">Level ' + v.level + ': ' + v.name + ' ' + v.emoji + '</div>' +
+            '<div class="story-desc">' + v.desc + '<br><strong>When:</strong> ' + v.when + '</div></div>';
+        list.appendChild(card);
+    });
+}
+
+// ===== ADD NEW ROUTES =====
+// Add to initMenu routes
+var newRoutes = {
+    "menu-wyr": function() { showWYR(); showScreen("wyr-screen"); },
+    "menu-sensory": function() { initSensory(); showScreen("sensory-screen"); },
+    "menu-emergency": function() { loadEmergencyCard(); showScreen("emergency-screen"); },
+    "menu-volume": function() { renderVolume(); showScreen("volume-screen"); }
+};
+Object.keys(newRoutes).forEach(function(id) {
+    var el = $("#" + id); if (el) el.addEventListener("click", newRoutes[id]);
+});
+
+// Back buttons for new screens
+["#bodyscan-back-btn","#iceberg-back-btn","#colorbreathe-back-btn","#fidget-back-btn",
+ "#wyr-back-btn","#sensory-back-btn","#emergency-back-btn","#volume-back-btn"].forEach(function(s) {
+    var el = $(s);
+    if (el && !el._backBound) {
+        el._backBound = true;
+        // calm tools go back to calm, others go to menu
+        if (s.indexOf("bodyscan") !== -1 || s.indexOf("iceberg") !== -1 || s.indexOf("colorbreathe") !== -1 || s.indexOf("fidget") !== -1) {
+            // already bound above
+        } else {
+            el.addEventListener("click", function() { showScreen("menu-screen"); });
+        }
+    }
+});
+
 // ===== AVATAR BUILDER =====
 function getAvatarDisplay() {
     if (!state.avatar) state.avatar = { skinTone:"s3", face:"f2", outfit:"o2", hair:"h0", accessory:"a0", pet:"p0" };

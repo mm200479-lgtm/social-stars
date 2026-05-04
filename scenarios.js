@@ -1006,3 +1006,55 @@ var FRIENDSHIP_CHALLENGES_DATA = [
     { emoji:"\u{1F4AA}", challenge:"Say sorry for something, even if it's small", stars:3 },
     { emoji:"\u{1F31F}", challenge:"Tell someone what you appreciate about them", stars:5 }
 ];
+
+
+/* ===== BODY SCAN STEPS ===== */
+var BODY_SCAN_STEPS = [
+    { emoji:"\u{1F9D1}", text:"Let's do a body scan. Sit or lie down comfortably. Close your eyes if you want to." },
+    { emoji:"\u{1F9B6}", text:"Start with your FEET. How do they feel? Warm? Cold? Tingly? Tense? Just notice \u2014 no need to change anything." },
+    { emoji:"\u{1F9B5}", text:"Move up to your LEGS. Are they heavy? Light? Restless? Just notice the feeling." },
+    { emoji:"\u{1F4A8}", text:"Now your TUMMY. This is where we often feel worry or excitement. Is it tight? Fluttery? Calm?" },
+    { emoji:"\u{1F4AA}", text:"Check your SHOULDERS and ARMS. Are your shoulders up near your ears? Try letting them drop. How do your hands feel?" },
+    { emoji:"\u{1F9E0}", text:"Finally, your HEAD and FACE. Is your jaw clenched? Forehead tight? Try relaxing your face muscles." },
+    { emoji:"\u{1F31F}", text:"Great job! You just listened to your whole body. The more you practice this, the better you'll understand your feelings. Your body always has clues!" }
+];
+
+/* ===== ANGER ICEBERG FEELINGS ===== */
+var ICEBERG_FEELINGS = [
+    "Sad", "Scared", "Embarrassed", "Frustrated", "Lonely",
+    "Jealous", "Hurt", "Disappointed", "Worried", "Confused",
+    "Tired", "Hungry", "Overwhelmed", "Misunderstood", "Left out"
+];
+
+/* ===== WOULD YOU RATHER ===== */
+var WOULD_YOU_RATHER = [
+    ["Be able to fly", "Be able to turn invisible"],
+    ["Have a pet dragon", "Have a pet unicorn"],
+    ["Live in a treehouse", "Live in a castle"],
+    ["Be the fastest runner in the world", "Be the best swimmer in the world"],
+    ["Have the power to talk to animals", "Have the power to read minds"],
+    ["Eat only pizza forever", "Eat only ice cream forever"],
+    ["Be a famous singer", "Be a famous artist"],
+    ["Live in the future", "Live in the past"],
+    ["Have super strength", "Have super speed"],
+    ["Be able to breathe underwater", "Be able to fly through space"],
+    ["Have a robot best friend", "Have a fairy best friend"],
+    ["Visit every country in the world", "Visit another planet"],
+    ["Be really good at every sport", "Be really good at every instrument"],
+    ["Have a time machine", "Have a teleporter"],
+    ["Be able to talk to plants", "Be able to control the weather"],
+    ["Live in a world made of candy", "Live in a world made of LEGO"],
+    ["Have the biggest library in the world", "Have the biggest playground in the world"],
+    ["Be a detective", "Be an inventor"],
+    ["Have wings", "Have a tail"],
+    ["Meet your favourite character from a book", "Meet your favourite character from a movie"]
+];
+
+/* ===== VOLUME LEVELS ===== */
+var VOLUME_LEVELS = [
+    { level:0, name:"Silent", emoji:"\u{1F910}", animal:"\u{1F41F} Fish", desc:"No talking at all. Like during a test or when someone is sleeping.", when:"Tests, library, sleeping time" },
+    { level:1, name:"Whisper", emoji:"\u{1F90F}", animal:"\u{1F401} Mouse", desc:"Very quiet, only the person next to you can hear. Lean in close.", when:"Library, cinema, when someone is on the phone" },
+    { level:2, name:"Indoor Voice", emoji:"\u{1F5E3}\uFE0F", animal:"\u{1F431} Cat", desc:"Normal talking voice. The people near you can hear comfortably.", when:"Classroom, dinner table, shops, restaurants" },
+    { level:3, name:"Outdoor Voice", emoji:"\u{1F4E2}", animal:"\u{1F436} Dog", desc:"Louder so people further away can hear you. Good for outside.", when:"Playground, park, garden, sports" },
+    { level:4, name:"Emergency Only", emoji:"\u{1F6A8}", animal:"\u{1F981} Lion", desc:"Very loud! Only for emergencies when you need help RIGHT NOW.", when:"Only if you're in danger or need urgent help" }
+];
