@@ -334,7 +334,7 @@ function initMenu() {
         "menu-calm": function() { state.calmUsed = true; saveProfile(); checkBadges(); showScreen("calm-screen"); },
         "menu-thermometer": function() { initThermometer(); showScreen("thermometer-screen"); },
         "menu-checkin": function() { renderCheckin(); showScreen("checkin-screen"); },
-        "menu-rewards": function() { renderRewards(); showScreen("rewards-screen"); },
+        "menu-rewards": function() { checkBadges(); renderRewards(); showScreen("rewards-screen"); },
         "menu-tone": function() { startTone(); },
         "menu-perspective": function() { startPerspective(); },
         "menu-coping": function() { startCoping(); },
@@ -1592,7 +1592,7 @@ var origShowScreen2 = showScreen;
 showScreen = function(id) {
     origShowScreen2(id);
     if (id === "results-screen") { fireConfetti(); playComplete(); }
-    if (id === "menu-screen") { checkDailyBonus(); showStarOfTheDay(); applySavedSettings(); }
+    if (id === "menu-screen") { checkDailyBonus(); checkBadges(); showStarOfTheDay(); applySavedSettings(); }
 };
 
 // ===== Init =====
