@@ -1,6 +1,6 @@
 // Social Stars - Service Worker
 // Network-first strategy: always tries to get the latest, falls back to cache offline
-var CACHE_NAME = "social-stars-v12";
+var CACHE_NAME = "social-stars-v13";
 var ASSETS = [
     "./",
     "./index.html",
@@ -42,6 +42,12 @@ self.addEventListener("activate", function(event) {
 // Fetch: network-first — always try to get fresh content
 // Only use cache as fallback when offline
 self.addEventListener("fetch", function(event) {
+    // Cache API only supports GET requests — skip caching for POST, etc.
+    if (event.request.method !== "GET") {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
     event.respondWith(
         fetch(event.request).then(function(networkResponse) {
             // Got fresh response — update the cache

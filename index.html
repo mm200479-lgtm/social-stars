@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Social Stars">
@@ -847,8 +848,10 @@
                 </div>
                 <div class="settings-group">
                     <label>Change Parent PIN</label>
-                    <input type="password" id="new-pin-input" class="ci-note-input" maxlength="4" placeholder="New 4-digit PIN" style="max-width:200px;text-align:center;">
-                    <button id="save-pin-btn" class="btn btn-primary btn-small" style="margin-top:8px;">Save PIN</button>
+                    <form id="pin-form" onsubmit="return false;">
+                        <input type="password" id="new-pin-input" class="ci-note-input" maxlength="4" placeholder="New 4-digit PIN" style="max-width:200px;text-align:center;">
+                        <button id="save-pin-btn" class="btn btn-primary btn-small" style="margin-top:8px;">Save PIN</button>
+                    </form>
                 </div>
             </div>
         </div>
