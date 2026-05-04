@@ -147,6 +147,11 @@
                         <span class="card-title">Achievement Wall</span>
                         <span class="card-desc">See all your accomplishments</span>
                     </button>
+                    <button class="menu-card" id="menu-avatar" role="listitem">
+                        <span class="card-emoji">🧑‍🎨</span>
+                        <span class="card-title">My Avatar</span>
+                        <span class="card-desc">Build your character!</span>
+                    </button>
                     <button class="menu-card" id="menu-vouchers" role="listitem">
                         <span class="card-emoji">🎟️</span>
                         <span class="card-title">My Vouchers</span>
@@ -712,6 +717,35 @@
                 <div id="wall-badges" class="rewards-grid"></div>
                 <h3 style="margin:20px 0 12px;">📊 My Journey</h3>
                 <div id="wall-journey" class="wall-journey"></div>
+            </div>
+        </div>
+
+        <!-- ========== Avatar Builder Screen ========== -->
+        <div id="avatar-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="avatar-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">🧑‍🎨 My Avatar</h2>
+                <div id="avatar-preview" class="avatar-preview"></div>
+                <div class="avatar-categories">
+                    <div class="avatar-cat">
+                        <h3>Face</h3>
+                        <div id="avatar-face-grid" class="avatar-grid"></div>
+                    </div>
+                    <div class="avatar-cat">
+                        <h3>Hair / Hat</h3>
+                        <div id="avatar-hair-grid" class="avatar-grid"></div>
+                    </div>
+                    <div class="avatar-cat">
+                        <h3>Accessory</h3>
+                        <div id="avatar-accessory-grid" class="avatar-grid"></div>
+                    </div>
+                    <div class="avatar-cat">
+                        <h3>Pet Companion</h3>
+                        <div id="avatar-pet-grid" class="avatar-grid"></div>
+                    </div>
+                </div>
             </div>
         </div>
 

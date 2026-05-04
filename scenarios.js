@@ -686,3 +686,51 @@ var ADVANCED_COPING = [
     { emoji:"\u{1F64F}", title:"Gratitude Moment", text:"Name 3 things you're grateful for right now. They can be small \u2014 a comfy bed, a good meal, a friend who made you laugh. Gratitude shifts your brain from 'what's wrong' to 'what's good.'" },
     { emoji:"\u{1F30A}", title:"Ride the Wave", text:"Big feelings are like waves \u2014 they rise up, peak, and then come back down. You don't have to fight the wave. Just notice it, breathe, and wait. It WILL pass." }
 ];
+
+
+/* ===== AVATAR BUILDER ===== */
+var AVATAR_PARTS = {
+    face: [
+        { id:"f1", emoji:"\u{1F9D1}", name:"Person", starsNeeded:0 },
+        { id:"f2", emoji:"\u{1F467}", name:"Girl", starsNeeded:0 },
+        { id:"f3", emoji:"\u{1F466}", name:"Boy", starsNeeded:0 },
+        { id:"f4", emoji:"\u{1F9DA}", name:"Fairy", starsNeeded:20 },
+        { id:"f5", emoji:"\u{1F478}", name:"Princess", starsNeeded:40 },
+        { id:"f6", emoji:"\u{1F934}", name:"Prince", starsNeeded:40 },
+        { id:"f7", emoji:"\u{1F9B8}", name:"Superhero", starsNeeded:80 },
+        { id:"f8", emoji:"\u{1F9DC}", name:"Merperson", starsNeeded:120 },
+        { id:"f9", emoji:"\u{1F9D9}", name:"Wizard", starsNeeded:200 },
+        { id:"f10", emoji:"\u{1F47C}", name:"Angel", starsNeeded:300 }
+    ],
+    hair: [
+        { id:"h0", emoji:"", name:"None", starsNeeded:0 },
+        { id:"h1", emoji:"\u{1F380}", name:"Red Bow", starsNeeded:0 },
+        { id:"h2", emoji:"\u{1F3A0}", name:"Pink Bow", starsNeeded:10 },
+        { id:"h3", emoji:"\u{1F451}", name:"Crown", starsNeeded:50 },
+        { id:"h4", emoji:"\u{1F393}", name:"Grad Cap", starsNeeded:100 },
+        { id:"h5", emoji:"\u{1F452}", name:"Top Hat", starsNeeded:75 },
+        { id:"h6", emoji:"\u{1FA84}", name:"Magic Wand", starsNeeded:150 },
+        { id:"h7", emoji:"\u{1F31F}", name:"Star Halo", starsNeeded:200 }
+    ],
+    accessory: [
+        { id:"a0", emoji:"", name:"None", starsNeeded:0 },
+        { id:"a1", emoji:"\u{1F453}", name:"Glasses", starsNeeded:0 },
+        { id:"a2", emoji:"\u{1F576}\uFE0F", name:"Sunglasses", starsNeeded:15 },
+        { id:"a3", emoji:"\u{1F3A7}", name:"Headphones", starsNeeded:30 },
+        { id:"a4", emoji:"\u{1F48D}", name:"Ring", starsNeeded:60 },
+        { id:"a5", emoji:"\u{1F3A4}", name:"Microphone", starsNeeded:90 },
+        { id:"a6", emoji:"\u{1F3A8}", name:"Paint Palette", starsNeeded:130 },
+        { id:"a7", emoji:"\u{1F4AB}", name:"Sparkle", starsNeeded:250 }
+    ],
+    pet: [
+        { id:"p0", emoji:"", name:"None", starsNeeded:0 },
+        { id:"p1", emoji:"\u{1F431}", name:"Cat", starsNeeded:0 },
+        { id:"p2", emoji:"\u{1F436}", name:"Dog", starsNeeded:10 },
+        { id:"p3", emoji:"\u{1F430}", name:"Bunny", starsNeeded:25 },
+        { id:"p4", emoji:"\u{1F98B}", name:"Butterfly", starsNeeded:50 },
+        { id:"p5", emoji:"\u{1F984}", name:"Unicorn", starsNeeded:100 },
+        { id:"p6", emoji:"\u{1F409}", name:"Dragon", starsNeeded:200 },
+        { id:"p7", emoji:"\u{1F985}", name:"Eagle", starsNeeded:150 },
+        { id:"p8", emoji:"\u{1F42C}", name:"Dolphin", starsNeeded:175 }
+    ]
+};

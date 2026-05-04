@@ -76,7 +76,8 @@ function freshState(name) {
         replayCount: 0,
         levelsDone: { em: 1, tone: 1, persp: 1, hf: 1 },
         vouchers: [],
-        activeCelebration: "confetti"
+        activeCelebration: "confetti",
+        avatar: { face: "f2", hair: "h0", accessory: "a0", pet: "p0" }
     };
 }
 
@@ -260,7 +261,7 @@ function renderProfilePicker() {
             loadProfile(id);
             applyTheme();
             updateStars();
-            $("#player-greeting").textContent = "Hi, " + state.playerName + "!";
+            $("#player-greeting").textContent = getAvatarDisplay() + " Hi, " + state.playerName + "!";
             showScreen("menu-screen");
         });
 
@@ -363,7 +364,7 @@ function createAndStart() {
     createProfile(name);
     applyTheme();
     updateStars();
-    $("#player-greeting").textContent = "Hi, " + state.playerName + "!";
+    $("#player-greeting").textContent = getAvatarDisplay() + " Hi, " + state.playerName + "!";
     showScreen("menu-screen");
 }
 
@@ -387,6 +388,7 @@ function initMenu() {
         "menu-settings": function() { initSettings(); showScreen("settings-screen"); },
         "menu-chores": function() { renderChores(); showScreen("chores-screen"); },
         "menu-wall": function() { renderWall(); showScreen("wall-screen"); },
+        "menu-avatar": function() { renderAvatar(); showScreen("avatar-screen"); },
         "menu-vouchers": function() { renderVouchers(); showScreen("vouchers-screen"); },
         "menu-parent": function() {
             pinEntry = ""; updatePinDots();
@@ -401,7 +403,7 @@ function initMenu() {
     // Back buttons to menu
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
      "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results",
-     "#wall-back-btn","#vouchers-back-btn"].forEach(function(s) {
+     "#wall-back-btn","#vouchers-back-btn","#avatar-back-btn"].forEach(function(s) {
         var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
     });
 
@@ -1763,12 +1765,71 @@ function renderChoreManage() {
 
 $("#chores-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
 
+// ===== AVATAR BUILDER =====
+function getAvatarDisplay() {
+    if (!state.avatar) state.avatar = { face:"f2", hair:"h0", accessory:"a0", pet:"p0" };
+    var av = state.avatar;
+    var result = "";
+    // Hair/hat on top
+    var hair = AVATAR_PARTS.hair.find(function(h) { return h.id === av.hair; });
+    if (hair && hair.emoji) result += hair.emoji;
+    // Face
+    var face = AVATAR_PARTS.face.find(function(f) { return f.id === av.face; });
+    if (face) result += face.emoji;
+    // Accessory
+    var acc = AVATAR_PARTS.accessory.find(function(a) { return a.id === av.accessory; });
+    if (acc && acc.emoji) result += acc.emoji;
+    // Pet
+    var pet = AVATAR_PARTS.pet.find(function(p) { return p.id === av.pet; });
+    if (pet && pet.emoji) result += pet.emoji;
+    return result || "\u{1F9D1}";
+}
+
+function renderAvatar() {
+    // Preview
+    $("#avatar-preview").textContent = getAvatarDisplay();
+
+    // Render each category
+    ["face","hair","accessory","pet"].forEach(function(cat) {
+        var grid = $("#avatar-" + cat + "-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        AVATAR_PARTS[cat].forEach(function(item) {
+            var unlocked = state.totalStars >= item.starsNeeded;
+            var selected = state.avatar && state.avatar[cat] === item.id;
+            var btn = document.createElement("button");
+            btn.className = "avatar-option" + (selected ? " selected" : "") + (unlocked ? "" : " locked");
+            btn.innerHTML = (item.emoji || "\u274C") +
+                (unlocked ? "" : '<span class="av-lock">\u{1F512}</span>');
+            btn.title = item.name + (unlocked ? "" : " (" + item.starsNeeded + " stars)");
+
+            if (unlocked) {
+                btn.addEventListener("click", function() {
+                    if (!state.avatar) state.avatar = { face:"f2", hair:"h0", accessory:"a0", pet:"p0" };
+                    state.avatar[cat] = item.id;
+                    saveProfile();
+                    renderAvatar();
+                    updateAvatarDisplays();
+                });
+            }
+            grid.appendChild(btn);
+        });
+    });
+}
+
+function updateAvatarDisplays() {
+    var avatarStr = getAvatarDisplay();
+    // Update profile picker avatar
+    var greeting = $("#player-greeting");
+    if (greeting) greeting.textContent = avatarStr + " Hi, " + state.playerName + "!";
+}
+
 // ===== ACHIEVEMENT WALL =====
 function renderWall() {
     // Title display
     var titleDisp = $("#wall-title-display");
     if (titleDisp) {
-        titleDisp.innerHTML = '<div class="wall-name">' + escHtml(state.playerName) + '</div>' +
+        titleDisp.innerHTML = '<div class="wall-name">' + getAvatarDisplay() + ' ' + escHtml(state.playerName) + '</div>' +
             '<div class="wall-title-text">\u2728 ' + getPlayerTitle() + '</div>' +
             '<div class="wall-star-total">\u2B50 ' + state.totalStars + ' Stars</div>';
     }

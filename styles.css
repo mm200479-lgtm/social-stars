@@ -655,6 +655,35 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     border-radius: var(--radius-sm);
 }
 
+/* ===== Avatar Builder ===== */
+.avatar-preview {
+    text-align: center; font-size: 4rem; padding: 20px;
+    background: var(--color-card); border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 20px; min-height: 100px;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    letter-spacing: 2px;
+}
+.avatar-categories { display: flex; flex-direction: column; gap: 16px; }
+.avatar-cat h3 { font-size: 1rem; margin-bottom: 8px; color: var(--color-text); }
+.avatar-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+}
+.avatar-option {
+    width: 56px; height: 56px; border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm); background: var(--color-card);
+    font-size: 1.6rem; cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+    touch-action: manipulation; position: relative;
+}
+.avatar-option:active { transform: scale(0.93); }
+.avatar-option.selected { border-color: var(--color-primary); background: #f0eeff; box-shadow: 0 0 0 2px rgba(108,99,255,0.3); }
+.avatar-option.locked { opacity: 0.35; filter: grayscale(0.8); }
+.avatar-option .av-lock { position: absolute; bottom: 2px; right: 2px; font-size: 0.5rem; }
+.avatar-option .av-label {
+    position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    font-size: 0.55rem; white-space: nowrap; color: var(--color-text-light);
+}
+
 /* ===== Title & Achievement Wall ===== */
 .player-title {
     display: block; font-size: 0.8rem; color: var(--color-primary);
