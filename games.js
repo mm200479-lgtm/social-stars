@@ -481,7 +481,7 @@ function startSpotDiff() {
 }
 
 // ===== DOTS & BOXES =====
-var dbRows=3, dbCols=3, dbLines, dbBoxes, dbTurn;
+var dbRows=4, dbCols=4, dbLines, dbBoxes, dbTurn;
 
 function startDotsBoxes() {
     dbLines = {}; dbBoxes = {}; dbTurn = 1;
@@ -490,7 +490,7 @@ function startDotsBoxes() {
     var totalCols = dbCols * 2 + 1;
     var colTemplate = "";
     for (var ci = 0; ci < totalCols; ci++) {
-        colTemplate += (ci % 2 === 0) ? "16px " : "1fr ";
+        colTemplate += (ci % 2 === 0) ? "24px " : "1fr ";
     }
     grid.style.gridTemplateColumns = colTemplate.trim();
 
