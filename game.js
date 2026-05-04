@@ -222,13 +222,15 @@ function renderProfilePicker() {
         });
 
         // Delete button
-        card.querySelector(".profile-delete-btn").addEventListener("click", function(e) {
-            e.stopPropagation();
-            if (confirm("Remove " + p.playerName + "'s profile?\n\nThis will delete all their stars, badges, and journal entries. This cannot be undone.")) {
-                deleteProfile(id);
-                renderProfilePicker();
-            }
-        });
+        (function(profileId, profileName) {
+            card.querySelector(".profile-delete-btn").addEventListener("click", function(e) {
+                e.stopPropagation();
+                showDeleteModal(profileName, function() {
+                    deleteProfile(profileId);
+                    renderProfilePicker();
+                });
+            });
+        })(id, p.playerName);
 
         grid.appendChild(card);
     });
@@ -261,6 +263,31 @@ function getAvatar(name) {
 function escHtml(s) {
     var d = document.createElement("div"); d.textContent = s; return d.innerHTML;
 }
+
+// Custom delete confirmation modal (works on iPad PWA)
+var deleteModalCallback = null;
+
+function showDeleteModal(name, onConfirm) {
+    var modal = $("#delete-modal");
+    var text = $("#delete-modal-text");
+    if (!modal || !text) { if (onConfirm) onConfirm(); return; }
+    text.innerHTML = "Remove <strong>" + escHtml(name) + "</strong>'s profile?<br><br>This will delete all their stars, badges, and journal entries.";
+    deleteModalCallback = onConfirm;
+    modal.classList.remove("hidden");
+}
+
+var delConfirmBtn = document.getElementById("delete-confirm-btn");
+var delCancelBtn = document.getElementById("delete-cancel-btn");
+
+if (delConfirmBtn) delConfirmBtn.addEventListener("click", function() {
+    $("#delete-modal").classList.add("hidden");
+    if (deleteModalCallback) { deleteModalCallback(); deleteModalCallback = null; }
+});
+
+if (delCancelBtn) delCancelBtn.addEventListener("click", function() {
+    $("#delete-modal").classList.add("hidden");
+    deleteModalCallback = null;
+});
 
 // ===== Welcome Screen (New Profile) =====
 function initWelcome() {
