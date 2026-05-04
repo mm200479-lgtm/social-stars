@@ -67,7 +67,10 @@
         <div id="menu-screen" class="screen" tabindex="-1">
             <header class="game-header">
                 <div class="player-info">
-                    <span id="player-greeting" class="greeting"></span>
+                    <div>
+                        <span id="player-greeting" class="greeting"></span>
+                        <span id="player-title" class="player-title"></span>
+                    </div>
                 </div>
                 <div class="header-right">
                     <span id="star-count" class="star-count">⭐ 0</span>
@@ -137,7 +140,17 @@
                     <button class="menu-card" id="menu-rewards" role="listitem">
                         <span class="card-emoji">🏆</span>
                         <span class="card-title">My Rewards</span>
-                        <span class="card-desc">Badges &amp; unlockables</span>
+                        <span class="card-desc">Badges, themes &amp; celebrations</span>
+                    </button>
+                    <button class="menu-card" id="menu-wall" role="listitem">
+                        <span class="card-emoji">🖼️</span>
+                        <span class="card-title">Achievement Wall</span>
+                        <span class="card-desc">See all your accomplishments</span>
+                    </button>
+                    <button class="menu-card" id="menu-vouchers" role="listitem">
+                        <span class="card-emoji">🎟️</span>
+                        <span class="card-title">My Vouchers</span>
+                        <span class="card-desc">Earn real-life rewards!</span>
                     </button>
                     <button class="menu-card" id="menu-vocab" role="listitem">
                         <span class="card-emoji">📖</span>
@@ -467,6 +480,9 @@
                 <h3 class="section-title" style="margin-top:32px;">🎨 Themes</h3>
                 <p class="section-subtitle">Unlock new looks by earning stars!</p>
                 <div id="themes-grid" class="rewards-grid" role="list"></div>
+                <h3 class="section-title" style="margin-top:32px;">🎉 Celebrations</h3>
+                <p class="section-subtitle">Choose your celebration animation!</p>
+                <div id="celebrations-grid" class="rewards-grid" role="list"></div>
             </div>
         </div>
 
@@ -680,6 +696,44 @@
                 <h2 class="section-title">📋 Social Rules</h2>
                 <p class="section-subtitle">Helpful guides for everyday situations</p>
                 <div id="rules-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <!-- ========== Achievement Wall Screen ========== -->
+        <div id="wall-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="wall-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">🖼️ My Achievement Wall</h2>
+                <div id="wall-title-display" class="wall-title-display"></div>
+                <div id="wall-stats" class="wall-stats"></div>
+                <h3 style="margin:20px 0 12px;">🏅 My Badges</h3>
+                <div id="wall-badges" class="rewards-grid"></div>
+                <h3 style="margin:20px 0 12px;">📊 My Journey</h3>
+                <div id="wall-journey" class="wall-journey"></div>
+            </div>
+        </div>
+
+        <!-- ========== Vouchers Screen ========== -->
+        <div id="vouchers-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="vouchers-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">🎟️ My Vouchers</h2>
+                <p class="section-subtitle">Earn stars to unlock real-life rewards!</p>
+                <div id="vouchers-list" class="vouchers-list"></div>
+                <div id="vouchers-edit" class="chores-edit-section hidden">
+                    <h3 style="margin:16px 0 10px;">Edit Vouchers (Parent)</h3>
+                    <div class="chore-add-row">
+                        <input type="text" id="voucher-add-text" class="ci-note-input" placeholder="Reward description..." maxlength="80">
+                        <input type="number" id="voucher-add-stars" class="chore-stars-select" placeholder="Stars" min="10" max="2000" value="100" style="width:80px;">
+                        <button id="voucher-add-btn" class="btn btn-primary btn-small">Add</button>
+                    </div>
+                    <div id="vouchers-manage" class="chores-manage-list"></div>
+                </div>
+                <button id="vouchers-edit-toggle" class="btn btn-back" style="margin-top:16px;">🔧 Edit Vouchers (Parent)</button>
             </div>
         </div>
 

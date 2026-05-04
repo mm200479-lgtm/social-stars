@@ -74,7 +74,9 @@ function freshState(name) {
         weeklyProgress: {},
         weeklyId: "",
         replayCount: 0,
-        levelsDone: { em: 1, tone: 1, persp: 1, hf: 1 }
+        levelsDone: { em: 1, tone: 1, persp: 1, hf: 1 },
+        vouchers: [],
+        activeCelebration: "confetti"
     };
 }
 
@@ -177,6 +179,7 @@ function updateStars() {
     });
     var bc = $("#badge-count");
     if (bc) bc.textContent = "\u{1F3C5} " + state.earnedBadges.length;
+    updateTitle();
 }
 
 function applyTheme() {
@@ -215,6 +218,22 @@ function showBadgeResult(badge) {
     } else {
         rb.classList.add("hidden");
     }
+}
+
+// ===== Title System =====
+function getPlayerTitle() {
+    var title = "Beginner";
+    if (typeof TITLES !== "undefined") {
+        TITLES.forEach(function(t) {
+            if (state.totalStars >= t.stars) title = t.title;
+        });
+    }
+    return title;
+}
+
+function updateTitle() {
+    var titleEl = $("#player-title");
+    if (titleEl) titleEl.textContent = "\u2728 " + getPlayerTitle();
 }
 
 // ===== Profile Picker Screen =====
@@ -367,6 +386,8 @@ function initMenu() {
         "menu-rules": function() { renderRules(); showScreen("rules-screen"); },
         "menu-settings": function() { initSettings(); showScreen("settings-screen"); },
         "menu-chores": function() { renderChores(); showScreen("chores-screen"); },
+        "menu-wall": function() { renderWall(); showScreen("wall-screen"); },
+        "menu-vouchers": function() { renderVouchers(); showScreen("vouchers-screen"); },
         "menu-parent": function() {
             pinEntry = ""; updatePinDots();
             var pe = $("#pin-error"); if (pe) pe.classList.add("hidden");
@@ -379,7 +400,8 @@ function initMenu() {
 
     // Back buttons to menu
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
-     "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results"].forEach(function(s) {
+     "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results",
+     "#wall-back-btn","#vouchers-back-btn"].forEach(function(s) {
         var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
     });
 
@@ -1740,6 +1762,266 @@ function renderChoreManage() {
 }
 
 $("#chores-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
+// ===== ACHIEVEMENT WALL =====
+function renderWall() {
+    // Title display
+    var titleDisp = $("#wall-title-display");
+    if (titleDisp) {
+        titleDisp.innerHTML = '<div class="wall-name">' + escHtml(state.playerName) + '</div>' +
+            '<div class="wall-title-text">\u2728 ' + getPlayerTitle() + '</div>' +
+            '<div class="wall-star-total">\u2B50 ' + state.totalStars + ' Stars</div>';
+    }
+
+    // Stats
+    var statsEl = $("#wall-stats");
+    if (statsEl) {
+        var daysPlayed = (state.checkins || []).length;
+        var badgesEarned = (state.earnedBadges || []).length;
+        var catsComplete = (state.categoriesCompleted || []).length;
+        var storiesRead = state.storyRead ? "Yes" : "Not yet";
+        statsEl.innerHTML =
+            '<div class="wall-stat"><div class="wall-stat-val">' + badgesEarned + '</div><div class="wall-stat-label">Badges</div></div>' +
+            '<div class="wall-stat"><div class="wall-stat-val">' + catsComplete + '/6</div><div class="wall-stat-label">Topics</div></div>' +
+            '<div class="wall-stat"><div class="wall-stat-val">' + daysPlayed + '</div><div class="wall-stat-label">Check-Ins</div></div>' +
+            '<div class="wall-stat"><div class="wall-stat-val">' + (state.replayCount || 0) + '</div><div class="wall-stat-label">Replays</div></div>';
+    }
+
+    // Earned badges
+    var badgesEl = $("#wall-badges");
+    if (badgesEl) {
+        badgesEl.innerHTML = "";
+        BADGES.forEach(function(b) {
+            if (state.earnedBadges.indexOf(b.id) !== -1) {
+                var card = document.createElement("div");
+                card.className = "reward-card earned";
+                card.innerHTML = '<span class="reward-emoji">' + b.emoji + '</span><div class="reward-name">' + b.name + '</div>';
+                badgesEl.appendChild(card);
+            }
+        });
+        if (badgesEl.children.length === 0) {
+            badgesEl.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">No badges yet \u2014 keep playing!</p>';
+        }
+    }
+
+    // Journey milestones
+    var journeyEl = $("#wall-journey");
+    if (journeyEl) {
+        journeyEl.innerHTML = "";
+        var milestones = [
+            { check: state.totalStars >= 1, emoji: "\u{2B50}", text: "Earned first star!" },
+            { check: state.totalStars >= 10, emoji: "\u{1F31F}", text: "Reached 10 stars!" },
+            { check: (state.categoriesCompleted || []).length >= 1, emoji: "\u{1F4DA}", text: "Completed first Learn & Play topic" },
+            { check: state.emotionMatchDone, emoji: "\u{1F3AD}", text: "Completed Emotion Match" },
+            { check: state.toneDone, emoji: "\u{1F5E3}\uFE0F", text: "Completed Tone of Voice" },
+            { check: state.perspDone, emoji: "\u{1F440}", text: "Completed Perspective Taking" },
+            { check: state.storyRead, emoji: "\u{1F4D6}", text: "Read a Social Story" },
+            { check: state.calmUsed, emoji: "\u{1F9D8}", text: "Used the Calm Down Corner" },
+            { check: state.totalStars >= 100, emoji: "\u{1F3C6}", text: "Reached 100 stars!" },
+            { check: state.totalStars >= 500, emoji: "\u{1F48E}", text: "Reached 500 stars!" },
+            { check: state.totalStars >= 1000, emoji: "\u{1F451}", text: "Reached 1000 stars \u2014 ULTIMATE LEGEND!" }
+        ];
+        milestones.forEach(function(m) {
+            if (m.check) {
+                var item = document.createElement("div");
+                item.className = "wall-journey-item";
+                item.innerHTML = '<span class="wj-emoji">' + m.emoji + '</span><span class="wj-text">' + m.text + '</span>';
+                journeyEl.appendChild(item);
+            }
+        });
+        if (journeyEl.children.length === 0) {
+            journeyEl.innerHTML = '<p style="color:var(--color-text-light);font-style:italic;">Start playing to build your journey!</p>';
+        }
+    }
+}
+
+// ===== VOUCHERS =====
+function getVouchers() {
+    if (!state.vouchers || state.vouchers.length === 0) {
+        state.vouchers = DEFAULT_VOUCHERS.map(function(v, i) {
+            return { id: "v_" + i, text: v.text, stars: v.stars, emoji: v.emoji, claimed: false };
+        });
+        saveProfile();
+    }
+    return state.vouchers;
+}
+
+function renderVouchers() {
+    var vouchers = getVouchers();
+    var list = $("#vouchers-list");
+    list.innerHTML = "";
+
+    vouchers.forEach(function(v) {
+        var unlocked = state.totalStars >= v.stars;
+        var card = document.createElement("div");
+        card.className = "voucher-card " + (v.claimed ? "claimed" : (unlocked ? "unlocked" : "locked"));
+        var actionHtml = "";
+        if (v.claimed) {
+            actionHtml = '<span class="voucher-claimed-text">\u2705 Claimed!</span>';
+        } else if (unlocked) {
+            actionHtml = '<button class="voucher-claim-btn">Claim!</button>';
+        } else {
+            actionHtml = '<span class="voucher-cost">' + v.stars + ' \u2B50 needed</span>';
+        }
+        card.innerHTML =
+            '<span class="voucher-emoji">' + (v.emoji || "\u{1F3AB}") + '</span>' +
+            '<div class="voucher-info"><div class="voucher-text">' + escHtml(v.text) + '</div>' +
+            '<div class="voucher-cost">' + (v.claimed ? "Reward claimed!" : (unlocked ? "You earned this!" : v.stars + " stars to unlock")) + '</div></div>' +
+            actionHtml;
+
+        if (unlocked && !v.claimed) {
+            card.querySelector(".voucher-claim-btn").addEventListener("click", function() {
+                v.claimed = true;
+                saveProfile();
+                playComplete(); fireConfetti();
+                renderVouchers();
+            });
+        }
+        list.appendChild(card);
+    });
+}
+
+// Voucher edit
+var voucherEditVisible = false;
+var vetBtn = $("#vouchers-edit-toggle");
+if (vetBtn) vetBtn.addEventListener("click", function() {
+    voucherEditVisible = !voucherEditVisible;
+    var section = $("#vouchers-edit");
+    if (voucherEditVisible) { section.classList.remove("hidden"); renderVoucherManage(); this.textContent = "\u2B06\uFE0F Hide Edit"; }
+    else { section.classList.add("hidden"); this.textContent = "\u{1F527} Edit Vouchers (Parent)"; }
+});
+
+var vabBtn = $("#voucher-add-btn");
+if (vabBtn) vabBtn.addEventListener("click", function() {
+    var textInp = $("#voucher-add-text");
+    var starsInp = $("#voucher-add-stars");
+    var text = textInp.value.trim();
+    var stars = parseInt(starsInp.value) || 100;
+    if (!text) return;
+    var vouchers = getVouchers();
+    vouchers.push({ id: "v_" + Date.now(), text: text, stars: stars, emoji: "\u{1F3AB}", claimed: false });
+    state.vouchers = vouchers;
+    saveProfile();
+    textInp.value = "";
+    renderVoucherManage();
+    renderVouchers();
+});
+
+function renderVoucherManage() {
+    var list = $("#vouchers-manage");
+    if (!list) return;
+    list.innerHTML = "";
+    var vouchers = getVouchers();
+    vouchers.forEach(function(v, idx) {
+        var item = document.createElement("div");
+        item.className = "chore-manage-item";
+        item.innerHTML = '<span>' + escHtml(v.text) + ' (' + v.stars + '\u2B50)</span><button class="chore-remove-btn">\u274C</button>';
+        item.querySelector(".chore-remove-btn").addEventListener("click", function() {
+            vouchers.splice(idx, 1);
+            state.vouchers = vouchers;
+            saveProfile();
+            renderVoucherManage();
+            renderVouchers();
+        });
+        list.appendChild(item);
+    });
+}
+
+// ===== CELEBRATION PICKER =====
+function renderCelebrations() {
+    var grid = $("#celebrations-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    CELEBRATIONS.forEach(function(c) {
+        var unlocked = state.totalStars >= c.starsNeeded;
+        var active = (state.activeCelebration || "confetti") === c.id;
+        var card = document.createElement("button");
+        card.className = "reward-card " + (unlocked ? "earned" : "locked") + (active ? " active-theme" : "");
+        card.innerHTML = '<span class="reward-emoji">' + c.emoji + '</span>' +
+            '<div class="reward-name">' + c.name + '</div>' +
+            '<div class="reward-desc">' + (unlocked ? (active ? "\u2714 Active" : "Tap to use!") : "\u{1F512} Need " + c.starsNeeded + " stars") + '</div>';
+        if (unlocked) card.addEventListener("click", function() {
+            state.activeCelebration = c.id;
+            saveProfile();
+            renderCelebrations();
+        });
+        grid.appendChild(card);
+    });
+}
+
+// Update renderRewards to include celebrations
+var _origRenderRewards = renderRewards;
+renderRewards = function() {
+    _origRenderRewards();
+    renderCelebrations();
+};
+
+// ===== THEMED CONFETTI =====
+var _origFireConfetti = fireConfetti;
+fireConfetti = function() {
+    var celebType = state.activeCelebration || "confetti";
+    if (celebType === "confetti") { _origFireConfetti(); return; }
+
+    // Custom celebration particles
+    if (!confettiCanvas || !confettiCtx) return;
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    var emojis = {
+        fireworks: ["\u{1F386}","\u{2728}","\u{1F387}","\u{1F4A5}"],
+        butterflies: ["\u{1F98B}","\u{1F33C}","\u{1F33A}","\u{1F338}"],
+        rainbow: ["\u{1F308}","\u{2B50}","\u{1F31F}","\u{2728}"],
+        stars: ["\u{1F320}","\u{2B50}","\u{1F31F}","\u{2728}"],
+        hearts: ["\u{1F496}","\u{1F49C}","\u{1F499}","\u{1F49A}","\u{1F9E1}"],
+        sparkles: ["\u{2728}","\u{1F31F}","\u{1FA90}","\u{2B50}"]
+    };
+    var chars = emojis[celebType] || emojis.confetti;
+    var particles = [];
+    for (var i = 0; i < 40; i++) {
+        particles.push({
+            x: Math.random() * confettiCanvas.width,
+            y: -30 - Math.random() * 100,
+            char: chars[Math.floor(Math.random() * chars.length)],
+            size: 16 + Math.random() * 20,
+            vx: (Math.random() - 0.5) * 3,
+            vy: 1.5 + Math.random() * 3,
+            rot: Math.random() * 360,
+            rv: (Math.random() - 0.5) * 5
+        });
+    }
+    var frames = 0;
+    function draw() {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        var alive = false;
+        particles.forEach(function(p) {
+            p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.rot += p.rv;
+            if (p.y < confettiCanvas.height + 30) alive = true;
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate(p.rot * Math.PI / 180);
+            confettiCtx.font = p.size + "px serif";
+            confettiCtx.textAlign = "center";
+            confettiCtx.fillText(p.char, 0, 0);
+            confettiCtx.restore();
+        });
+        frames++;
+        if (alive && frames < 180) requestAnimationFrame(draw);
+        else confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+    draw();
+};
+
+// ===== ADVANCED COPING CARDS (unlock at 100 stars) =====
+var _origStartCoping = startCoping;
+startCoping = function() {
+    var cards = COPING_CARDS.slice();
+    if (state.totalStars >= 100 && typeof ADVANCED_COPING !== "undefined") {
+        cards = cards.concat(ADVANCED_COPING);
+    }
+    copingState.cards = shuffleArray(cards);
+    copingState.index = 0;
+    copingState.cardsViewed = 0;
+    showCopingCard(); showScreen("coping-screen");
+};
 
 // ===== SETTINGS =====
 var fontSizes = ["font-xs","font-sm","font-md","font-lg","font-xl"];

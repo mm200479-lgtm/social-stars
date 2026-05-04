@@ -655,6 +655,58 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     border-radius: var(--radius-sm);
 }
 
+/* ===== Title & Achievement Wall ===== */
+.player-title {
+    display: block; font-size: 0.8rem; color: var(--color-primary);
+    font-weight: 600; margin-top: 2px;
+}
+.wall-title-display {
+    text-align: center; padding: 20px; background: linear-gradient(135deg, var(--color-primary), #a78bfa);
+    border-radius: var(--radius); color: white; margin-bottom: 20px;
+}
+.wall-title-display .wall-name { font-size: 1.5rem; font-weight: 800; }
+.wall-title-display .wall-title-text { font-size: 1.1rem; opacity: 0.9; margin-top: 4px; }
+.wall-title-display .wall-star-total { font-size: 2rem; font-weight: 800; margin-top: 8px; }
+.wall-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px; margin-bottom: 16px;
+}
+.wall-stat {
+    background: var(--color-card); border-radius: var(--radius-sm); padding: 14px 10px;
+    text-align: center; box-shadow: var(--shadow);
+}
+.wall-stat-val { font-size: 1.5rem; font-weight: 800; color: var(--color-primary); }
+.wall-stat-label { font-size: 0.75rem; color: var(--color-text-light); }
+.wall-journey { display: flex; flex-direction: column; gap: 8px; }
+.wall-journey-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+    background: var(--color-card); border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.wall-journey-item .wj-emoji { font-size: 1.4rem; }
+.wall-journey-item .wj-text { font-size: 0.9rem; flex: 1; }
+
+/* ===== Vouchers ===== */
+.vouchers-list { display: flex; flex-direction: column; gap: 12px; }
+.voucher-card {
+    display: flex; align-items: center; gap: 14px; padding: 18px 20px;
+    background: var(--color-card); border: 2px solid var(--color-border);
+    border-radius: var(--radius); box-shadow: var(--shadow); transition: all 0.3s ease;
+}
+.voucher-card.unlocked { border-color: var(--color-star); background: #fffde7; }
+.voucher-card.locked { opacity: 0.6; }
+.voucher-card.claimed { border-color: var(--color-success); background: var(--color-success-bg); }
+.voucher-emoji { font-size: 2rem; }
+.voucher-info { flex: 1; }
+.voucher-text { font-weight: 600; font-size: 1rem; }
+.voucher-cost { font-size: 0.85rem; color: var(--color-text-light); }
+.voucher-claim-btn {
+    padding: 8px 16px; font-size: 0.9rem; font-weight: 700; border: none;
+    border-radius: var(--radius-sm); background: var(--color-star); color: white;
+    cursor: pointer; touch-action: manipulation; min-height: 40px;
+}
+.voucher-claim-btn:active { transform: scale(0.95); }
+.voucher-claimed-text { font-size: 0.85rem; color: var(--color-success); font-weight: 700; }
+
 /* ===== Chore List ===== */
 .chores-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 .chore-item {

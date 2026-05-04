@@ -637,3 +637,52 @@ var HOWFEEL_LEVELS = {
         { emoji:"\u{1F393}", text:"You're about to start secondary school / middle school next year.", feelings:["Excited","Nervous","Scared","Curious"], responses:{"Excited":"New beginnings can be exciting! There's so much to look forward to.","Nervous":"Almost everyone feels nervous about big transitions. That's completely normal!","Scared":"It's okay to feel scared about such a big change. It shows you care.","Curious":"Being curious about what's ahead is a great mindset for new experiences!"} }
     ]
 };
+
+
+/* ===== TITLE SYSTEM ===== */
+var TITLES = [
+    { stars: 0, title: "Beginner" },
+    { stars: 10, title: "Feelings Explorer" },
+    { stars: 25, title: "Social Learner" },
+    { stars: 50, title: "Kindness Apprentice" },
+    { stars: 100, title: "Emotion Expert" },
+    { stars: 150, title: "Empathy Champion" },
+    { stars: 200, title: "Social Superstar" },
+    { stars: 300, title: "Friendship Hero" },
+    { stars: 500, title: "Heart of Gold" },
+    { stars: 750, title: "World Changer" },
+    { stars: 1000, title: "Ultimate Legend" }
+];
+
+/* ===== CELEBRATION ANIMATIONS ===== */
+var CELEBRATIONS = [
+    { id: "confetti", name: "Confetti", emoji: "\u{1F389}", starsNeeded: 0 },
+    { id: "fireworks", name: "Fireworks", emoji: "\u{1F386}", starsNeeded: 25 },
+    { id: "butterflies", name: "Butterflies", emoji: "\u{1F98B}", starsNeeded: 50 },
+    { id: "rainbow", name: "Rainbow", emoji: "\u{1F308}", starsNeeded: 100 },
+    { id: "stars", name: "Shooting Stars", emoji: "\u{1F320}", starsNeeded: 150 },
+    { id: "hearts", name: "Hearts", emoji: "\u{1F496}", starsNeeded: 200 },
+    { id: "sparkles", name: "Sparkles", emoji: "\u{2728}", starsNeeded: 300 }
+];
+
+/* ===== DEFAULT REWARD VOUCHERS ===== */
+var DEFAULT_VOUCHERS = [
+    { stars: 50, text: "Choose what's for dinner tonight!", emoji: "\u{1F35D}" },
+    { stars: 100, text: "Extra 15 minutes of screen time!", emoji: "\u{1F4F1}" },
+    { stars: 150, text: "Pick a movie for family night!", emoji: "\u{1F3AC}" },
+    { stars: 200, text: "Choose a special snack from the shop!", emoji: "\u{1F36D}" },
+    { stars: 300, text: "Stay up 30 minutes past bedtime!", emoji: "\u{1F31C}" },
+    { stars: 500, text: "Plan a fun outing with the family!", emoji: "\u{1F3A2}" },
+    { stars: 750, text: "Get a special surprise gift!", emoji: "\u{1F381}" },
+    { stars: 1000, text: "ULTIMATE REWARD \u2014 You choose! Ask mum or dad!", emoji: "\u{1F451}" }
+];
+
+/* ===== ADVANCED COPING CARDS (unlockable) ===== */
+var ADVANCED_COPING = [
+    { emoji:"\u{1F9E0}", title:"Reframe Your Thoughts", text:"When you think \"I can't do this,\" try changing it to \"I can't do this YET.\" Adding 'yet' reminds your brain that you're still learning. It's not a failure \u2014 it's a work in progress." },
+    { emoji:"\u{1F4AC}", title:"Positive Self-Talk", text:"Talk to yourself like you'd talk to your best friend. Instead of \"I'm so stupid,\" say \"I made a mistake, and that's okay. I'll try again.\" Be kind to yourself!" },
+    { emoji:"\u{1F4DD}", title:"Worry Time", text:"Set aside 10 minutes as your 'worry time.' Write down everything you're worried about. When worry time is over, close the notebook. This teaches your brain that worries have a time and place." },
+    { emoji:"\u{1F3AF}", title:"Focus on What You CAN Control", text:"Make two lists: things you can control and things you can't. Spend your energy on the first list. You can't control the weather, but you can control bringing an umbrella!" },
+    { emoji:"\u{1F64F}", title:"Gratitude Moment", text:"Name 3 things you're grateful for right now. They can be small \u2014 a comfy bed, a good meal, a friend who made you laugh. Gratitude shifts your brain from 'what's wrong' to 'what's good.'" },
+    { emoji:"\u{1F30A}", title:"Ride the Wave", text:"Big feelings are like waves \u2014 they rise up, peak, and then come back down. You don't have to fight the wave. Just notice it, breathe, and wait. It WILL pass." }
+];
