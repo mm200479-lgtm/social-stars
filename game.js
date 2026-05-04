@@ -3755,32 +3755,6 @@ function initFamilyScreen() {
     });
 }
 
-// ===== GAME SCREEN BUTTONS =====
-["memory","ttt","hangman","drawing","coloring","pattern","bingo","spotdiff","dotsboxes","wordsearch","ctd","facebuilder"].forEach(function(g) {
-    var back = document.getElementById(g + "-back");
-    if (back) back.addEventListener("click", function() {
-        // Use querySelectorAll to hide all screens and show submenu
-        document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
-        var sub = document.getElementById("submenu-screen");
-        if (sub) { sub.classList.add("active"); sub.scrollTop = 0; window.scrollTo(0, 0); }
-    });
-});
-var gameActions = {
-    "memory-new": function(){startMemory();},
-    "ttt-new": function(){startTTT();},
-    "hangman-new": function(){startHangman();},
-    "drawing-clear": function(){startDrawing();},
-    "pattern-new": function(){startPattern();},
-    "spotdiff-new": function(){startSpotDiff();},
-    "dotsboxes-new": function(){startDotsBoxes();},
-    "wordsearch-new": function(){startWordSearch();},
-    "ctd-new": function(){startConnectDots();}
-};
-Object.keys(gameActions).forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.addEventListener("click", gameActions[id]);
-});
-
 // ===== EXPOSE TO GLOBAL SCOPE (for games.js) =====
 window.state = state;
 window.saveProfile = saveProfile;
@@ -3793,4 +3767,33 @@ window.playComplete = playComplete;
 window.fireConfetti = fireConfetti;
 window.shuffleArray = shuffleArray;
 
+})();
+
+// ===== GAME BUTTON BINDINGS (outside IIFE, in global scope) =====
+(function() {
+    var gameBackBtns = ["memory","ttt","hangman","drawing","coloring","pattern","bingo","spotdiff","dotsboxes","wordsearch","ctd","facebuilder"];
+    gameBackBtns.forEach(function(g) {
+        var back = document.getElementById(g + "-back");
+        if (back) back.addEventListener("click", function() {
+            document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
+            var sub = document.getElementById("submenu-screen");
+            if (sub) { sub.classList.add("active"); sub.scrollTop = 0; window.scrollTo(0, 0); }
+        });
+    });
+
+    var actions = {
+        "memory-new": function(){ if(typeof startMemory==="function") startMemory(); },
+        "ttt-new": function(){ if(typeof startTTT==="function") startTTT(); },
+        "hangman-new": function(){ if(typeof startHangman==="function") startHangman(); },
+        "drawing-clear": function(){ if(typeof startDrawing==="function") startDrawing(); },
+        "pattern-new": function(){ if(typeof startPattern==="function") startPattern(); },
+        "spotdiff-new": function(){ if(typeof startSpotDiff==="function") startSpotDiff(); },
+        "dotsboxes-new": function(){ if(typeof startDotsBoxes==="function") startDotsBoxes(); },
+        "wordsearch-new": function(){ if(typeof startWordSearch==="function") startWordSearch(); },
+        "ctd-new": function(){ if(typeof startConnectDots==="function") startConnectDots(); }
+    };
+    Object.keys(actions).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener("click", actions[id]);
+    });
 })();
