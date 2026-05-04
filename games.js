@@ -481,22 +481,33 @@ function startSpotDiff() {
 }
 
 // ===== DOTS & BOXES =====
-var dbRows=4, dbCols=4, dbLines, dbBoxes, dbTurn;
+var dbRows=3, dbCols=3, dbLines, dbBoxes, dbTurn;
 
 function startDotsBoxes() {
     dbLines = {}; dbBoxes = {}; dbTurn = 1;
     var grid = document.getElementById("db-grid"); if(!grid) return;
-    grid.innerHTML = ""; grid.style.display = "grid";
-    grid.style.gridTemplateColumns = "20px " + ("1fr 20px ".repeat(dbCols)).trim();
-    grid.style.gridTemplateRows = "20px " + ("1fr 20px ".repeat(dbRows)).trim();
+    grid.innerHTML = "";
+    var totalCols = dbCols * 2 + 1;
+    var colTemplate = "";
+    for (var ci = 0; ci < totalCols; ci++) {
+        colTemplate += (ci % 2 === 0) ? "16px " : "1fr ";
+    }
+    grid.style.gridTemplateColumns = colTemplate.trim();
 
     for(var r=0; r<=dbRows*2; r++) {
         for(var c=0; c<=dbCols*2; c++) {
             var el = document.createElement("div");
-            if(r%2===0 && c%2===0) { el.className = "db-dot"; }
-            else if(r%2===0 && c%2===1) { el.className = "db-hline"; el.dataset.r=r; el.dataset.c=c; el.addEventListener("click", dbClickLine); }
-            else if(r%2===1 && c%2===0) { el.className = "db-vline"; el.dataset.r=r; el.dataset.c=c; el.addEventListener("click", dbClickLine); }
-            else { el.className = "db-box"; el.dataset.r=r; el.dataset.c=c; }
+            if(r%2===0 && c%2===0) {
+                el.className = "db-dot";
+            } else if(r%2===0 && c%2===1) {
+                el.className = "db-hline"; el.dataset.r=r; el.dataset.c=c;
+                el.addEventListener("click", dbClickLine);
+            } else if(r%2===1 && c%2===0) {
+                el.className = "db-vline"; el.dataset.r=r; el.dataset.c=c;
+                el.addEventListener("click", dbClickLine);
+            } else {
+                el.className = "db-box"; el.dataset.r=r; el.dataset.c=c;
+            }
             grid.appendChild(el);
         }
     }

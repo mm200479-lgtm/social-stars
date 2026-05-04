@@ -1136,13 +1136,12 @@ body.quiet-mode * { animation-duration: 0.01ms !important; transition-duration: 
 .spot-wrong { border-color: #f44336; background: #ffebee; }
 
 /* ===== Dots & Boxes ===== */
-.db-grid { max-width: 350px; margin: 0 auto; gap: 0; }
-.db-dot { width: 20px; height: 20px; background: var(--color-text); border-radius: 50%; }
-.db-hline { height: 20px; background: var(--color-border); cursor: pointer; border-radius: 4px; touch-action: manipulation; min-height: 12px; }
-.db-vline { width: 20px; background: var(--color-border); cursor: pointer; border-radius: 4px; touch-action: manipulation; }
-.db-box { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; }
-.db-line-filled { opacity: 1; }
-.db-hline:hover, .db-vline:hover { opacity: 0.7; }
+.db-grid { max-width: 350px; margin: 0 auto; gap: 0; display: grid; }
+.db-dot { width: 16px; height: 16px; background: var(--color-text); border-radius: 50%; }
+.db-hline { height: 16px; background: var(--color-border); cursor: pointer; border-radius: 4px; touch-action: manipulation; transition: background 0.2s; }
+.db-vline { width: 16px; background: var(--color-border); cursor: pointer; border-radius: 4px; touch-action: manipulation; transition: background 0.2s; }
+.db-box { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; min-height: 40px; }
+.db-hline:active, .db-vline:active { opacity: 0.6; }
 
 /* ===== Word Search ===== */
 .ws-grid { display: grid; gap: 2px; max-width: 350px; margin: 0 auto; }
