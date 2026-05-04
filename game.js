@@ -3781,4 +3781,16 @@ Object.keys(gameActions).forEach(function(id) {
     if (el) el.addEventListener("click", gameActions[id]);
 });
 
+// ===== EXPOSE TO GLOBAL SCOPE (for games.js) =====
+window.state = state;
+window.saveProfile = saveProfile;
+window.updateStars = updateStars;
+window.checkBadges = checkBadges;
+window.showScreen = showScreen;
+window.playChime = playChime;
+window.playGentle = playGentle;
+window.playComplete = playComplete;
+window.fireConfetti = fireConfetti;
+window.shuffleArray = shuffleArray;
+
 })();
