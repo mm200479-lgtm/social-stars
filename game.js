@@ -544,15 +544,20 @@ function initMenu() {
     var smBack = $("#submenu-back-btn");
     if (smBack) smBack.addEventListener("click", function() { showScreen("menu-screen"); });
 
-    // Back buttons to menu
+    // Back buttons to main menu (top-level screens)
     ["#cat-back-btn","#em-back-btn","#hf-back-btn","#ss-back-btn","#calm-back-btn",
-     "#therm-back-btn","#ci-back-btn","#rew-back-btn","#par-back-btn","#menu-from-results",
+     "#rew-back-btn","#par-back-btn","#menu-from-results"].forEach(function(s) {
+        var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
+    });
+
+    // Back buttons to submenu (screens opened from a category submenu)
+    ["#therm-back-btn","#ci-back-btn",
      "#wall-back-btn","#vouchers-back-btn","#avatar-back-btn",
      "#scripts-back-btn","#flashcards-back-btn","#idioms-back-btn","#hidden-back-btn",
      "#whatif-back-btn","#convo-back-btn","#friendship-back-btn","#waiting-back-btn",
      "#problem-back-btn","#kindness-back-btn","#gratitude-back-btn","#sleep-back-btn",
      "#surprise-back-btn","#routine-back-btn"].forEach(function(s) {
-        var el = $(s); if (el) el.addEventListener("click", function() { showScreen("menu-screen"); });
+        var el = $(s); if (el) el.addEventListener("click", function() { showScreen("submenu-screen"); });
     });
 
     // Switch profile button
@@ -2550,7 +2555,7 @@ Object.keys(newRoutes).forEach(function(id) {
         if (s.indexOf("bodyscan") !== -1 || s.indexOf("iceberg") !== -1 || s.indexOf("colorbreathe") !== -1 || s.indexOf("fidget") !== -1) {
             // already bound to calm screen above
         } else {
-            el.addEventListener("click", function() { showScreen("menu-screen"); });
+            el.addEventListener("click", function() { showScreen("submenu-screen"); });
         }
     }
 });
