@@ -557,6 +557,59 @@ input, textarea { -webkit-user-select: text; user-select: text; }
     from { transform: translateY(-100%); } to { transform: translateY(0); }
 }
 
+/* ===== Conversation Simulator ===== */
+.convsim-chat {
+    display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+    max-height: 300px; overflow-y: auto; padding: 16px;
+    background: var(--color-card); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.convsim-msg {
+    padding: 10px 16px; border-radius: 16px; max-width: 80%; font-size: 0.95rem; line-height: 1.5;
+}
+.convsim-msg.other { background: #e3f2fd; align-self: flex-start; border-bottom-left-radius: 4px; }
+.convsim-msg.self { background: var(--color-primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+/* ===== Teach Me ===== */
+.teach-wrong {
+    background: #ffebee; border: 2px solid #ef9a9a; border-radius: var(--radius-sm);
+    padding: 16px; margin-bottom: 16px; text-align: center;
+    font-size: 1.05rem; font-weight: 600; color: #c62828;
+}
+
+/* ===== Spinner ===== */
+.spinner-display {
+    width: 150px; height: 150px; border-radius: 50%; margin: 20px auto;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; box-shadow: 0 0 30px rgba(255,193,7,0.4);
+    transition: transform 0.1s ease;
+}
+.spinner-display.spinning { animation: spinAnim 0.5s linear infinite; }
+@keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ===== Progress Map ===== */
+.progress-map { display: flex; flex-direction: column; gap: 0; }
+.map-node {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    position: relative;
+}
+.map-node::before {
+    content: ""; position: absolute; left: 27px; top: 0; bottom: 0;
+    width: 3px; background: var(--color-border);
+}
+.map-node:first-child::before { top: 50%; }
+.map-node:last-child::before { bottom: 50%; }
+.map-dot {
+    width: 24px; height: 24px; border-radius: 50%; z-index: 1;
+    display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+    flex-shrink: 0;
+}
+.map-dot.reached { background: var(--color-primary); }
+.map-dot.future { background: var(--color-border); }
+.map-label { font-size: 0.95rem; }
+.map-label.reached { font-weight: 700; color: var(--color-primary); }
+.map-label.future { color: var(--color-text-light); }
+
 /* ===== Iceberg ===== */
 .iceberg-visual { text-align: center; }
 .iceberg-top {

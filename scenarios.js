@@ -1058,3 +1058,85 @@ var VOLUME_LEVELS = [
     { level:3, name:"Outdoor Voice", emoji:"\u{1F4E2}", animal:"\u{1F436} Dog", desc:"Louder so people further away can hear you. Good for outside.", when:"Playground, park, garden, sports" },
     { level:4, name:"Emergency Only", emoji:"\u{1F6A8}", animal:"\u{1F981} Lion", desc:"Very loud! Only for emergencies when you need help RIGHT NOW.", when:"Only if you're in danger or need urgent help" }
 ];
+
+
+/* ===== CONVERSATION SIMULATOR ===== */
+var CONV_SIMULATIONS = [
+    {
+        title: "Meeting someone new",
+        start: { speaker:"other", text:"Hi! I'm Alex. I just moved here." },
+        steps: [
+            { prompt:"What do you say?", choices:[
+                { text:"Hi Alex! I'm [name]. Welcome! Where did you move from?", next:1, good:true },
+                { text:"...", next:2, good:false }
+            ]},
+            { speaker:"other", text:"Thanks! I moved from London. I'm a bit nervous about the new school.", choices:[
+                { text:"I remember being new too. Want me to show you around?", next:3, good:true },
+                { text:"You'll be fine.", next:4, good:false }
+            ]},
+            { speaker:"other", text:"Oh... okay.", end:true, feedback:"When someone says hi, it's kind to respond! Try saying your name and asking a question." },
+            { speaker:"other", text:"That would be amazing! You're really kind. What's your favourite thing about this school?", end:true, feedback:"Great job! You made Alex feel welcome by offering help. That's how friendships start!" },
+            { speaker:"other", text:"Yeah, I hope so...", end:true, feedback:"Alex still seems worried. Offering to help (like showing them around) would have been even kinder!" }
+        ]
+    },
+    {
+        title: "A friend is upset",
+        start: { speaker:"other", text:"*Your friend Sam is sitting alone and looks sad*" },
+        steps: [
+            { prompt:"What do you do?", choices:[
+                { text:"Hey Sam, are you okay? You seem a bit down today.", next:1, good:true },
+                { text:"Walk past and don't say anything.", next:2, good:false }
+            ]},
+            { speaker:"other", text:"Not really... I had a fight with my mum this morning and I feel awful.", choices:[
+                { text:"I'm sorry to hear that. Do you want to talk about it, or would you rather just sit together?", next:3, good:true },
+                { text:"Just don't think about it. Let's play a game!", next:4, good:false }
+            ]},
+            { speaker:"other", text:"*Sam stays alone*", end:true, feedback:"When a friend looks upset, checking on them shows you care. A simple 'Are you okay?' can mean the world." },
+            { speaker:"other", text:"Thanks... I think I just want to sit for a bit. But it helps knowing you're here.", end:true, feedback:"Perfect response! You gave Sam the choice of talking or just having company. That's real empathy." },
+            { speaker:"other", text:"I don't really feel like playing right now...", end:true, feedback:"Sometimes people need to feel their feelings before they can move on. Offering to just sit with them is often better than trying to distract them." }
+        ]
+    }
+];
+
+/* ===== SARCASM DECODER ===== */
+var SARCASM_DECODER = [
+    { said:"Oh great, more homework!", meant:"I'm annoyed about getting more homework. I don't actually think it's great." },
+    { said:"Well, THAT went well.", meant:"It actually went badly. I'm being sarcastic because I'm frustrated." },
+    { said:"Thanks for letting me know... eventually.", meant:"I'm annoyed you told me so late. I wish you'd told me sooner." },
+    { said:"No, please, take your time.", meant:"I'm impatient and want you to hurry up." },
+    { said:"Wow, what a surprise.", meant:"I'm not surprised at all. I expected this to happen." },
+    { said:"Oh sure, because THAT'S a great idea.", meant:"I think it's actually a bad idea." },
+    { said:"I'm SO glad it's Monday.", meant:"I don't like Mondays. I wish it was still the weekend." },
+    { said:"Nice weather we're having.", meant:"The weather is actually terrible. I'm being ironic." },
+    { said:"Well, aren't YOU special.", meant:"I think you're being a bit full of yourself." },
+    { said:"Yeah, because that always works.", meant:"It never works. I'm pointing out that this approach has failed before." }
+];
+
+/* ===== PROGRESS MAP MILESTONES ===== */
+var MAP_MILESTONES = [
+    { stars:0, label:"\u{1F331} Just Starting", emoji:"\u{1F331}" },
+    { stars:10, label:"\u{1F33F} First Steps", emoji:"\u{1F33F}" },
+    { stars:25, label:"\u{1F33B} Growing", emoji:"\u{1F33B}" },
+    { stars:50, label:"\u{1F333} Getting Stronger", emoji:"\u{1F333}" },
+    { stars:100, label:"\u{2B50} Star Achiever", emoji:"\u{2B50}" },
+    { stars:150, label:"\u{1F31F} Shining Bright", emoji:"\u{1F31F}" },
+    { stars:200, label:"\u{1F3C6} Champion", emoji:"\u{1F3C6}" },
+    { stars:300, label:"\u{1F525} On Fire", emoji:"\u{1F525}" },
+    { stars:500, label:"\u{1F48E} Diamond", emoji:"\u{1F48E}" },
+    { stars:750, label:"\u{1F30D} World Changer", emoji:"\u{1F30D}" },
+    { stars:1000, label:"\u{1F451} Ultimate Legend", emoji:"\u{1F451}" }
+];
+
+/* ===== REWARD SPINNER OPTIONS ===== */
+var SPINNER_REWARDS = [
+    { emoji:"\u{2B50}", text:"+5 bonus stars!", action:"stars", value:5 },
+    { emoji:"\u{2B50}", text:"+3 bonus stars!", action:"stars", value:3 },
+    { emoji:"\u{2B50}", text:"+10 bonus stars!", action:"stars", value:10 },
+    { emoji:"\u{1F602}", text:"Here's a joke: Why don't scientists trust atoms? Because they make up everything!", action:"none" },
+    { emoji:"\u{1F4AA}", text:"You're amazing! Keep being you!", action:"none" },
+    { emoji:"\u{2B50}", text:"+1 bonus star!", action:"stars", value:1 },
+    { emoji:"\u{1F389}", text:"+7 bonus stars! Lucky spin!", action:"stars", value:7 },
+    { emoji:"\u{1F31F}", text:"Double stars on your next activity!", action:"none" },
+    { emoji:"\u{1F49C}", text:"You are kind, brave, and wonderful!", action:"none" },
+    { emoji:"\u{2B50}", text:"+2 bonus stars!", action:"stars", value:2 }
+];

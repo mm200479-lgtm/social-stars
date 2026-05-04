@@ -2256,12 +2256,16 @@ function renderVolume() {
 }
 
 // ===== ADD NEW ROUTES =====
-// Add to initMenu routes
 var newRoutes = {
     "menu-wyr": function() { showWYR(); showScreen("wyr-screen"); },
     "menu-sensory": function() { initSensory(); showScreen("sensory-screen"); },
     "menu-emergency": function() { loadEmergencyCard(); showScreen("emergency-screen"); },
-    "menu-volume": function() { renderVolume(); showScreen("volume-screen"); }
+    "menu-volume": function() { renderVolume(); showScreen("volume-screen"); },
+    "menu-convsim": function() { startConvSim(); showScreen("convsim-screen"); },
+    "menu-teach": function() { startTeachMe(); showScreen("teach-screen"); },
+    "menu-sarcasm": function() { sarcasmIdx=0; showSarcasmCard(); showScreen("sarcasm-screen"); },
+    "menu-progressmap": function() { renderProgressMap(); showScreen("progressmap-screen"); },
+    "menu-spinner": function() { showScreen("spinner-screen"); }
 };
 Object.keys(newRoutes).forEach(function(id) {
     var el = $("#" + id); if (el) el.addEventListener("click", newRoutes[id]);
@@ -2269,17 +2273,206 @@ Object.keys(newRoutes).forEach(function(id) {
 
 // Back buttons for new screens
 ["#bodyscan-back-btn","#iceberg-back-btn","#colorbreathe-back-btn","#fidget-back-btn",
- "#wyr-back-btn","#sensory-back-btn","#emergency-back-btn","#volume-back-btn"].forEach(function(s) {
+ "#wyr-back-btn","#sensory-back-btn","#emergency-back-btn","#volume-back-btn",
+ "#convsim-back-btn","#teach-back-btn","#sarcasm-back-btn","#progressmap-back-btn","#spinner-back-btn"].forEach(function(s) {
     var el = $(s);
     if (el && !el._backBound) {
         el._backBound = true;
-        // calm tools go back to calm, others go to menu
         if (s.indexOf("bodyscan") !== -1 || s.indexOf("iceberg") !== -1 || s.indexOf("colorbreathe") !== -1 || s.indexOf("fidget") !== -1) {
-            // already bound above
+            // already bound to calm screen above
         } else {
             el.addEventListener("click", function() { showScreen("menu-screen"); });
         }
     }
+});
+
+// ===== CONVERSATION SIMULATOR =====
+var convSimState = { conv: null, stepIdx: 0 };
+
+function startConvSim() {
+    var conv = CONV_SIMULATIONS[Math.floor(Math.random() * CONV_SIMULATIONS.length)];
+    convSimState.conv = conv;
+    convSimState.stepIdx = 0;
+    var chat = $("#convsim-chat"); chat.innerHTML = "";
+    // Show start message
+    addConvMsg(chat, conv.start.speaker, conv.start.text);
+    showConvChoices(0);
+}
+
+function addConvMsg(chat, speaker, text) {
+    var msg = document.createElement("div");
+    msg.className = "convsim-msg " + (speaker === "other" ? "other" : "self");
+    msg.textContent = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function showConvChoices(stepIdx) {
+    var step = convSimState.conv.steps[stepIdx];
+    var area = $("#convsim-choices"); area.innerHTML = "";
+    if (step.end) {
+        // Show feedback
+        var fb = document.createElement("div"); fb.className = "feedback-area";
+        fb.innerHTML = '<p class="feedback-text">' + (step.feedback || "Great conversation!") + '</p>' +
+            '<button class="btn btn-primary" onclick="startConvSim()">Try Another</button>';
+        area.appendChild(fb);
+        state.totalStars += 3; state.replayCount = (state.replayCount || 0) + 1;
+        saveProfile(); updateStars();
+        return;
+    }
+    if (step.prompt) {
+        var label = document.createElement("p");
+        label.style.cssText = "font-weight:700;margin-bottom:8px;text-align:center;";
+        label.textContent = step.prompt;
+        area.appendChild(label);
+    }
+    if (step.choices) {
+        step.choices.forEach(function(ch) {
+            var btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.textContent = ch.text;
+            btn.addEventListener("click", function() {
+                var chat = $("#convsim-chat");
+                addConvMsg(chat, "self", ch.text);
+                if (ch.good) playChime(); else playGentle();
+                // Show next step
+                var nextStep = convSimState.conv.steps[ch.next];
+                if (nextStep && nextStep.speaker) {
+                    setTimeout(function() {
+                        addConvMsg(chat, nextStep.speaker, nextStep.text);
+                        showConvChoices(ch.next);
+                    }, 800);
+                } else {
+                    showConvChoices(ch.next);
+                }
+            });
+            area.appendChild(btn);
+        });
+    }
+}
+
+// ===== TEACH ME MODE =====
+var teachState = { scenarios: [], index: 0 };
+
+function startTeachMe() {
+    // Gather wrong answers from all categories
+    var all = [];
+    Object.keys(SCENARIOS).forEach(function(cat) {
+        SCENARIOS[cat].forEach(function(sc) {
+            var wrong = sc.choices.filter(function(c) { return !c.correct; });
+            if (wrong.length > 0) {
+                all.push({ emoji: sc.emoji, text: sc.text, wrongAnswer: wrong[0].text, explanation: sc.encourageFeedback });
+            }
+        });
+    });
+    teachState.scenarios = shuffleArray(all).slice(0, 5);
+    teachState.index = 0;
+    showTeachScenario();
+}
+
+function showTeachScenario() {
+    var sc = teachState.scenarios[teachState.index];
+    $("#teach-emoji").textContent = sc.emoji;
+    $("#teach-text").textContent = sc.text;
+    $("#teach-wrong").textContent = "\u274C Wrong answer: \"" + sc.wrongAnswer + "\"";
+    $("#teach-input").value = "";
+    $("#teach-feedback").classList.add("hidden");
+}
+
+var teachSubmitBtn = $("#teach-submit");
+if (teachSubmitBtn) teachSubmitBtn.addEventListener("click", function() {
+    var input = $("#teach-input").value.trim();
+    if (input.length < 5) return; // Need at least a short explanation
+    state.totalStars += 5; saveProfile(); updateStars(); playChime();
+    $("#teach-feedback-icon").textContent = "\u{1F31F}";
+    $("#teach-feedback-text").textContent = "Great teaching! +5 stars! Here's the full explanation:";
+    $("#teach-feedback-text").className = "feedback-text success";
+    // Show the real explanation below
+    var sc = teachState.scenarios[teachState.index];
+    var explainP = document.createElement("p");
+    explainP.className = "feedback-explanation";
+    explainP.textContent = sc.explanation;
+    var fb = $("#teach-feedback");
+    // Remove old explanation if exists
+    var oldP = fb.querySelector(".feedback-explanation");
+    if (oldP) oldP.remove();
+    fb.querySelector(".feedback-text").after(explainP);
+    fb.classList.remove("hidden");
+});
+
+var teachNextBtn = $("#teach-next");
+if (teachNextBtn) teachNextBtn.addEventListener("click", function() {
+    teachState.index++;
+    if (teachState.index >= teachState.scenarios.length) {
+        checkBadges(); showScreen("menu-screen");
+    } else {
+        showTeachScenario();
+    }
+});
+
+// ===== SARCASM DECODER =====
+var sarcasmIdx = 0;
+function showSarcasmCard() {
+    var s = SARCASM_DECODER[sarcasmIdx];
+    $("#sarcasm-said").textContent = "\u{1F4AC} \"" + s.said + "\"";
+    $("#sarcasm-meant").textContent = s.meant;
+    $("#sarcasm-reveal").classList.add("hidden");
+    var decodeBtn = $("#sarcasm-decode");
+    if (decodeBtn) decodeBtn.disabled = false;
+}
+var sdBtn = $("#sarcasm-decode");
+if (sdBtn) sdBtn.addEventListener("click", function() {
+    $("#sarcasm-reveal").classList.remove("hidden");
+    this.disabled = true;
+    state.totalStars++; saveProfile(); updateStars(); playChime();
+});
+var snBtn2 = $("#sarcasm-next");
+if (snBtn2) snBtn2.addEventListener("click", function() {
+    sarcasmIdx++;
+    if (sarcasmIdx >= SARCASM_DECODER.length) sarcasmIdx = 0;
+    showSarcasmCard();
+});
+
+// ===== PROGRESS MAP =====
+function renderProgressMap() {
+    var map = $("#progress-map"); map.innerHTML = "";
+    MAP_MILESTONES.forEach(function(m) {
+        var reached = state.totalStars >= m.stars;
+        var node = document.createElement("div");
+        node.className = "map-node";
+        node.innerHTML = '<div class="map-dot ' + (reached ? "reached" : "future") + '">' + (reached ? "\u2714" : "") + '</div>' +
+            '<span class="map-label ' + (reached ? "reached" : "future") + '">' + m.label + ' (' + m.stars + ' stars)</span>';
+        map.appendChild(node);
+    });
+}
+
+// ===== REWARD SPINNER =====
+var spinnerEl = $("#spinner-display"), spinnerResult = $("#spinner-result"), spinnerBtn = $("#spinner-spin");
+var spinnerAvailable = true;
+
+if (spinnerBtn) spinnerBtn.addEventListener("click", function() {
+    if (!spinnerAvailable) return;
+    // Check if spinner was used today
+    if (state._spinDate === todayStr()) {
+        spinnerResult.textContent = "You already spun today! Come back tomorrow.";
+        return;
+    }
+    spinnerAvailable = false;
+    spinnerEl.classList.add("spinning");
+    spinnerResult.textContent = "Spinning...";
+
+    var reward = SPINNER_REWARDS[Math.floor(Math.random() * SPINNER_REWARDS.length)];
+    setTimeout(function() {
+        spinnerEl.classList.remove("spinning");
+        spinnerEl.textContent = reward.emoji;
+        spinnerResult.textContent = reward.text;
+        if (reward.action === "stars") {
+            state.totalStars += reward.value;
+        }
+        state._spinDate = todayStr();
+        saveProfile(); updateStars(); playComplete(); fireConfetti();
+        spinnerAvailable = true;
+    }, 2000);
 });
 
 // ===== AVATAR BUILDER =====
@@ -2310,14 +2503,17 @@ function getAvatarDisplay() {
 
 function getAvatarHTML() {
     var p = getAvatarParts();
-    var html = '';
+    var html = '<div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;">';
+    // Left side: the character stacked
+    html += '<div style="display:flex;flex-direction:column;align-items:center;">';
     if (p.hat) html += '<div class="av-row av-hat">' + p.hat + '</div>';
     html += '<div class="av-row av-face">' + p.face + '</div>';
     if (p.outfit) html += '<div class="av-row av-outfit">' + p.outfit + '</div>';
-    var extras = '';
-    if (p.accessory) extras += p.accessory;
-    if (p.pet) extras += p.pet;
-    if (extras) html += '<div class="av-extras">' + extras + '</div>';
+    if (p.accessory) html += '<div class="av-extras">' + p.accessory + '</div>';
+    html += '</div>';
+    // Right side: pet standing beside
+    if (p.pet) html += '<div style="font-size:3rem;padding-bottom:4px;">' + p.pet + '</div>';
+    html += '</div>';
     return html;
 }
 

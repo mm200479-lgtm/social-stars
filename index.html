@@ -262,6 +262,31 @@
                         <span class="card-title">Volume Check</span>
                         <span class="card-desc">Which voice should I use?</span>
                     </button>
+                    <button class="menu-card" id="menu-convsim" role="listitem">
+                        <span class="card-emoji">🗨️</span>
+                        <span class="card-title">Conversation Practice</span>
+                        <span class="card-desc">Practice real conversations</span>
+                    </button>
+                    <button class="menu-card" id="menu-teach" role="listitem">
+                        <span class="card-emoji">🎓</span>
+                        <span class="card-title">Teach Me!</span>
+                        <span class="card-desc">YOU become the teacher</span>
+                    </button>
+                    <button class="menu-card" id="menu-sarcasm" role="listitem">
+                        <span class="card-emoji">🔍</span>
+                        <span class="card-title">Sarcasm Decoder</span>
+                        <span class="card-desc">What did they really mean?</span>
+                    </button>
+                    <button class="menu-card" id="menu-progressmap" role="listitem">
+                        <span class="card-emoji">🗺️</span>
+                        <span class="card-title">My Journey Map</span>
+                        <span class="card-desc">See how far you've come!</span>
+                    </button>
+                    <button class="menu-card" id="menu-spinner" role="listitem">
+                        <span class="card-emoji">🎰</span>
+                        <span class="card-title">Reward Spinner</span>
+                        <span class="card-desc">Spin for surprise rewards!</span>
+                    </button>
                     <button class="menu-card" id="menu-settings" role="listitem">
                         <span class="card-emoji">⚙️</span>
                         <span class="card-title">Settings</span>
@@ -1254,6 +1279,79 @@
                     <label>Things that help me calm down</label><input type="text" id="emer-calm" class="ci-note-input" maxlength="80">
                 </div>
                 <button id="emer-save" class="btn btn-primary" style="width:100%;margin-top:12px;">Save Card</button>
+            </div>
+        </div>
+
+        <!-- ========== Conversation Simulator Screen ========== -->
+        <div id="convsim-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="convsim-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🗨️ Conversation Simulator</h2>
+                <div id="convsim-chat" class="convsim-chat"></div>
+                <div id="convsim-choices" class="choices-area"></div>
+            </div>
+        </div>
+
+        <!-- ========== Teach Me Mode Screen ========== -->
+        <div id="teach-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="teach-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🎓 Teach Me!</h2>
+                <p class="section-subtitle">YOU are the teacher now! Explain why the answer is wrong.</p>
+                <div id="teach-scenario" class="scenario-area">
+                    <div id="teach-emoji" class="scenario-emoji"></div>
+                    <p id="teach-text" class="scenario-text"></p>
+                </div>
+                <div id="teach-wrong" class="teach-wrong"></div>
+                <div class="ci-note-group">
+                    <label for="teach-input">Explain why this answer is wrong:</label>
+                    <textarea id="teach-input" class="ci-note-input" rows="3" maxlength="300" placeholder="This answer is wrong because..."></textarea>
+                    <button id="teach-submit" class="btn btn-primary btn-small" style="width:100%;margin-top:8px;">Submit My Explanation +5⭐</button>
+                </div>
+                <div id="teach-feedback" class="feedback-area hidden">
+                    <div id="teach-feedback-icon" class="feedback-icon"></div>
+                    <p id="teach-feedback-text" class="feedback-text"></p>
+                    <button id="teach-next" class="btn btn-primary">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Sarcasm Decoder Screen ========== -->
+        <div id="sarcasm-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="sarcasm-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🔍 Sarcasm Decoder</h2>
+                <p class="section-subtitle">What they said vs what they meant</p>
+                <div id="sarcasm-card" class="scenario-area">
+                    <p id="sarcasm-said" class="tone-quote"></p>
+                    <div id="sarcasm-reveal" class="hidden" style="margin-top:16px;">
+                        <p style="font-weight:700;color:var(--color-success);">What they actually meant:</p>
+                        <p id="sarcasm-meant" style="font-size:1.1rem;margin-top:8px;"></p>
+                    </div>
+                </div>
+                <button id="sarcasm-decode" class="btn btn-primary" style="width:100%;">🔓 Decode!</button>
+                <button id="sarcasm-next" class="btn btn-secondary" style="width:100%;margin-top:10px;">Next →</button>
+            </div>
+        </div>
+
+        <!-- ========== Progress Map Screen ========== -->
+        <div id="progressmap-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="progressmap-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container">
+                <h2 class="section-title">🗺️ My Journey Map</h2>
+                <div id="progress-map" class="progress-map"></div>
+            </div>
+        </div>
+
+        <!-- ========== Reward Spinner Screen ========== -->
+        <div id="spinner-screen" class="screen" tabindex="-1">
+            <header class="game-header"><button id="spinner-back-btn" class="btn btn-small btn-back">← Menu</button></header>
+            <div class="game-container breathing-container">
+                <h2 class="section-title">🎰 Reward Spinner</h2>
+                <p class="section-subtitle">Spin for a surprise reward!</p>
+                <div id="spinner-display" class="spinner-display">🎁</div>
+                <button id="spinner-spin" class="btn btn-primary">Spin! 🎰</button>
+                <p id="spinner-result" class="breathing-counter"></p>
             </div>
         </div>
 
