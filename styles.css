@@ -1136,11 +1136,11 @@ body.quiet-mode * { animation-duration: 0.01ms !important; transition-duration: 
 .spot-wrong { border-color: #f44336; background: #ffebee; }
 
 /* ===== Dots & Boxes ===== */
-.db-grid { max-width: 400px; margin: 0 auto; gap: 0; display: grid; }
-.db-dot { width: 24px; height: 24px; background: var(--color-text); border-radius: 50%; }
-.db-hline { height: 24px; min-height: 44px; background: var(--color-border); cursor: pointer; border-radius: 6px; touch-action: manipulation; transition: background 0.2s; }
-.db-vline { width: 24px; min-width: 44px; background: var(--color-border); cursor: pointer; border-radius: 6px; touch-action: manipulation; transition: background 0.2s; }
-.db-box { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; min-height: 50px; }
+.db-grid { width: 100%; max-width: 500px; margin: 0 auto; gap: 0; display: grid; }
+.db-dot { width: 100%; aspect-ratio: 1; background: var(--color-text); border-radius: 50%; max-width: 28px; max-height: 28px; margin: auto; }
+.db-hline { height: 100%; min-height: 48px; background: var(--color-border); cursor: pointer; border-radius: 8px; touch-action: manipulation; transition: background 0.2s; }
+.db-vline { width: 100%; min-width: 48px; background: var(--color-border); cursor: pointer; border-radius: 8px; touch-action: manipulation; transition: background 0.2s; }
+.db-box { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; min-height: 60px; }
 .db-hline:active, .db-vline:active { opacity: 0.6; }
 
 /* ===== Word Search ===== */

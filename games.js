@@ -534,9 +534,15 @@ function startDotsBoxes() {
     var totalCols = dbCols * 2 + 1;
     var colTemplate = "";
     for (var ci = 0; ci < totalCols; ci++) {
-        colTemplate += (ci % 2 === 0) ? "24px " : "1fr ";
+        colTemplate += (ci % 2 === 0) ? "28px " : "1fr ";
     }
     grid.style.gridTemplateColumns = colTemplate.trim();
+    var totalRows = dbRows * 2 + 1;
+    var rowTemplate = "";
+    for (var ri = 0; ri < totalRows; ri++) {
+        rowTemplate += (ri % 2 === 0) ? "28px " : "1fr ";
+    }
+    grid.style.gridTemplateRows = rowTemplate.trim();
 
     for(var r=0; r<=dbRows*2; r++) {
         for(var c=0; c<=dbCols*2; c++) {
