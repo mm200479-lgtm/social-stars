@@ -4,6 +4,16 @@
  * Colouring Book, Feelings Bingo, Pattern Match, Spot the Difference, Dots & Boxes
  */
 
+// Local shuffleArray in case game.js hasn't loaded yet
+function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
 // ===== MEMORY MATCH =====
 var memoryPairs = [
     {emoji:"\u{1F604}",name:"Happy"},{emoji:"\u{1F622}",name:"Sad"},{emoji:"\u{1F621}",name:"Angry"},
@@ -136,12 +146,16 @@ function renderHangman() {
     });
     // Check win/lose
     var won = hangWord.split("").every(function(l){return hangGuessed.indexOf(l)!==-1;});
+    var lost = hangWrong >= hangMax;
     if(won) {
         if(info) info.textContent = "\u{1F389} You got it! The word was " + hangWord + "! +3\u2B50";
+        kb.querySelectorAll(".hang-key").forEach(function(b){b.disabled=true;});
         if(typeof state!=="undefined"){state.totalStars+=3;state.hangmanWon=true;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();if(typeof checkBadges==="function")checkBadges();}
         if(typeof playComplete==="function")playComplete();
-    } else if(hangWrong>=hangMax) {
+    } else if(lost) {
         if(info) info.textContent = "The word was " + hangWord + ". Try again! +1\u2B50";
+        display.textContent = hangWord.split("").join(" ");
+        kb.querySelectorAll(".hang-key").forEach(function(b){b.disabled=true;});
         if(typeof state!=="undefined"){state.totalStars+=1;if(typeof saveProfile==="function")saveProfile();if(typeof updateStars==="function")updateStars();}
     }
 }
@@ -164,6 +178,36 @@ function startDrawing() {
     drawCtx = drawCanvas.getContext("2d");
     drawCtx.fillStyle = "#ffffff"; drawCtx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
     drawCtx.lineCap = "round"; drawCtx.lineJoin = "round";
+
+    // Colour picker
+    var colorDiv = document.getElementById("draw-colors");
+    if (colorDiv) {
+        colorDiv.innerHTML = "";
+        var colors = ["#000000","#f44336","#e91e63","#9c27b0","#2196f3","#4caf50","#ffeb3b","#ff9800","#795548","#ffffff"];
+        colors.forEach(function(c) {
+            var btn = document.createElement("button");
+            btn.className = "color-swatch" + (c === drawColor ? " active" : "");
+            btn.style.background = c;
+            btn.addEventListener("click", function() {
+                drawColor = c;
+                colorDiv.querySelectorAll(".color-swatch").forEach(function(b) { b.classList.remove("active"); });
+                btn.classList.add("active");
+            });
+            colorDiv.appendChild(btn);
+        });
+        // Size buttons
+        [2, 4, 8, 16].forEach(function(s) {
+            var btn = document.createElement("button");
+            btn.className = "color-swatch" + (s === drawSize ? " active" : "");
+            btn.style.background = "var(--color-card)";
+            btn.style.border = "2px solid var(--color-border)";
+            btn.style.fontSize = "0.7rem";
+            btn.style.fontWeight = "700";
+            btn.textContent = s === 2 ? "S" : (s === 4 ? "M" : (s === 8 ? "L" : "XL"));
+            btn.addEventListener("click", function() { drawSize = s; });
+            colorDiv.appendChild(btn);
+        });
+    }
 
     function getPos(e) {
         var rect = drawCanvas.getBoundingClientRect();

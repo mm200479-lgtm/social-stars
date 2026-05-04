@@ -2524,16 +2524,7 @@ var newRoutes = {
     "menu-teach": function() { startTeachMe(); showScreen("teach-screen"); },
     "menu-sarcasm": function() { sarcasmIdx=0; showSarcasmCard(); showScreen("sarcasm-screen"); },
     "menu-progressmap": function() { renderProgressMap(); showScreen("progressmap-screen"); },
-    "menu-spinner": function() { showScreen("spinner-screen"); },
-    "menu-memory": function() { startMemory(); showScreen("memory-screen"); },
-    "menu-ttt": function() { startTTT(); showScreen("ttt-screen"); },
-    "menu-hangman": function() { startHangman(); showScreen("hangman-screen"); },
-    "menu-wordsearch": function() { startWordSearch(); showScreen("wordsearch-screen"); },
-    "menu-drawing": function() { initDrawing(); showScreen("drawing-screen"); },
-    "menu-bingo": function() { startBingo(); showScreen("bingo-screen"); },
-    "menu-pattern": function() { patternIdx=0; showPattern(); showScreen("pattern-screen"); },
-    "menu-spotdiff": function() { spotIdx=0; showSpotDiff(); showScreen("spotdiff-screen"); },
-    "menu-dotsboxes": function() { startDotsBoxes(); showScreen("dotsboxes-screen"); }
+    "menu-spinner": function() { showScreen("spinner-screen"); }
 };
 Object.keys(newRoutes).forEach(function(id) {
     var el = $("#" + id); if (el) el.addEventListener("click", newRoutes[id]);
