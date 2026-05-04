@@ -66,7 +66,14 @@ function freshState(name) {
         _sotdDate: "",
         _fontSize: 2,
         _highContrast: false,
-        _simplified: false
+        _simplified: false,
+        chores: [],
+        choresCompleted: {},
+        choresDayComplete: false,
+        weeklyComplete: false,
+        weeklyProgress: {},
+        weeklyId: "",
+        replayCount: 0
     };
 }
 
@@ -358,6 +365,7 @@ function initMenu() {
         "menu-vocab": function() { startVocab(); },
         "menu-rules": function() { renderRules(); showScreen("rules-screen"); },
         "menu-settings": function() { initSettings(); showScreen("settings-screen"); },
+        "menu-chores": function() { renderChores(); showScreen("chores-screen"); },
         "menu-parent": function() {
             pinEntry = ""; updatePinDots();
             var pe = $("#pin-error"); if (pe) pe.classList.add("hidden");
@@ -471,9 +479,15 @@ function finishRound() {
         state.categoriesCompleted.push(game.currentCategory);
     if (ratio === 1) {
         state.perfectRound = true;
-        // +3 bonus stars for a perfect round!
         state.totalStars += 3;
     }
+    // +2 completion bonus every time (replay rewards!)
+    state.totalStars += 2;
+    state.replayCount = (state.replayCount || 0) + 1;
+    // Track weekly progress
+    if (!state.weeklyProgress) state.weeklyProgress = {};
+    state.weeklyProgress.catsPlayed = (state.weeklyProgress.catsPlayed || 0) + 1;
+
     if (!state.categoryStats) state.categoryStats = {};
     var prev = state.categoryStats[game.currentCategory] || { played:0, bestScore:0, totalQ:0, totalCorrect:0 };
     prev.played++; prev.totalQ += total; prev.totalCorrect += stars;
@@ -1407,6 +1421,52 @@ $("#pin-back-btn").addEventListener("click", function() { pinEntry = ""; updateP
 var sfc2 = document.getElementById("settings-family-code");
 if (sfc2 && familyCode) sfc2.textContent = familyCode;
 
+// ===== WEEKLY CHALLENGE =====
+function getWeekId() {
+    var d = new Date();
+    var jan1 = new Date(d.getFullYear(), 0, 1);
+    var week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+    return d.getFullYear() + "-W" + week;
+}
+
+function showWeeklyChallenge() {
+    var el = $("#weekly-challenge");
+    if (!el) return;
+    var currentWeek = getWeekId();
+
+    // Reset weekly progress if new week
+    if (state.weeklyId !== currentWeek) {
+        state.weeklyId = currentWeek;
+        state.weeklyProgress = {};
+        saveProfile();
+    }
+
+    // Pick challenge based on week number
+    var seed = 0;
+    for (var i = 0; i < currentWeek.length; i++) seed += currentWeek.charCodeAt(i);
+    var challenge = WEEKLY_CHALLENGES[seed % WEEKLY_CHALLENGES.length];
+
+    $("#weekly-title").textContent = challenge.emoji + " Weekly Challenge: " + challenge.title;
+    $("#weekly-desc").textContent = challenge.desc;
+
+    var done = challenge.check(state);
+    var statusEl = $("#weekly-status");
+    if (done) {
+        statusEl.textContent = "\u2705 Complete! +10 bonus stars!";
+        statusEl.className = "weekly-status complete";
+        if (!state.weeklyProgress._rewarded) {
+            state.weeklyProgress._rewarded = true;
+            state.weeklyComplete = true;
+            state.totalStars += 10;
+            saveProfile(); updateStars(); checkBadges();
+        }
+    } else {
+        statusEl.textContent = "\u{1F4AA} In progress \u2014 keep going!";
+        statusEl.className = "weekly-status in-progress";
+    }
+    el.classList.remove("hidden");
+}
+
 // ===== STAR OF THE DAY =====
 function showStarOfTheDay() {
     var banner = $("#sotd-banner");
@@ -1509,6 +1569,111 @@ function renderRules() {
 
 $("#rules-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
 
+// ===== CHORE LIST =====
+function getChores() {
+    if (!state.chores || state.chores.length === 0) {
+        state.chores = DEFAULT_CHORES.map(function(c, i) {
+            return { id: "chore_" + i, name: c.name, stars: c.stars, emoji: c.emoji };
+        });
+        saveProfile();
+    }
+    return state.chores;
+}
+
+function getCompletedToday() {
+    if (!state.choresCompleted) state.choresCompleted = {};
+    var today = todayStr();
+    if (!state.choresCompleted[today]) state.choresCompleted[today] = [];
+    return state.choresCompleted[today];
+}
+
+function renderChores() {
+    var chores = getChores();
+    var completed = getCompletedToday();
+    var list = $("#chores-list");
+    list.innerHTML = "";
+    var allDone = true;
+
+    chores.forEach(function(chore) {
+        var isDone = completed.indexOf(chore.id) !== -1;
+        if (!isDone) allDone = false;
+        var item = document.createElement("div");
+        item.className = "chore-item" + (isDone ? " completed" : "");
+        item.innerHTML =
+            '<span class="chore-check">' + (isDone ? "\u2705" : "\u2B1C") + '</span>' +
+            '<div class="chore-info"><div class="chore-name">' + (chore.emoji || "") + " " + escHtml(chore.name) + '</div></div>' +
+            '<span class="chore-stars-value">' + (isDone ? "Done!" : "+" + chore.stars + " \u2B50") + '</span>';
+
+        if (!isDone) {
+            item.addEventListener("click", function() {
+                completed.push(chore.id);
+                state.totalStars += chore.stars;
+                saveProfile(); updateStars();
+                playChime();
+                renderChores();
+                checkBadges();
+            });
+        }
+        list.appendChild(item);
+    });
+
+    var doneMsg = $("#chores-done-msg");
+    if (allDone && chores.length > 0) { doneMsg.classList.remove("hidden"); }
+    else { doneMsg.classList.add("hidden"); }
+}
+
+// Chore edit toggle
+var choreEditVisible = false;
+$("#chores-edit-toggle").addEventListener("click", function() {
+    choreEditVisible = !choreEditVisible;
+    var section = $("#chores-edit-section");
+    if (choreEditVisible) {
+        section.classList.remove("hidden");
+        renderChoreManage();
+        this.textContent = "\u2B06\uFE0F Hide Edit";
+    } else {
+        section.classList.add("hidden");
+        this.textContent = "\u{1F527} Edit Chores (Parent)";
+    }
+});
+
+// Add chore
+$("#chore-add-btn").addEventListener("click", function() {
+    var input = $("#chore-add-input");
+    var name = input.value.trim();
+    if (!name) return;
+    var stars = parseInt($("#chore-stars-select").value) || 3;
+    var chores = getChores();
+    chores.push({ id: "chore_" + Date.now(), name: name, stars: stars, emoji: "\u2B50" });
+    state.chores = chores;
+    saveProfile();
+    input.value = "";
+    renderChoreManage();
+    renderChores();
+});
+
+function renderChoreManage() {
+    var list = $("#chores-manage-list");
+    list.innerHTML = "";
+    var chores = getChores();
+    chores.forEach(function(chore, idx) {
+        var item = document.createElement("div");
+        item.className = "chore-manage-item";
+        item.innerHTML = '<span>' + escHtml(chore.name) + ' (' + chore.stars + '\u2B50)</span>' +
+            '<button class="chore-remove-btn">\u274C</button>';
+        item.querySelector(".chore-remove-btn").addEventListener("click", function() {
+            chores.splice(idx, 1);
+            state.chores = chores;
+            saveProfile();
+            renderChoreManage();
+            renderChores();
+        });
+        list.appendChild(item);
+    });
+}
+
+$("#chores-back-btn").addEventListener("click", function() { showScreen("menu-screen"); });
+
 // ===== SETTINGS =====
 var fontSizes = ["font-xs","font-sm","font-md","font-lg","font-xl"];
 
@@ -1600,7 +1765,7 @@ var origShowScreen2 = showScreen;
 showScreen = function(id) {
     origShowScreen2(id);
     if (id === "results-screen") { fireConfetti(); playComplete(); }
-    if (id === "menu-screen") { checkDailyBonus(); checkBadges(); showStarOfTheDay(); applySavedSettings(); }
+    if (id === "menu-screen") { checkDailyBonus(); checkBadges(); showWeeklyChallenge(); showStarOfTheDay(); applySavedSettings(); }
 };
 
 // ===== Init =====

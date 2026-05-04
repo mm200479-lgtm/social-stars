@@ -149,6 +149,11 @@
                         <span class="card-title">Social Rules</span>
                         <span class="card-desc">Helpful guides for social situations</span>
                     </button>
+                    <button class="menu-card" id="menu-chores" role="listitem">
+                        <span class="card-emoji">✅</span>
+                        <span class="card-title">My Chores</span>
+                        <span class="card-desc">Complete tasks &amp; earn stars</span>
+                    </button>
                     <button class="menu-card" id="menu-settings" role="listitem">
                         <span class="card-emoji">⚙️</span>
                         <span class="card-title">Settings</span>
@@ -575,6 +580,13 @@
                     <button class="timer-preset-btn" data-seconds="60">1 min</button>
                     <button class="timer-preset-btn" data-seconds="120">2 min</button>
                     <button class="timer-preset-btn" data-seconds="300">5 min</button>
+                    <button class="timer-preset-btn" data-seconds="600">10 min</button>
+                </div>
+                <div class="timer-presets" style="margin-top:0;">
+                    <button class="timer-preset-btn" data-seconds="120">🪥 Brush teeth</button>
+                    <button class="timer-preset-btn" data-seconds="300">👕 Get dressed</button>
+                    <button class="timer-preset-btn" data-seconds="600">📚 Homework</button>
+                    <button class="timer-preset-btn" data-seconds="900">📺 Screen time</button>
                 </div>
                 <div class="timer-display-wrap">
                     <svg id="timer-svg" class="timer-svg" viewBox="0 0 200 200">
@@ -621,6 +633,13 @@
         </div>
 
         <!-- ========== Star of the Day (on menu) ========== -->
+        <div id="weekly-challenge" class="weekly-challenge hidden">
+            <div class="weekly-inner">
+                <h3 id="weekly-title">📅 Weekly Challenge</h3>
+                <p id="weekly-desc" class="weekly-desc"></p>
+                <div id="weekly-status" class="weekly-status"></div>
+            </div>
+        </div>
         <div id="sotd-banner" class="sotd-banner hidden">
             <div class="sotd-inner">
                 <h3>⭐ Star of the Day ⭐</h3>
@@ -661,6 +680,36 @@
                 <h2 class="section-title">📋 Social Rules</h2>
                 <p class="section-subtitle">Helpful guides for everyday situations</p>
                 <div id="rules-list" class="story-list"></div>
+            </div>
+        </div>
+
+        <!-- ========== Chore List Screen ========== -->
+        <div id="chores-screen" class="screen" tabindex="-1">
+            <header class="game-header">
+                <button id="chores-back-btn" class="btn btn-small btn-back">← Menu</button>
+            </header>
+            <div class="game-container">
+                <h2 class="section-title">✅ My Chores</h2>
+                <p class="section-subtitle">Complete tasks to earn stars!</p>
+                <div id="chores-list" class="chores-list"></div>
+                <div id="chores-done-msg" class="chores-done-msg hidden">
+                    <p>🌟 All done for today! Great job!</p>
+                </div>
+                <div id="chores-edit-section" class="chores-edit-section hidden">
+                    <h3 style="margin:20px 0 10px;">Add / Edit Chores (Parent)</h3>
+                    <div class="chore-add-row">
+                        <input type="text" id="chore-add-input" class="ci-note-input" placeholder="New chore name..." maxlength="50">
+                        <select id="chore-stars-select" class="chore-stars-select">
+                            <option value="1">1 ⭐</option>
+                            <option value="2">2 ⭐</option>
+                            <option value="3" selected>3 ⭐</option>
+                            <option value="5">5 ⭐</option>
+                        </select>
+                        <button id="chore-add-btn" class="btn btn-primary btn-small">Add</button>
+                    </div>
+                    <div id="chores-manage-list" class="chores-manage-list"></div>
+                </div>
+                <button id="chores-edit-toggle" class="btn btn-back" style="margin-top:16px;">🔧 Edit Chores (Parent)</button>
             </div>
         </div>
 

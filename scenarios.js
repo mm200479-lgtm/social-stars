@@ -206,6 +206,13 @@ const BADGES = [
     { id: "timer-used", emoji: "\u{23F1}\uFE0F", name: "Time Keeper", desc: "Complete a Visual Timer countdown", condition: (s) => s.timerUsed },
     { id: "star-150", emoji: "\u{1F31F}", name: "Mega Star", desc: "Earn 150 stars", condition: (s) => s.totalStars >= 150 },
     { id: "star-200", emoji: "\u{1F4A5}", name: "Legendary", desc: "Earn 200 stars", condition: (s) => s.totalStars >= 200 },
+    { id: "star-300", emoji: "\u{1F525}", name: "On Fire", desc: "Earn 300 stars", condition: (s) => s.totalStars >= 300 },
+    { id: "star-500", emoji: "\u{1F48E}", name: "Diamond Star", desc: "Earn 500 stars", condition: (s) => s.totalStars >= 500 },
+    { id: "star-750", emoji: "\u{1F30D}", name: "World Changer", desc: "Earn 750 stars", condition: (s) => s.totalStars >= 750 },
+    { id: "star-1000", emoji: "\u{1F3C6}", name: "Ultimate Champion", desc: "Earn 1000 stars!", condition: (s) => s.totalStars >= 1000 },
+    { id: "chores-done", emoji: "\u{2705}", name: "Helper Star", desc: "Complete all chores in one day", condition: (s) => s.choresDayComplete },
+    { id: "weekly-done", emoji: "\u{1F4C5}", name: "Weekly Winner", desc: "Complete a weekly challenge", condition: (s) => s.weeklyComplete },
+    { id: "replay-5", emoji: "\u{1F504}", name: "Practice Pro", desc: "Replay activities 5 times", condition: (s) => (s.replayCount || 0) >= 5 },
     { id: "all-badges", emoji: "\u{1F3C5}", name: "Badge Collector", desc: "Earn 20 other badges", condition: (s) => (s.earnedBadges || []).length >= 20 }
 ];
 
@@ -365,3 +372,183 @@ var SOCIAL_RULES = [
     { emoji:"\u{1F4AC}", rule:"Don't interrupt", detail:"Wait for a pause before speaking. If you accidentally interrupt, say \"Sorry, go ahead\" and let them finish." },
     { emoji:"\u{1F60A}", rule:"Compliment others", detail:"Saying nice things like \"Great job!\" or \"I like your drawing\" makes people feel good and strengthens friendships." }
 ];
+
+
+/* ===== MORE SOCIAL STORIES ===== */
+SOCIAL_STORIES.push(
+    {
+        id: "grocery-store", title: "Going to the Grocery Store", emoji: "\u{1F6D2}",
+        description: "What to expect when shopping",
+        steps: [
+            { emoji: "\u{1F4DD}", text: "We're going to the grocery store! We might make a list first so we know what to get." },
+            { emoji: "\u{1F697}", text: "We drive or walk to the store. It might be busy with lots of people and sounds. That's normal." },
+            { emoji: "\u{1F6D2}", text: "Inside, we get a trolley or basket. We walk through the aisles and find the things on our list." },
+            { emoji: "\u{1F34E}", text: "I can help by finding items, putting them in the trolley, or holding the list. That's being a great helper!" },
+            { emoji: "\u{1F4B0}", text: "At the checkout, we wait in line. I can help put items on the belt. The cashier will scan everything." },
+            { emoji: "\u{1F60A}", text: "We pay and say \"Thank you!\" to the cashier. Then we carry the bags to the car. I did great!" }
+        ]
+    },
+    {
+        id: "playdate", title: "Having a Playdate", emoji: "\u{1F3AE}",
+        description: "How to have fun with a friend at your house",
+        steps: [
+            { emoji: "\u{1F3E0}", text: "A friend is coming to my house to play! I might feel excited or a little nervous. Both are okay." },
+            { emoji: "\u{1F44B}", text: "When they arrive, I say \"Hi! Come in!\" and show them where we'll play." },
+            { emoji: "\u{1F3AE}", text: "We decide what to do together. If we want different things, we can take turns \u2014 their choice first, then mine." },
+            { emoji: "\u{1F37F}", text: "We might have a snack together. I offer to share and ask what they'd like." },
+            { emoji: "\u{1F91D}", text: "If we disagree about something, I try to stay calm and find a compromise. Friends work things out." },
+            { emoji: "\u{1F44B}", text: "When it's time to go, I say \"Thanks for coming! I had fun!\" and wave goodbye." }
+        ]
+    },
+    {
+        id: "losing-game", title: "Losing a Game", emoji: "\u{1F3B2}",
+        description: "How to handle not winning",
+        steps: [
+            { emoji: "\u{1F3AE}", text: "I'm playing a game with friends or family. I really want to win!" },
+            { emoji: "\u{1F614}", text: "But this time, I didn't win. I might feel disappointed, frustrated, or sad. Those feelings are normal." },
+            { emoji: "\u{1F4A8}", text: "I take a deep breath. Losing doesn't mean I'm bad at the game \u2014 it just means someone else did well this time." },
+            { emoji: "\u{1F91D}", text: "I say \"Good game!\" to the winner. This is called good sportsmanship and it makes everyone feel good." },
+            { emoji: "\u{1F4AA}", text: "I can try again next time! Every time I play, I get a little better." },
+            { emoji: "\u{2B50}", text: "Being a good loser is actually really hard and really brave. I should be proud of myself for handling it well!" }
+        ]
+    },
+    {
+        id: "haircut", title: "Getting a Haircut", emoji: "\u{2702}\uFE0F",
+        description: "What happens at the hairdresser",
+        steps: [
+            { emoji: "\u{1F3E0}", text: "Today I'm getting a haircut. The hairdresser's job is to make my hair look nice." },
+            { emoji: "\u{1F4BA}", text: "I sit in a special chair. They might put a cape around me to keep hair off my clothes." },
+            { emoji: "\u{1F4AC}", text: "The hairdresser might ask how I want my hair. I can tell them, or my parent can help explain." },
+            { emoji: "\u{2702}\uFE0F", text: "They'll use scissors or clippers. It might feel tickly or make buzzing sounds. It doesn't hurt!" },
+            { emoji: "\u{1F4A7}", text: "They might spray water on my hair. If anything feels uncomfortable, I can say \"That bothers me\" and they'll adjust." },
+            { emoji: "\u{1F31F}", text: "When it's done, I look in the mirror! I say \"Thank you!\" to the hairdresser. I was brave!" }
+        ]
+    },
+    {
+        id: "school-bus", title: "Riding the School Bus", emoji: "\u{1F68C}",
+        description: "What to expect on the bus",
+        steps: [
+            { emoji: "\u{23F0}", text: "I need to be at the bus stop on time. I wait safely on the pavement, not in the road." },
+            { emoji: "\u{1F68C}", text: "When the bus arrives, I wait for it to stop completely. Then I climb the steps carefully." },
+            { emoji: "\u{1F4BA}", text: "I find a seat and sit down. I keep my bag on my lap or under the seat." },
+            { emoji: "\u{1F50A}", text: "On the bus, I use my indoor voice. It might be noisy \u2014 I can use headphones if that helps." },
+            { emoji: "\u{1F91D}", text: "I can sit with a friend or by myself \u2014 both are fine! I keep my hands to myself." },
+            { emoji: "\u{1F3EB}", text: "When we arrive at school, I wait for the bus to stop, then walk off carefully. I did it!" }
+        ]
+    },
+    {
+        id: "restaurant", title: "Going to a Restaurant", emoji: "\u{1F37D}\uFE0F",
+        description: "How to behave when eating out",
+        steps: [
+            { emoji: "\u{1F37D}\uFE0F", text: "We're going to a restaurant! This means someone else cooks our food and brings it to us." },
+            { emoji: "\u{1F4BA}", text: "We wait to be shown to our table. I sit in my chair and look at the menu." },
+            { emoji: "\u{1F4AC}", text: "A waiter will come to take our order. I can tell them what I'd like, or point to it on the menu. I say \"please\"!" },
+            { emoji: "\u{23F3}", text: "We wait for our food. This can take a while! I can talk quietly, draw, or play a quiet game while waiting." },
+            { emoji: "\u{1F35D}", text: "When the food arrives, I eat nicely \u2014 chewing with my mouth closed and using my napkin." },
+            { emoji: "\u{1F60A}", text: "When we're done, we say \"Thank you!\" to the waiter. Going to a restaurant is a special treat!" }
+        ]
+    },
+    {
+        id: "plans-change", title: "When Plans Change", emoji: "\u{1F504}",
+        description: "How to handle unexpected changes",
+        steps: [
+            { emoji: "\u{1F4C5}", text: "Sometimes plans change and things don't happen the way I expected. This can feel really hard." },
+            { emoji: "\u{1F621}", text: "I might feel angry, sad, or frustrated when plans change. These feelings are completely okay and normal." },
+            { emoji: "\u{1F4A8}", text: "I take some deep breaths. Breathing helps my brain calm down so I can think clearly." },
+            { emoji: "\u{1F4AC}", text: "I can tell someone how I feel: \"I'm upset because I was looking forward to [the plan].\"" },
+            { emoji: "\u{1F914}", text: "I try to think about what we CAN do instead. Sometimes the new plan turns out to be fun too!" },
+            { emoji: "\u{1F4AA}", text: "Being flexible when plans change is really hard, but it's a superpower. I'm getting better at it every time!" }
+        ]
+    }
+);
+
+/* ===== DEFAULT CHORES ===== */
+var DEFAULT_CHORES = [
+    { name: "Make my bed", stars: 2, emoji: "\u{1F6CF}\uFE0F" },
+    { name: "Brush my teeth", stars: 1, emoji: "\u{1FAA5}" },
+    { name: "Get dressed by myself", stars: 2, emoji: "\u{1F455}" },
+    { name: "Put dirty clothes in the basket", stars: 1, emoji: "\u{1F9FA}" },
+    { name: "Help set the table", stars: 3, emoji: "\u{1F37D}\uFE0F" },
+    { name: "Tidy my room", stars: 3, emoji: "\u{1F3E0}" },
+    { name: "Pack my school bag", stars: 2, emoji: "\u{1F392}" },
+    { name: "Feed the pet", stars: 2, emoji: "\u{1F436}" },
+    { name: "Put shoes away", stars: 1, emoji: "\u{1F45F}" },
+    { name: "Help with dishes", stars: 3, emoji: "\u{1F37D}\uFE0F" },
+    { name: "Read for 15 minutes", stars: 3, emoji: "\u{1F4DA}" },
+    { name: "Say something kind to someone", stars: 2, emoji: "\u{1F49C}" }
+];
+
+/* ===== MORE STAR OF THE DAY QUESTIONS ===== */
+STAR_OF_THE_DAY.push(
+    { emoji:"\u{1F3AB}", question:"You're at the cinema and someone's phone rings. Is that okay?", choices:["Yes, phones are fine","No \u2014 phones should be on silent in the cinema","Only if it's a short call"], answer:1 },
+    { emoji:"\u{1F6BF}", question:"Why is it important to shower or bathe regularly?", choices:["It's not important","To stay clean and healthy, and to be considerate of people around us","Only before special events"], answer:1 },
+    { emoji:"\u{1F46B}", question:"Your friend got a new haircut and asks what you think. You don't love it. What do you say?", choices:["\"It looks terrible\"","\"I like that you tried something new!\"","Say nothing and walk away"], answer:1 },
+    { emoji:"\u{1F3E5}", question:"You see someone drop their walking stick. What should you do?", choices:["Keep walking","Pick it up and hand it to them with a smile","Stare at them"], answer:1 },
+    { emoji:"\u{1F4E7}", question:"Is it okay to read someone else's messages or diary without asking?", choices:["Yes, if you're curious","No \u2014 everyone deserves privacy","Only if they're your friend"], answer:1 },
+    { emoji:"\u{1F3B5}", question:"You're wearing headphones and someone tries to talk to you. What should you do?", choices:["Ignore them","Take off or pause your headphones and listen","Turn the music up louder"], answer:1 },
+    { emoji:"\u{1F6AA}", question:"You accidentally bump into someone in the hallway. What do you say?", choices:["Nothing","\"Sorry! Are you okay?\"","\"Watch where you're going!\""], answer:1 },
+    { emoji:"\u{1F37D}\uFE0F", question:"At dinner, you don't like the food that was made. What's a polite thing to do?", choices:["Say \"This is disgusting!\"","Try a small bite and say \"Thank you for cooking\" even if it's not your favourite","Refuse to eat anything"], answer:1 },
+    { emoji:"\u{1F3C3}", question:"You're in a race and you see someone fall behind. What's a kind thing to do?", choices:["Laugh at them","Encourage them: \"You can do it!\"","Ignore them and keep running"], answer:1 },
+    { emoji:"\u{1F4F7}", question:"Is it okay to take a photo of someone without asking?", choices:["Yes, if they look funny","No \u2014 always ask before taking someone's photo","Only if you won't share it"], answer:1 },
+    { emoji:"\u{1F9F3}", question:"You're visiting someone's house. Should you touch their things without asking?", choices:["Yes, if it looks interesting","No \u2014 ask first before touching other people's belongings","Only if they're not looking"], answer:1 },
+    { emoji:"\u{1F4AC}", question:"Someone tells you something private. What should you do?", choices:["Tell everyone","Keep it to yourself \u2014 they trusted you","Post it online"], answer:1 },
+    { emoji:"\u{1F9D1}\u200D\u{1F9BD}", question:"You see someone in a wheelchair. What's the right thing to do?", choices:["Stare at them","Treat them like anyone else \u2014 smile and say hi if appropriate","Ask them lots of questions about their wheelchair"], answer:1 },
+    { emoji:"\u{1F4E2}", question:"Your teacher is explaining something important. What should you do?", choices:["Talk to your friend","Listen carefully and save questions for after","Play with something in your desk"], answer:1 },
+    { emoji:"\u{1F91D}", question:"Someone new joins your group project. What's a welcoming thing to say?", choices:["\"Who are you?\"","\"Hi! Welcome to our group. I'm [name]. What ideas do you have?\"","Ignore them"], answer:1 }
+);
+
+
+/* ===== WEEKLY CHALLENGES ===== */
+var WEEKLY_CHALLENGES = [
+    { id: "w1", title: "Feelings Week", desc: "Complete 3 Learn & Play categories", emoji: "\u{1F4DA}", check: function(s) { return (s.weeklyProgress || {}).catsPlayed >= 3; } },
+    { id: "w2", title: "Check-In Champion", desc: "Do 5 daily check-ins this week", emoji: "\u{1F4DD}", check: function(s) { return (s.weeklyProgress || {}).checkinsThisWeek >= 5; } },
+    { id: "w3", title: "Calm Explorer", desc: "Use all 3 Calm Down tools", emoji: "\u{1F9D8}", check: function(s) { var p = s.weeklyProgress || {}; return p.breathingDone && p.groundingDone && p.squeezeDone; } },
+    { id: "w4", title: "Story Time", desc: "Read 3 Social Stories", emoji: "\u{1F4D6}", check: function(s) { return (s.weeklyProgress || {}).storiesRead >= 3; } },
+    { id: "w5", title: "Emotion Expert", desc: "Complete Emotion Match and Tone of Voice", emoji: "\u{1F3AD}", check: function(s) { var p = s.weeklyProgress || {}; return p.emDone && p.toneDone; } },
+    { id: "w6", title: "Kindness Week", desc: "Write 3 journal entries about your feelings", emoji: "\u{1F49C}", check: function(s) { return (s.weeklyProgress || {}).journalNotes >= 3; } },
+    { id: "w7", title: "Super Helper", desc: "Complete all your chores 3 days this week", emoji: "\u{2705}", check: function(s) { return (s.weeklyProgress || {}).choresDaysComplete >= 3; } },
+    { id: "w8", title: "Social Star", desc: "Play Perspective Taking and How Would You Feel", emoji: "\u{1F440}", check: function(s) { var p = s.weeklyProgress || {}; return p.perspDone && p.hfDone; } }
+];
+
+/* ===== MANY MORE SCENARIOS FOR LONGEVITY ===== */
+SCENARIOS.emotions.push(
+    { difficulty:1, emoji:"\u{1F60C}", text:"After a long day, your dad sits on the couch, closes his eyes, and lets out a big sigh. How is he feeling?", choices:[{text:"Tired and relaxed",correct:true},{text:"Angry",correct:false},{text:"Excited",correct:false}], correctFeedback:"Right! Closing eyes and sighing after a long day means someone is tired and trying to relax.", encourageFeedback:"When someone closes their eyes and sighs after a busy day, they're usually feeling tired and need to rest." },
+    { difficulty:1, emoji:"\u{1F92D}", text:"Your friend covers their mouth and their eyes go wide after accidentally saying something silly. How are they feeling?", choices:[{text:"Embarrassed",correct:true},{text:"Angry",correct:false},{text:"Bored",correct:false}], correctFeedback:"Yes! Covering the mouth with wide eyes is a classic sign of embarrassment or surprise at what they said!", encourageFeedback:"When someone covers their mouth after saying something, they're usually embarrassed or surprised at themselves." },
+    { difficulty:2, emoji:"\u{1F9D0}", text:"Your classmate keeps checking their bag over and over before a trip. What might they be feeling?", choices:[{text:"Bored",correct:false},{text:"Anxious \u2014 they want to make sure they haven't forgotten anything",correct:true},{text:"Happy",correct:false}], correctFeedback:"Good observation! Repeatedly checking things is often a sign of anxiety. They want to make sure everything is right.", encourageFeedback:"Checking things over and over usually means someone is feeling anxious or worried about forgetting something." },
+    { difficulty:2, emoji:"\u{1F60E}", text:"After scoring a goal, your teammate pumps their fist and shouts \"Yes!\" How are they feeling?", choices:[{text:"Proud and triumphant",correct:true},{text:"Scared",correct:false},{text:"Confused",correct:false}], correctFeedback:"Exactly! Fist pumping and shouting after an achievement shows pride and excitement!", encourageFeedback:"Fist pumps and shouts of \"Yes!\" are signs of feeling proud and triumphant about an achievement." },
+    { difficulty:3, emoji:"\u{1F910}", text:"Your friend smiles and says \"I'm happy for you\" when you win a prize, but their voice sounds flat. What might really be going on?", choices:[{text:"They're genuinely happy",correct:false},{text:"They might be hiding jealousy or disappointment behind a polite smile",correct:true},{text:"They're tired",correct:false}], correctFeedback:"Great emotional intelligence! When words say one thing but the voice says another, the person might be hiding their true feelings to be polite.", encourageFeedback:"Sometimes people say the right thing but their voice gives away different feelings. A flat voice with a smile might mean they're hiding disappointment." },
+    { difficulty:3, emoji:"\u{1F97A}", text:"A kid in your class is laughing along with everyone else, but you notice they keep wiping their eyes. What might be happening?", choices:[{text:"They have allergies",correct:false},{text:"They might be upset but trying to fit in by laughing along",correct:true},{text:"The joke was really funny",correct:false}], correctFeedback:"That's very perceptive! Sometimes people laugh to fit in even when they're actually upset. Wiping eyes while laughing can be a sign of hidden tears.", encourageFeedback:"This is tricky! When someone laughs but keeps wiping their eyes, they might be trying to hide that they're upset. It's a way of fitting in." }
+);
+
+SCENARIOS.conversations.push(
+    { difficulty:1, emoji:"\u{1F4DE}", text:"The phone rings and it's for your mum. What's a polite way to answer?", choices:[{text:"\"What do you want?\"",correct:false},{text:"\"Hello, who's calling please?\"",correct:true},{text:"Don't answer it",correct:false}], correctFeedback:"Perfect phone manners! \"Hello, who's calling please?\" is polite and helpful.", encourageFeedback:"When answering the phone, \"Hello, who's calling please?\" is the polite way to do it." },
+    { difficulty:1, emoji:"\u{1F44B}", text:"You see your teacher in the supermarket. What should you do?", choices:[{text:"Hide behind the shelves",correct:false},{text:"Smile and say \"Hi, [teacher's name]!\"",correct:true},{text:"Pretend you don't see them",correct:false}], correctFeedback:"That's friendly! Teachers are people too, and a simple hello is always nice.", encourageFeedback:"It's polite to say hi to people you know, even outside of school. A smile and a greeting is perfect." },
+    { difficulty:2, emoji:"\u{1F914}", text:"You want to join a conversation that two friends are having. What's the best way?", choices:[{text:"Just start talking over them",correct:false},{text:"Wait for a pause, then say \"Hey, what are you talking about? Can I join?\"",correct:true},{text:"Stand silently until they notice you",correct:false}], correctFeedback:"Great approach! Waiting for a pause and asking to join shows respect for their conversation.", encourageFeedback:"The best way to join a conversation is to wait for a natural pause, then ask to join in. Don't interrupt!" },
+    { difficulty:2, emoji:"\u{1F622}", text:"Your friend tells you their pet died. What's a good thing to say?", choices:[{text:"\"Just get a new one\"",correct:false},{text:"\"I'm really sorry. That must be so sad. I'm here for you.\"",correct:true},{text:"Change the subject to something happy",correct:false}], correctFeedback:"That's really compassionate. Acknowledging their sadness and offering support is exactly what a good friend does.", encourageFeedback:"When someone shares sad news, the best response is to acknowledge their feelings: \"I'm sorry, that must be really sad.\"" },
+    { difficulty:3, emoji:"\u{1F4AC}", text:"Someone keeps talking about themselves and never asks about you. How could you handle this?", choices:[{text:"Stop being friends with them",correct:false},{text:"When there's a pause, gently redirect: \"That's cool! Something similar happened to me...\"",correct:true},{text:"Talk over them about yourself",correct:false}], correctFeedback:"Smart approach! Gently redirecting the conversation is a great social skill. Some people don't realise they're doing it.", encourageFeedback:"Some people don't realise they dominate conversations. Gently redirecting with \"Something similar happened to me...\" is a kind way to balance things." },
+    { difficulty:3, emoji:"\u{1F937}", text:"You disagree with something your friend said. How can you express this respectfully?", choices:[{text:"\"You're wrong!\"",correct:false},{text:"\"I see it differently. I think... What do you think about that?\"",correct:true},{text:"Just agree even though you don't",correct:false}], correctFeedback:"That's really mature! \"I see it differently\" is respectful and opens up a real discussion instead of an argument.", encourageFeedback:"Disagreeing respectfully is a big skill. Try \"I see it differently\" instead of \"You're wrong\" \u2014 it keeps the conversation friendly." }
+);
+
+SCENARIOS.friendships.push(
+    { difficulty:1, emoji:"\u{1F3A8}", text:"Your friend invites you to their art show. You don't really like art. What should you do?", choices:[{text:"Say \"Art is boring, no thanks\"",correct:false},{text:"Go to support your friend \u2014 it matters to them!",correct:true},{text:"Say you'll go but don't show up",correct:false}], correctFeedback:"That's what good friends do! Supporting your friend's interests, even if they're not your favourite, shows you care about them.", encourageFeedback:"Good friends support each other's interests. Going to your friend's art show shows you care about what matters to them." },
+    { difficulty:2, emoji:"\u{1F4F1}", text:"Your friend hasn't replied to your message for 2 days. What should you think?", choices:[{text:"They hate me now",correct:false},{text:"They might be busy, their phone might be broken, or they forgot \u2014 it's probably not about me",correct:true},{text:"Send 50 more messages",correct:false}], correctFeedback:"That's healthy thinking! There are many reasons someone might not reply, and most have nothing to do with you.", encourageFeedback:"When someone doesn't reply, try not to assume the worst. They might be busy, their phone might be dead, or they simply forgot." },
+    { difficulty:3, emoji:"\u{1F46F}", text:"Your two best friends are becoming closer with each other and you feel left out. What could you do?", choices:[{text:"Try to break up their friendship",correct:false},{text:"Talk to them honestly: \"I feel a bit left out lately. Can we all hang out together?\"",correct:true},{text:"Find completely new friends and ignore them",correct:false}], correctFeedback:"That's really brave and honest! Using \"I feel\" statements is the healthiest way to address friendship concerns.", encourageFeedback:"Feeling left out is painful. The bravest thing is to tell your friends honestly how you feel. Most friends don't realise they're doing it." }
+);
+
+SCENARIOS["body-language"].push(
+    { difficulty:1, emoji:"\u{1F44D}", text:"Your teacher gives you a thumbs up from across the room. What does this mean?", choices:[{text:"They want you to stop",correct:false},{text:"They're saying \"Good job!\" or \"You're doing great!\"",correct:true},{text:"They need help",correct:false}], correctFeedback:"Right! A thumbs up is a universal sign for \"Good job!\" or \"Everything's okay!\"", encourageFeedback:"A thumbs up is one of the most common body language signals \u2014 it means \"Good job!\" or \"All good!\"" },
+    { difficulty:2, emoji:"\u{1F9CD}", text:"Someone is standing with their feet pointed towards the door while talking to you. What might this mean?", choices:[{text:"They're very interested in the conversation",correct:false},{text:"They might want to leave or are thinking about going somewhere",correct:true},{text:"They're cold",correct:false}], correctFeedback:"Great observation! Feet pointing towards the exit often means someone is thinking about leaving, even if they're still talking.", encourageFeedback:"Our feet often point where we want to go! If someone's feet point at the door, they might be ready to leave." },
+    { difficulty:3, emoji:"\u{1F914}", text:"During a group project, one person keeps checking their phone, sighing, and not making eye contact. What might they be communicating?", choices:[{text:"They're really engaged in the project",correct:false},{text:"They might be bored, disinterested, or upset about something",correct:true},{text:"They're researching for the project",correct:false}], correctFeedback:"Good reading! Multiple negative body language signals together (phone, sighing, no eye contact) usually mean someone is disengaged or upset.", encourageFeedback:"When you see several negative body language signs together \u2014 phone checking, sighing, avoiding eye contact \u2014 the person is probably not engaged or might be upset." }
+);
+
+SCENARIOS["tricky-situations"].push(
+    { difficulty:1, emoji:"\u{1F4B0}", text:"You find some money on the ground at school. What should you do?", choices:[{text:"Keep it \u2014 finders keepers!",correct:false},{text:"Take it to the office or a teacher so the person who lost it can get it back",correct:true},{text:"Give it to your friend",correct:false}], correctFeedback:"That's the honest thing to do! Someone is probably looking for that money, and turning it in is the right choice.", encourageFeedback:"When you find something that isn't yours, the right thing is to turn it in. Someone might be really worried about losing it." },
+    { difficulty:2, emoji:"\u{1F3EB}", text:"You see a younger kid being picked on by older kids. What could you do?", choices:[{text:"Walk away \u2014 it's not your problem",correct:false},{text:"Tell a teacher or adult right away, and check on the younger kid after",correct:true},{text:"Join in so the older kids like you",correct:false}], correctFeedback:"That's really brave! Standing up for someone (even by getting adult help) is one of the most important things you can do.", encourageFeedback:"You don't have to confront bullies yourself. Getting an adult to help and then checking on the kid afterwards is the safest and kindest approach." },
+    { difficulty:3, emoji:"\u{1F4F1}", text:"A friend shares a rumour about another classmate and asks you to spread it. What should you do?", choices:[{text:"Share it \u2014 everyone else is",correct:false},{text:"Say \"I don't want to spread rumours. That could really hurt them.\"",correct:true},{text:"Share it but say \"Don't tell anyone I told you\"",correct:false}], correctFeedback:"That takes real courage! Refusing to spread rumours protects people and shows strong character.", encourageFeedback:"Rumours can really hurt people. Saying \"I don't want to spread that\" is brave and shows you care about doing the right thing." }
+);
+
+SCENARIOS["feelings-check"].push(
+    { difficulty:1, emoji:"\u{1F60A}", text:"Something really good happened and you feel amazing! What's a healthy way to enjoy this feeling?", choices:[{text:"Brag to everyone about it",correct:false},{text:"Enjoy the moment! Share your happiness with people you care about",correct:true},{text:"Worry that something bad will happen next",correct:false}], correctFeedback:"Yes! It's important to enjoy good feelings when they come. Sharing happiness with people you love makes it even better!", encourageFeedback:"When something good happens, let yourself enjoy it! Share your happiness with people you care about \u2014 good feelings are meant to be celebrated." },
+    { difficulty:2, emoji:"\u{1F4A4}", text:"You can't fall asleep because your mind keeps thinking about things. What could help?", choices:[{text:"Watch videos on your phone",correct:false},{text:"Try slow breathing, imagine a calm place, or write your thoughts in a journal",correct:true},{text:"Just lie there and worry more",correct:false}], correctFeedback:"Great strategies! Slow breathing, visualisation, and journaling are all proven ways to calm a busy mind before sleep.", encourageFeedback:"A busy mind at bedtime is common! Try slow breathing, imagining a peaceful place, or writing your thoughts down to get them out of your head." },
+    { difficulty:3, emoji:"\u{1F494}", text:"Someone you care about said something that really hurt your feelings, but you don't think they meant to. What should you do?", choices:[{text:"Never speak to them again",correct:false},{text:"Wait until you're calm, then tell them: \"When you said [that], it hurt my feelings. I don't think you meant to, but I wanted you to know.\"",correct:true},{text:"Say something hurtful back",correct:false}], correctFeedback:"That's incredibly mature! Waiting until you're calm and using \"When you said... it made me feel...\" is the gold standard of communication.", encourageFeedback:"When someone hurts you accidentally, the best approach is to wait until you're calm, then explain how their words made you feel. Most people will apologise." }
+);
