@@ -221,7 +221,25 @@ const BADGES = [
     { id: "persp-lv3", emoji: "\u{1F440}", name: "Empathy Master Lv3", desc: "Complete Perspective Taking Level 3", condition: (s) => (s.levelsDone || {}).persp >= 3 },
     { id: "hf-lv2", emoji: "\u{1FA9E}", name: "Self-Aware Lv2", desc: "Complete How Would You Feel Level 2", condition: (s) => (s.levelsDone || {}).hf >= 2 },
     { id: "hf-lv3", emoji: "\u{1FA9E}", name: "Self-Aware Master Lv3", desc: "Complete How Would You Feel Level 3", condition: (s) => (s.levelsDone || {}).hf >= 3 },
-    { id: "all-badges", emoji: "\u{1F3C5}", name: "Badge Collector", desc: "Earn 20 other badges", condition: (s) => (s.earnedBadges || []).length >= 20 }
+    { id: "all-badges", emoji: "\u{1F3C5}", name: "Badge Collector", desc: "Earn 20 other badges", condition: (s) => (s.earnedBadges || []).length >= 20 },
+    { id: "convsim-done", emoji: "\u{1F5E8}\uFE0F", name: "Conversation Star", desc: "Complete a Conversation Practice", condition: (s) => s.convsimDone },
+    { id: "teach-done", emoji: "\u{1F393}", name: "Super Teacher", desc: "Complete Teach Me mode", condition: (s) => s.teachDone },
+    { id: "sarcasm-done", emoji: "\u{1F50D}", name: "Sarcasm Expert", desc: "Decode 5 sarcastic phrases", condition: (s) => (s.sarcasmDecoded || 0) >= 5 },
+    { id: "kindness-5", emoji: "\u{1F49C}", name: "Kind Heart", desc: "Add 5 kind acts to the Kindness Jar", condition: (s) => (s.kindnessJar || []).length >= 5 },
+    { id: "kindness-20", emoji: "\u{1F49B}", name: "Kindness Champion", desc: "Add 20 kind acts", condition: (s) => (s.kindnessJar || []).length >= 20 },
+    { id: "gratitude-5", emoji: "\u{1F33B}", name: "Grateful Heart", desc: "Plant 5 gratitude flowers", condition: (s) => (s.gratitudeGarden || []).length >= 5 },
+    { id: "gratitude-20", emoji: "\u{1F33A}", name: "Garden Master", desc: "Plant 20 gratitude flowers", condition: (s) => (s.gratitudeGarden || []).length >= 20 },
+    { id: "routine-done", emoji: "\u{1F4CB}", name: "Routine Star", desc: "Complete a full morning routine", condition: (s) => s.routineComplete },
+    { id: "sleep-done", emoji: "\u{1F319}", name: "Sweet Dreams", desc: "Complete the Sleep Helper", condition: (s) => s.sleepDone },
+    { id: "friendship-3", emoji: "\u{1F91D}", name: "Friendship Builder", desc: "Complete 3 Friendship Challenges", condition: (s) => (s.friendshipTotal || 0) >= 3 },
+    { id: "surprise-7", emoji: "\u{1F381}", name: "Surprise Collector", desc: "Collect 7 Daily Surprises", condition: (s) => (s.surprisesCollected || 0) >= 7 },
+    { id: "memory-done", emoji: "\u{1F9E0}", name: "Memory Master", desc: "Complete Memory Match game", condition: (s) => s.memoryDone },
+    { id: "ttt-done", emoji: "\u{274E}", name: "Tic-Tac-Pro", desc: "Play Tic-Tac-Toe", condition: (s) => s.tttPlayed },
+    { id: "hangman-done", emoji: "\u{1F4DD}", name: "Word Detective", desc: "Win a Hangman game", condition: (s) => s.hangmanWon },
+    { id: "wordsearch-done", emoji: "\u{1F50E}", name: "Word Finder", desc: "Complete a Word Search", condition: (s) => s.wordsearchDone },
+    { id: "drawing-done", emoji: "\u{1F3A8}", name: "Artist", desc: "Create a drawing", condition: (s) => s.drawingDone },
+    { id: "bingo-done", emoji: "\u{1F3B0}", name: "Bingo Star", desc: "Complete a Feelings Bingo card", condition: (s) => s.bingoDone },
+    { id: "dots-done", emoji: "\u{1F7E2}", name: "Dots Champion", desc: "Play Dots and Boxes", condition: (s) => s.dotsPlayed }
 ];
 
 /* ===== THEMES ===== */
@@ -1139,4 +1157,118 @@ var SPINNER_REWARDS = [
     { emoji:"\u{1F31F}", text:"Double stars on your next activity!", action:"none" },
     { emoji:"\u{1F49C}", text:"You are kind, brave, and wonderful!", action:"none" },
     { emoji:"\u{2B50}", text:"+2 bonus stars!", action:"stars", value:2 }
+];
+
+
+/* ===== MEMORY MATCH PAIRS ===== */
+var MEMORY_PAIRS = [
+    { emoji:"\u{1F604}", label:"Happy" },
+    { emoji:"\u{1F622}", label:"Sad" },
+    { emoji:"\u{1F621}", label:"Angry" },
+    { emoji:"\u{1F628}", label:"Scared" },
+    { emoji:"\u{1F632}", label:"Surprised" },
+    { emoji:"\u{1F60A}", label:"Proud" },
+    { emoji:"\u{1F634}", label:"Tired" },
+    { emoji:"\u{1F914}", label:"Confused" },
+    { emoji:"\u{1F633}", label:"Embarrassed" },
+    { emoji:"\u{1F60D}", label:"Loving" },
+    { emoji:"\u{1F624}", label:"Frustrated" },
+    { emoji:"\u{1F630}", label:"Anxious" }
+];
+
+/* ===== HANGMAN WORDS ===== */
+var HANGMAN_WORDS = [
+    { word:"HAPPY", hint:"Feeling good and joyful" },
+    { word:"BRAVE", hint:"Not afraid to try new things" },
+    { word:"FRIEND", hint:"Someone you care about and spend time with" },
+    { word:"LISTEN", hint:"What you do with your ears when someone talks" },
+    { word:"SHARE", hint:"Giving part of something to someone else" },
+    { word:"SORRY", hint:"What you say when you make a mistake" },
+    { word:"CALM", hint:"Feeling peaceful and relaxed" },
+    { word:"PROUD", hint:"Feeling good about something you did" },
+    { word:"TRUST", hint:"Believing someone will be honest and kind" },
+    { word:"GENTLE", hint:"Being soft and careful with others" },
+    { word:"PATIENT", hint:"Waiting without getting upset" },
+    { word:"HONEST", hint:"Telling the truth" },
+    { word:"RESPECT", hint:"Treating others the way you want to be treated" },
+    { word:"EMPATHY", hint:"Understanding how someone else feels" },
+    { word:"GRATEFUL", hint:"Feeling thankful for something" },
+    { word:"KINDNESS", hint:"Being nice and helpful to others" }
+];
+
+/* ===== WORD SEARCH GRIDS ===== */
+var WORDSEARCH_PUZZLES = [
+    {
+        title: "Feelings",
+        size: 8,
+        words: ["HAPPY","SAD","ANGRY","SCARED","PROUD","CALM"],
+        grid: [
+            "HAPPYXSC",
+            "XSADXAXA",
+            "ANGRYRLR",
+            "XPXCXMED",
+            "PROUDXDX",
+            "XCALMXXX",
+            "XXXXXXXX",
+            "XXXXXXXX"
+        ]
+    },
+    {
+        title: "Friendship",
+        size: 8,
+        words: ["SHARE","KIND","TRUST","HELP","CARE","LOVE"],
+        grid: [
+            "SHAREXXX",
+            "XKINDXXX",
+            "XXTRUSTH",
+            "XXXHELPX",
+            "CAREXXXX",
+            "XLOVEXXL",
+            "XXXXXXXX",
+            "XXXXXXXX"
+        ]
+    }
+];
+
+/* ===== FEELINGS BINGO ===== */
+var BINGO_FEELINGS = [
+    "Happy","Sad","Angry","Scared","Surprised","Proud",
+    "Tired","Confused","Embarrassed","Excited","Nervous","Grateful",
+    "Frustrated","Calm","Lonely","Jealous","Brave","Silly",
+    "Worried","Loved","Disappointed","Curious","Shy","Hopeful"
+];
+
+/* ===== SPOT THE DIFFERENCE ===== */
+var SPOT_DIFF_PUZZLES = [
+    {
+        title: "Classroom Scene",
+        scene1: ["\u{1F9D1}\u200D\u{1F3EB}","\u{1F4DA}","\u{1F3A8}","\u{1F4DD}","\u{23F0}","\u{1F34E}"],
+        scene2: ["\u{1F9D1}\u200D\u{1F3EB}","\u{1F4DA}","\u{1F3A8}","\u{1F4DD}","\u{23F0}","\u{1F34A}"],
+        diffIndex: 5,
+        hint: "Look at the fruit!"
+    },
+    {
+        title: "Park Scene",
+        scene1: ["\u{1F333}","\u{1F436}","\u{26BD}","\u{1F338}","\u{1F31E}","\u{1F98B}"],
+        scene2: ["\u{1F333}","\u{1F431}","\u{26BD}","\u{1F338}","\u{1F31E}","\u{1F98B}"],
+        diffIndex: 1,
+        hint: "Look at the animal!"
+    },
+    {
+        title: "Kitchen Scene",
+        scene1: ["\u{1F373}","\u{1F34E}","\u{1F95B}","\u{1F35E}","\u{1F52A}","\u{1F9C1}"],
+        scene2: ["\u{1F373}","\u{1F34E}","\u{1F95B}","\u{1F35E}","\u{1F52A}","\u{1F370}"],
+        diffIndex: 5,
+        hint: "Look at the dessert!"
+    }
+];
+
+/* ===== PATTERN MATCHING ===== */
+var PATTERN_PUZZLES = [
+    { pattern:["\u{1F604}","\u{1F622}","\u{1F604}","\u{1F622}","\u{1F604}"], answer:"\u{1F622}", options:["\u{1F622}","\u{1F621}","\u{1F604}","\u{1F628}"] },
+    { pattern:["\u{1F621}","\u{1F621}","\u{1F60A}","\u{1F621}","\u{1F621}"], answer:"\u{1F60A}", options:["\u{1F621}","\u{1F60A}","\u{1F622}","\u{1F634}"] },
+    { pattern:["\u{1F604}","\u{1F622}","\u{1F621}","\u{1F604}","\u{1F622}"], answer:"\u{1F621}", options:["\u{1F604}","\u{1F622}","\u{1F621}","\u{1F60A}"] },
+    { pattern:["\u{2B50}","\u{2B50}","\u{1F31F}","\u{2B50}","\u{2B50}"], answer:"\u{1F31F}", options:["\u{2B50}","\u{1F31F}","\u{1F320}","\u{1F4AB}"] },
+    { pattern:["\u{1F534}","\u{1F7E1}","\u{1F7E2}","\u{1F534}","\u{1F7E1}"], answer:"\u{1F7E2}", options:["\u{1F534}","\u{1F7E1}","\u{1F7E2}","\u{1F535}"] },
+    { pattern:["\u{1F436}","\u{1F431}","\u{1F430}","\u{1F436}","\u{1F431}"], answer:"\u{1F430}", options:["\u{1F436}","\u{1F431}","\u{1F430}","\u{1F98A}"] }
 ];

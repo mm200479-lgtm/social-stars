@@ -2265,7 +2265,16 @@ var newRoutes = {
     "menu-teach": function() { startTeachMe(); showScreen("teach-screen"); },
     "menu-sarcasm": function() { sarcasmIdx=0; showSarcasmCard(); showScreen("sarcasm-screen"); },
     "menu-progressmap": function() { renderProgressMap(); showScreen("progressmap-screen"); },
-    "menu-spinner": function() { showScreen("spinner-screen"); }
+    "menu-spinner": function() { showScreen("spinner-screen"); },
+    "menu-memory": function() { startMemory(); showScreen("memory-screen"); },
+    "menu-ttt": function() { startTTT(); showScreen("ttt-screen"); },
+    "menu-hangman": function() { startHangman(); showScreen("hangman-screen"); },
+    "menu-wordsearch": function() { startWordSearch(); showScreen("wordsearch-screen"); },
+    "menu-drawing": function() { initDrawing(); showScreen("drawing-screen"); },
+    "menu-bingo": function() { startBingo(); showScreen("bingo-screen"); },
+    "menu-pattern": function() { patternIdx=0; showPattern(); showScreen("pattern-screen"); },
+    "menu-spotdiff": function() { spotIdx=0; showSpotDiff(); showScreen("spotdiff-screen"); },
+    "menu-dotsboxes": function() { startDotsBoxes(); showScreen("dotsboxes-screen"); }
 };
 Object.keys(newRoutes).forEach(function(id) {
     var el = $("#" + id); if (el) el.addEventListener("click", newRoutes[id]);
@@ -2274,7 +2283,9 @@ Object.keys(newRoutes).forEach(function(id) {
 // Back buttons for new screens
 ["#bodyscan-back-btn","#iceberg-back-btn","#colorbreathe-back-btn","#fidget-back-btn",
  "#wyr-back-btn","#sensory-back-btn","#emergency-back-btn","#volume-back-btn",
- "#convsim-back-btn","#teach-back-btn","#sarcasm-back-btn","#progressmap-back-btn","#spinner-back-btn"].forEach(function(s) {
+ "#convsim-back-btn","#teach-back-btn","#sarcasm-back-btn","#progressmap-back-btn","#spinner-back-btn",
+ "#memory-back-btn","#ttt-back-btn","#hangman-back-btn","#wordsearch-back-btn","#drawing-back-btn",
+ "#bingo-back-btn","#pattern-back-btn","#spotdiff-back-btn","#dotsboxes-back-btn"].forEach(function(s) {
     var el = $(s);
     if (el && !el._backBound) {
         el._backBound = true;
@@ -2474,6 +2485,418 @@ if (spinnerBtn) spinnerBtn.addEventListener("click", function() {
         spinnerAvailable = true;
     }, 2000);
 });
+
+// ===== MEMORY MATCH GAME =====
+function startMemory() {
+    var pairs = shuffleArray(MEMORY_PAIRS.slice(0, 6));
+    var cards = shuffleArray(pairs.concat(pairs.map(function(p) { return {emoji:p.emoji, label:p.label}; })));
+    var grid = $("#memory-grid"); grid.innerHTML = "";
+    var flipped = [], matched = 0, locked = false;
+    $("#memory-status").textContent = "Find all the matching pairs!";
+    cards.forEach(function(card, idx) {
+        var el = document.createElement("div");
+        el.className = "memory-card"; el.textContent = "?";
+        el.addEventListener("click", function() {
+            if (locked || el.classList.contains("flipped") || el.classList.contains("matched")) return;
+            el.classList.add("flipped"); el.textContent = card.emoji;
+            flipped.push({ el: el, card: card, idx: idx });
+            if (flipped.length === 2) {
+                locked = true;
+                setTimeout(function() {
+                    if (flipped[0].card.label === flipped[1].card.label && flipped[0].idx !== flipped[1].idx) {
+                        flipped[0].el.classList.add("matched");
+                        flipped[1].el.classList.add("matched");
+                        matched++; playChime();
+                        if (matched >= 6) {
+                            state.memoryDone = true; state.totalStars += 5;
+                            saveProfile(); updateStars(); checkBadges(); fireConfetti();
+                            $("#memory-status").textContent = "\u{1F389} You found all pairs! +5 stars!";
+                        }
+                    } else {
+                        flipped[0].el.classList.remove("flipped"); flipped[0].el.textContent = "?";
+                        flipped[1].el.classList.remove("flipped"); flipped[1].el.textContent = "?";
+                    }
+                    flipped = []; locked = false;
+                }, 800);
+            }
+        });
+        grid.appendChild(el);
+    });
+}
+
+// ===== TIC-TAC-TOE =====
+var tttBoard, tttTurn;
+function startTTT() {
+    tttBoard = ["","","","","","","","",""]; tttTurn = "X";
+    $("#ttt-status").textContent = "X goes first! Take turns with a friend.";
+    var grid = $("#ttt-grid"); grid.innerHTML = "";
+    for (var i = 0; i < 9; i++) {
+        (function(idx) {
+            var cell = document.createElement("div"); cell.className = "ttt-cell";
+            cell.addEventListener("click", function() {
+                if (tttBoard[idx] || checkTTTWin()) return;
+                tttBoard[idx] = tttTurn;
+                cell.textContent = tttTurn === "X" ? "\u274C" : "\u2B55";
+                var winner = checkTTTWin();
+                if (winner) {
+                    $("#ttt-status").textContent = winner + " wins! \u{1F389}";
+                    state.tttPlayed = true; state.totalStars += 3; saveProfile(); updateStars(); checkBadges(); playComplete();
+                } else if (tttBoard.every(function(c) { return c; })) {
+                    $("#ttt-status").textContent = "It's a draw! Good game!";
+                    state.tttPlayed = true; state.totalStars += 2; saveProfile(); updateStars(); checkBadges();
+                } else {
+                    tttTurn = tttTurn === "X" ? "O" : "X";
+                    $("#ttt-status").textContent = tttTurn + "'s turn!";
+                }
+            });
+            grid.appendChild(cell);
+        })(i);
+    }
+}
+function checkTTTWin() {
+    var wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (var i = 0; i < wins.length; i++) {
+        var w = wins[i];
+        if (tttBoard[w[0]] && tttBoard[w[0]] === tttBoard[w[1]] && tttBoard[w[1]] === tttBoard[w[2]]) return tttBoard[w[0]];
+    }
+    return null;
+}
+var tttResetBtn = $("#ttt-reset");
+if (tttResetBtn) tttResetBtn.addEventListener("click", startTTT);
+
+// ===== HANGMAN =====
+var hmWord, hmGuessed, hmLives;
+function startHangman() {
+    var puzzle = HANGMAN_WORDS[Math.floor(Math.random() * HANGMAN_WORDS.length)];
+    hmWord = puzzle.word; hmGuessed = []; hmLives = 6;
+    $("#hangman-hint").textContent = "\u{1F4A1} Hint: " + puzzle.hint;
+    $("#hangman-result").classList.add("hidden");
+    renderHangman();
+}
+function renderHangman() {
+    // Word display
+    var wordEl = $("#hangman-word"); wordEl.innerHTML = "";
+    hmWord.split("").forEach(function(ch) {
+        var span = document.createElement("span"); span.className = "hangman-letter";
+        span.textContent = hmGuessed.indexOf(ch) !== -1 ? ch : "";
+        wordEl.appendChild(span);
+    });
+    // Lives
+    var hearts = ""; for (var i = 0; i < hmLives; i++) hearts += "\u2764\uFE0F";
+    for (var j = hmLives; j < 6; j++) hearts += "\u{1F5A4}";
+    $("#hangman-lives").textContent = hearts;
+    // Keyboard
+    var keys = $("#hangman-keys"); keys.innerHTML = "";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(letter) {
+        var btn = document.createElement("button"); btn.className = "hangman-key";
+        btn.textContent = letter;
+        if (hmGuessed.indexOf(letter) !== -1) {
+            btn.classList.add("used");
+            btn.classList.add(hmWord.indexOf(letter) !== -1 ? "correct" : "wrong");
+        }
+        btn.addEventListener("click", function() {
+            if (hmGuessed.indexOf(letter) !== -1) return;
+            hmGuessed.push(letter);
+            if (hmWord.indexOf(letter) === -1) hmLives--;
+            renderHangman();
+            // Check win/lose
+            var won = hmWord.split("").every(function(ch) { return hmGuessed.indexOf(ch) !== -1; });
+            if (won) {
+                state.hangmanWon = true; state.totalStars += 5; saveProfile(); updateStars(); checkBadges(); playComplete();
+                var res = $("#hangman-result"); res.classList.remove("hidden");
+                res.innerHTML = '<p class="feedback-text success">\u{1F389} You got it! The word was ' + hmWord + '! +5\u2B50</p><button class="btn btn-primary" onclick="startHangman()">Play Again</button>';
+            } else if (hmLives <= 0) {
+                state.totalStars += 1; saveProfile(); updateStars();
+                var res2 = $("#hangman-result"); res2.classList.remove("hidden");
+                res2.innerHTML = '<p class="feedback-text encourage">The word was ' + hmWord + '. Good try! +1\u2B50</p><button class="btn btn-primary" onclick="startHangman()">Try Again</button>';
+            }
+        });
+        keys.appendChild(btn);
+    });
+}
+
+// ===== WORD SEARCH =====
+function startWordSearch() {
+    var puzzle = WORDSEARCH_PUZZLES[Math.floor(Math.random() * WORDSEARCH_PUZZLES.length)];
+    var grid = $("#ws-grid"); grid.innerHTML = "";
+    grid.style.gridTemplateColumns = "repeat(" + puzzle.size + ", 1fr)";
+    var found = [], selected = [];
+    $("#ws-words").textContent = "Find: " + puzzle.words.join(", ");
+    $("#ws-found").textContent = "Found: 0 / " + puzzle.words.length;
+    for (var r = 0; r < puzzle.size; r++) {
+        for (var c = 0; c < puzzle.size; c++) {
+            (function(row, col) {
+                var ch = puzzle.grid[row] ? puzzle.grid[row][col] || "X" : "X";
+                var cell = document.createElement("div"); cell.className = "ws-cell";
+                cell.textContent = ch; cell.dataset.row = row; cell.dataset.col = col;
+                cell.addEventListener("click", function() {
+                    cell.classList.toggle("selected");
+                    // Check if any word is fully selected
+                    var selectedCells = grid.querySelectorAll(".selected");
+                    var selectedStr = "";
+                    selectedCells.forEach(function(sc) { selectedStr += sc.textContent; });
+                    puzzle.words.forEach(function(word) {
+                        if (selectedStr === word && found.indexOf(word) === -1) {
+                            found.push(word);
+                            selectedCells.forEach(function(sc) { sc.classList.remove("selected"); sc.classList.add("found"); });
+                            playChime();
+                            $("#ws-found").textContent = "Found: " + found.length + " / " + puzzle.words.length;
+                            if (found.length >= puzzle.words.length) {
+                                state.wordsearchDone = true; state.totalStars += 5;
+                                saveProfile(); updateStars(); checkBadges(); fireConfetti();
+                                $("#ws-found").textContent = "\u{1F389} All words found! +5\u2B50";
+                            }
+                        }
+                    });
+                });
+                grid.appendChild(cell);
+            })(r, c);
+        }
+    }
+}
+
+// ===== DRAWING PAD =====
+var drawCtx, drawColor = "#000000", drawing = false;
+function initDrawing() {
+    var canvas = $("#drawing-canvas");
+    if (!canvas) return;
+    drawCtx = canvas.getContext("2d");
+    drawCtx.fillStyle = "white";
+    drawCtx.fillRect(0, 0, canvas.width, canvas.height);
+    drawCtx.lineWidth = 4; drawCtx.lineCap = "round"; drawCtx.strokeStyle = drawColor;
+    drawing = false;
+    function getPos(e) {
+        var rect = canvas.getBoundingClientRect();
+        var touch = e.touches ? e.touches[0] : e;
+        return { x: (touch.clientX - rect.left) * (canvas.width / rect.width), y: (touch.clientY - rect.top) * (canvas.height / rect.height) };
+    }
+    canvas.onmousedown = canvas.ontouchstart = function(e) { e.preventDefault(); drawing = true; var p = getPos(e); drawCtx.beginPath(); drawCtx.moveTo(p.x, p.y); };
+    canvas.onmousemove = canvas.ontouchmove = function(e) { e.preventDefault(); if (!drawing) return; var p = getPos(e); drawCtx.lineTo(p.x, p.y); drawCtx.stroke(); };
+    canvas.onmouseup = canvas.ontouchend = function() { drawing = false; };
+    canvas.onmouseleave = function() { drawing = false; };
+}
+$$(".color-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+        drawColor = btn.dataset.color;
+        if (drawCtx) drawCtx.strokeStyle = drawColor;
+        $$(".color-btn").forEach(function(b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+    });
+});
+var drawClearBtn = $("#drawing-clear");
+if (drawClearBtn) drawClearBtn.addEventListener("click", function() {
+    if (drawCtx) { var c = $("#drawing-canvas"); drawCtx.fillStyle = "white"; drawCtx.fillRect(0, 0, c.width, c.height); }
+});
+var drawSaveBtn = $("#drawing-save");
+if (drawSaveBtn) drawSaveBtn.addEventListener("click", function() {
+    state.drawingDone = true; state.totalStars += 3; saveProfile(); updateStars(); checkBadges(); playChime();
+    drawSaveBtn.textContent = "Saved! +3\u2B50 \u2714";
+    setTimeout(function() { drawSaveBtn.textContent = "Save +3\u2B50"; }, 2000);
+});
+
+// ===== FEELINGS BINGO =====
+function startBingo() {
+    var feelings = shuffleArray(BINGO_FEELINGS.slice()).slice(0, 16);
+    var grid = $("#bingo-grid"); grid.innerHTML = "";
+    var marked = 0;
+    if (!state.bingoMarked) state.bingoMarked = {};
+    var today = todayStr();
+    if (!state.bingoMarked[today]) state.bingoMarked[today] = [];
+    feelings.forEach(function(f) {
+        var cell = document.createElement("div"); cell.className = "bingo-cell";
+        if (state.bingoMarked[today].indexOf(f) !== -1) { cell.classList.add("marked"); marked++; }
+        cell.textContent = f;
+        cell.addEventListener("click", function() {
+            if (cell.classList.contains("marked")) return;
+            cell.classList.add("marked"); marked++;
+            state.bingoMarked[today].push(f);
+            state.totalStars++; saveProfile(); updateStars(); playChime();
+            $("#bingo-status").textContent = marked + " / 16 marked";
+            if (marked >= 16) {
+                state.bingoDone = true; state.totalStars += 5; saveProfile(); updateStars(); checkBadges(); fireConfetti();
+                $("#bingo-status").textContent = "\u{1F389} BINGO! All feelings marked! +5\u2B50";
+            }
+        });
+        grid.appendChild(cell);
+    });
+    $("#bingo-status").textContent = marked + " / 16 marked";
+}
+
+// ===== PATTERN MATCH =====
+var patternIdx = 0;
+function showPattern() {
+    var p = PATTERN_PUZZLES[patternIdx];
+    var display = $("#pattern-display"); display.innerHTML = "";
+    p.pattern.forEach(function(emoji) {
+        var span = document.createElement("span"); span.textContent = emoji; span.style.fontSize = "2.5rem";
+        display.appendChild(span);
+    });
+    var q = document.createElement("span"); q.className = "pattern-q"; q.textContent = "?";
+    display.appendChild(q);
+    var choices = $("#pattern-choices"); choices.innerHTML = "";
+    $("#pattern-feedback").classList.add("hidden");
+    shuffleArray(p.options).forEach(function(opt) {
+        var btn = document.createElement("button"); btn.className = "em-choice-btn"; btn.textContent = opt;
+        btn.addEventListener("click", function() {
+            $$("#pattern-choices .em-choice-btn").forEach(function(b) { b.disabled = true; });
+            if (opt === p.answer) {
+                btn.classList.add("correct");
+                $("#pattern-fb-text").textContent = "\u{1F31F} Correct! +2\u2B50";
+                $("#pattern-fb-text").className = "feedback-text success";
+                state.totalStars += 2; playChime();
+            } else {
+                btn.classList.add("gentle");
+                $("#pattern-fb-text").textContent = "The answer was " + p.answer + ". Good try!";
+                $("#pattern-fb-text").className = "feedback-text encourage";
+            }
+            saveProfile(); updateStars();
+            $("#pattern-feedback").classList.remove("hidden");
+        });
+        choices.appendChild(btn);
+    });
+}
+var patNextBtn = $("#pattern-next");
+if (patNextBtn) patNextBtn.addEventListener("click", function() {
+    patternIdx++;
+    if (patternIdx >= PATTERN_PUZZLES.length) { patternIdx = 0; checkBadges(); showScreen("menu-screen"); }
+    else showPattern();
+});
+
+// ===== SPOT THE DIFFERENCE =====
+var spotIdx = 0;
+function showSpotDiff() {
+    var p = SPOT_DIFF_PUZZLES[spotIdx];
+    $("#spotdiff-title").textContent = p.title;
+    $("#spotdiff-hint").textContent = "";
+    var s1 = $("#spotdiff-scene1"); s1.innerHTML = "";
+    var s2 = $("#spotdiff-scene2"); s2.innerHTML = "";
+    p.scene1.forEach(function(emoji) {
+        var el = document.createElement("div"); el.className = "spotdiff-item"; el.textContent = emoji;
+        s1.appendChild(el);
+    });
+    p.scene2.forEach(function(emoji, idx) {
+        var el = document.createElement("div"); el.className = "spotdiff-item"; el.textContent = emoji;
+        if (idx === p.diffIndex) {
+            el.addEventListener("click", function() {
+                el.classList.add("found"); playChime();
+                state.totalStars += 3; saveProfile(); updateStars();
+                $("#spotdiff-hint").textContent = "\u{1F389} You found it! +3\u2B50";
+            });
+        }
+        s2.appendChild(el);
+    });
+    // Show hint after 10 seconds
+    setTimeout(function() {
+        if (!$("#spotdiff-hint").textContent) $("#spotdiff-hint").textContent = "\u{1F4A1} Hint: " + p.hint;
+    }, 10000);
+}
+var spotNextBtn = $("#spotdiff-next");
+if (spotNextBtn) spotNextBtn.addEventListener("click", function() {
+    spotIdx++; if (spotIdx >= SPOT_DIFF_PUZZLES.length) spotIdx = 0;
+    showSpotDiff();
+});
+
+// ===== DOTS AND BOXES =====
+var dotsSize = 4, dotsLines, dotsBoxes, dotsTurn;
+function startDotsBoxes() {
+    dotsLines = {}; dotsBoxes = {}; dotsTurn = 1;
+    var scores = [0, 0];
+    var grid = $("#dots-grid"); grid.innerHTML = "";
+    var totalCols = dotsSize * 2 - 1;
+    grid.style.gridTemplateColumns = "";
+    // Build grid: dots, horizontal lines, vertical lines, boxes
+    var cols = [];
+    for (var c = 0; c < totalCols; c++) {
+        if (c % 2 === 0) cols.push("12px"); else cols.push("1fr");
+    }
+    grid.style.gridTemplateColumns = cols.join(" ");
+    var totalRows = dotsSize * 2 - 1;
+    for (var r = 0; r < totalRows; r++) {
+        for (var c2 = 0; c2 < totalCols; c2++) {
+            var el = document.createElement("div");
+            if (r % 2 === 0 && c2 % 2 === 0) {
+                el.className = "dots-dot";
+            } else if (r % 2 === 0 && c2 % 2 === 1) {
+                el.className = "dots-hline";
+                (function(row, col) {
+                    var key = "h_" + row + "_" + col;
+                    el.addEventListener("click", function() {
+                        if (dotsLines[key]) return;
+                        dotsLines[key] = dotsTurn;
+                        el.classList.add("taken", "p" + dotsTurn);
+                        var scored = checkDotsBoxes(row, col, "h", dotsTurn);
+                        if (!scored) dotsTurn = dotsTurn === 1 ? 2 : 1;
+                        updateDotsStatus();
+                    });
+                })(r, c2);
+            } else if (r % 2 === 1 && c2 % 2 === 0) {
+                el.className = "dots-vline";
+                (function(row, col) {
+                    var key = "v_" + row + "_" + col;
+                    el.addEventListener("click", function() {
+                        if (dotsLines[key]) return;
+                        dotsLines[key] = dotsTurn;
+                        el.classList.add("taken", "p" + dotsTurn);
+                        var scored = checkDotsBoxes(row, col, "v", dotsTurn);
+                        if (!scored) dotsTurn = dotsTurn === 1 ? 2 : 1;
+                        updateDotsStatus();
+                    });
+                })(r, c2);
+            } else {
+                el.className = "dots-box";
+                el.dataset.boxKey = "b_" + r + "_" + c2;
+            }
+            grid.appendChild(el);
+        }
+    }
+    updateDotsStatus();
+}
+
+function checkDotsBoxes(row, col, type, player) {
+    var scored = false;
+    // Check if any box is completed
+    var boxChecks = [];
+    if (type === "h") {
+        // Horizontal line: check box above and below
+        if (row > 0) boxChecks.push({ r: row - 1, c: col });
+        if (row < (dotsSize - 1) * 2) boxChecks.push({ r: row + 1, c: col });
+    } else {
+        // Vertical line: check box left and right
+        if (col > 0) boxChecks.push({ r: row, c: col - 1 });
+        if (col < (dotsSize - 1) * 2) boxChecks.push({ r: row, c: col + 1 });
+    }
+    boxChecks.forEach(function(b) {
+        var bKey = "b_" + b.r + "_" + b.c;
+        if (dotsBoxes[bKey]) return;
+        // Check all 4 sides of this box
+        var top = "h_" + (b.r - 1) + "_" + b.c;
+        var bottom = "h_" + (b.r + 1) + "_" + b.c;
+        var left = "v_" + b.r + "_" + (b.c - 1);
+        var right = "v_" + b.r + "_" + (b.c + 1);
+        if (dotsLines[top] && dotsLines[bottom] && dotsLines[left] && dotsLines[right]) {
+            dotsBoxes[bKey] = player;
+            var boxEl = document.querySelector('[data-box-key="' + bKey + '"]');
+            if (boxEl) { boxEl.classList.add("p" + player); boxEl.textContent = player === 1 ? "\u{1F535}" : "\u{1F534}"; }
+            scored = true;
+        }
+    });
+    return scored;
+}
+
+function updateDotsStatus() {
+    var p1 = 0, p2 = 0;
+    Object.values(dotsBoxes).forEach(function(v) { if (v === 1) p1++; else if (v === 2) p2++; });
+    var total = (dotsSize - 1) * (dotsSize - 1);
+    $("#dots-status").textContent = "Player " + dotsTurn + "'s turn! (" + (dotsTurn === 1 ? "\u{1F535}" : "\u{1F534}") + ")";
+    $("#dots-score").textContent = "\u{1F535} Player 1: " + p1 + " | \u{1F534} Player 2: " + p2;
+    if (p1 + p2 >= total) {
+        var winner = p1 > p2 ? "Player 1 \u{1F535}" : (p2 > p1 ? "Player 2 \u{1F534}" : "Nobody (tie!)");
+        $("#dots-status").textContent = winner + " wins! \u{1F389}";
+        state.dotsPlayed = true; state.totalStars += 3; saveProfile(); updateStars(); checkBadges(); playComplete();
+    }
+}
+var dotsResetBtn = $("#dots-reset");
+if (dotsResetBtn) dotsResetBtn.addEventListener("click", startDotsBoxes);
 
 // ===== AVATAR BUILDER =====
 function getAvatarParts() {
