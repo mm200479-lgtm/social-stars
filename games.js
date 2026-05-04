@@ -179,35 +179,149 @@ function startDrawing() {
 }
 
 // ===== COLOURING BOOK =====
-var coloringColors = ["#f44336","#e91e63","#9c27b0","#2196f3","#4caf50","#ffeb3b","#ff9800","#795548","#ffffff","#000000"];
+var coloringColors = ["#f44336","#e91e63","#9c27b0","#673ab7","#2196f3","#03a9f4","#4caf50","#8bc34a","#ffeb3b","#ff9800","#795548","#ffffff","#000000","#607d8b","#ff80ab"];
 var coloringCurrent = "#f44336";
 var coloringSections = [];
+var coloringPageIdx = 0;
 
-function startColoring() {
+var COLORING_PAGES = [
+    { name: "Butterfly", emoji: "\u{1F98B}", sections: [
+        {x:250,y:100,r:30,color:"#fff"}, // head
+        {x:250,y:170,r:40,color:"#fff"}, // body top
+        {x:250,y:240,r:35,color:"#fff"}, // body mid
+        {x:250,y:300,r:25,color:"#fff"}, // body bottom
+        {x:170,y:120,r:55,color:"#fff"}, // left wing top
+        {x:330,y:120,r:55,color:"#fff"}, // right wing top
+        {x:160,y:210,r:50,color:"#fff"}, // left wing bottom
+        {x:340,y:210,r:50,color:"#fff"}, // right wing bottom
+        {x:170,y:120,r:25,color:"#fff"}, // left wing inner top
+        {x:330,y:120,r:25,color:"#fff"}, // right wing inner top
+        {x:160,y:210,r:22,color:"#fff"}, // left wing inner bottom
+        {x:340,y:210,r:22,color:"#fff"}  // right wing inner bottom
+    ]},
+    { name: "Flower", emoji: "\u{1F33B}", sections: [
+        {x:250,y:200,r:40,color:"#fff"}, // center
+        {x:250,y:130,r:35,color:"#fff"}, // top petal
+        {x:250,y:270,r:35,color:"#fff"}, // bottom petal
+        {x:180,y:200,r:35,color:"#fff"}, // left petal
+        {x:320,y:200,r:35,color:"#fff"}, // right petal
+        {x:200,y:145,r:32,color:"#fff"}, // top-left petal
+        {x:300,y:145,r:32,color:"#fff"}, // top-right petal
+        {x:200,y:255,r:32,color:"#fff"}, // bottom-left petal
+        {x:300,y:255,r:32,color:"#fff"}, // bottom-right petal
+        {x:250,y:350,r:20,color:"#fff"}, // stem top
+        {x:250,y:400,r:20,color:"#fff"}, // stem bottom
+        {x:200,y:380,r:28,color:"#fff"}, // leaf left
+        {x:300,y:360,r:28,color:"#fff"}  // leaf right
+    ]},
+    { name: "Star", emoji: "\u2B50", sections: [
+        {x:250,y:80,r:40,color:"#fff"},  // top point
+        {x:150,y:180,r:40,color:"#fff"}, // left point
+        {x:350,y:180,r:40,color:"#fff"}, // right point
+        {x:180,y:320,r:40,color:"#fff"}, // bottom-left point
+        {x:320,y:320,r:40,color:"#fff"}, // bottom-right point
+        {x:250,y:200,r:60,color:"#fff"}, // center
+        {x:200,y:140,r:30,color:"#fff"}, // inner top-left
+        {x:300,y:140,r:30,color:"#fff"}, // inner top-right
+        {x:210,y:260,r:30,color:"#fff"}, // inner bottom-left
+        {x:290,y:260,r:30,color:"#fff"}  // inner bottom-right
+    ]},
+    { name: "Heart", emoji: "\u2764\uFE0F", sections: [
+        {x:200,y:140,r:55,color:"#fff"}, // left bump
+        {x:300,y:140,r:55,color:"#fff"}, // right bump
+        {x:250,y:200,r:50,color:"#fff"}, // center
+        {x:210,y:250,r:40,color:"#fff"}, // lower left
+        {x:290,y:250,r:40,color:"#fff"}, // lower right
+        {x:250,y:300,r:35,color:"#fff"}, // bottom
+        {x:250,y:350,r:20,color:"#fff"}, // tip
+        {x:170,y:180,r:25,color:"#fff"}, // inner left
+        {x:330,y:180,r:25,color:"#fff"}  // inner right
+    ]},
+    { name: "Rainbow", emoji: "\u{1F308}", sections: [
+        {x:100,y:350,r:40,color:"#fff"}, // left cloud
+        {x:400,y:350,r:40,color:"#fff"}, // right cloud
+        {x:150,y:280,r:35,color:"#fff"}, // arc 1 left
+        {x:250,y:200,r:40,color:"#fff"}, // arc 1 top
+        {x:350,y:280,r:35,color:"#fff"}, // arc 1 right
+        {x:180,y:250,r:30,color:"#fff"}, // arc 2 left
+        {x:250,y:240,r:30,color:"#fff"}, // arc 2 top
+        {x:320,y:250,r:30,color:"#fff"}, // arc 2 right
+        {x:200,y:300,r:28,color:"#fff"}, // arc 3 left
+        {x:250,y:280,r:28,color:"#fff"}, // arc 3 mid
+        {x:300,y:300,r:28,color:"#fff"}, // arc 3 right
+        {x:60,y:370,r:30,color:"#fff"},  // cloud left extra
+        {x:440,y:370,r:30,color:"#fff"}  // cloud right extra
+    ]},
+    { name: "Cat", emoji: "\u{1F431}", sections: [
+        {x:250,y:200,r:70,color:"#fff"}, // face
+        {x:190,y:120,r:30,color:"#fff"}, // left ear
+        {x:310,y:120,r:30,color:"#fff"}, // right ear
+        {x:220,y:180,r:15,color:"#fff"}, // left eye
+        {x:280,y:180,r:15,color:"#fff"}, // right eye
+        {x:250,y:210,r:12,color:"#fff"}, // nose
+        {x:250,y:320,r:55,color:"#fff"}, // body
+        {x:180,y:380,r:25,color:"#fff"}, // left paw
+        {x:320,y:380,r:25,color:"#fff"}, // right paw
+        {x:350,y:300,r:20,color:"#fff"}, // tail base
+        {x:390,y:260,r:18,color:"#fff"}, // tail mid
+        {x:410,y:220,r:15,color:"#fff"}  // tail tip
+    ]},
+    { name: "Unicorn", emoji: "\u{1F984}", sections: [
+        {x:250,y:220,r:65,color:"#fff"}, // head
+        {x:250,y:120,r:20,color:"#fff"}, // horn base
+        {x:250,y:80,r:15,color:"#fff"},  // horn tip
+        {x:200,y:200,r:15,color:"#fff"}, // left eye
+        {x:280,y:200,r:15,color:"#fff"}, // right eye
+        {x:250,y:240,r:12,color:"#fff"}, // nose
+        {x:180,y:160,r:25,color:"#fff"}, // left ear
+        {x:320,y:160,r:25,color:"#fff"}, // right ear
+        {x:300,y:140,r:20,color:"#fff"}, // mane 1
+        {x:330,y:180,r:22,color:"#fff"}, // mane 2
+        {x:340,y:220,r:20,color:"#fff"}, // mane 3
+        {x:250,y:360,r:60,color:"#fff"}, // body
+        {x:190,y:430,r:22,color:"#fff"}, // front left leg
+        {x:230,y:430,r:22,color:"#fff"}, // front right leg
+        {x:280,y:430,r:22,color:"#fff"}, // back left leg
+        {x:320,y:430,r:22,color:"#fff"}  // back right leg
+    ]},
+    { name: "House", emoji: "\u{1F3E0}", sections: [
+        {x:250,y:150,r:30,color:"#fff"}, // roof top
+        {x:180,y:190,r:35,color:"#fff"}, // roof left
+        {x:320,y:190,r:35,color:"#fff"}, // roof right
+        {x:200,y:280,r:45,color:"#fff"}, // wall left
+        {x:300,y:280,r:45,color:"#fff"}, // wall right
+        {x:250,y:350,r:40,color:"#fff"}, // wall bottom
+        {x:250,y:300,r:25,color:"#fff"}, // door
+        {x:190,y:250,r:18,color:"#fff"}, // window left
+        {x:310,y:250,r:18,color:"#fff"}, // window right
+        {x:350,y:160,r:20,color:"#fff"}, // chimney
+        {x:100,y:400,r:35,color:"#fff"}, // tree left
+        {x:400,y:400,r:35,color:"#fff"}  // tree right
+    ]}
+];
+
+function startColoring(pageIdx) {
+    if (pageIdx === undefined) pageIdx = coloringPageIdx;
+    coloringPageIdx = pageIdx;
+    var page = COLORING_PAGES[pageIdx];
+    if (!page) return;
+
     var canvas = document.getElementById("color-canvas"); if(!canvas) return;
     canvas.width = Math.min(500, window.innerWidth - 40); canvas.height = 500;
+
+    // Scale sections to canvas size
+    var scale = canvas.width / 500;
+    coloringSections = page.sections.map(function(s) {
+        return { x: s.x * scale, y: s.y * scale, r: s.r * scale, color: "#ffffff" };
+    });
+
     var ctx = canvas.getContext("2d");
-    // Draw a simple picture with sections (star outline)
-    ctx.fillStyle = "#ffffff"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.strokeStyle = "#333"; ctx.lineWidth = 2;
-    // Draw sections as clickable areas
-    coloringSections = [
-        {x:250,y:50,r:60,color:"#ffffff"}, // top circle
-        {x:150,y:200,r:70,color:"#ffffff"}, // left
-        {x:350,y:200,r:70,color:"#ffffff"}, // right
-        {x:180,y:350,r:65,color:"#ffffff"}, // bottom left
-        {x:320,y:350,r:65,color:"#ffffff"}, // bottom right
-        {x:250,y:250,r:80,color:"#ffffff"}, // center
-        {x:100,y:100,r:40,color:"#ffffff"}, // small top left
-        {x:400,y:100,r:40,color:"#ffffff"}, // small top right
-    ];
     drawColoringBook(ctx, canvas);
 
     canvas.onclick = function(e) {
         var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left, y = e.clientY - rect.top;
-        // Scale for canvas size
-        x = x * (canvas.width / rect.width); y = y * (canvas.height / rect.height);
+        var x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        var y = (e.clientY - rect.top) * (canvas.height / rect.height);
         for (var i = coloringSections.length-1; i >= 0; i--) {
             var s = coloringSections[i];
             var dx = x-s.x, dy = y-s.y;
@@ -233,6 +347,19 @@ function startColoring() {
         });
         palette.appendChild(btn);
     });
+
+    // Page picker
+    var picker = document.getElementById("color-page-picker");
+    if (picker) {
+        picker.innerHTML = "";
+        COLORING_PAGES.forEach(function(p, idx) {
+            var btn = document.createElement("button");
+            btn.className = "timer-preset-btn" + (idx === pageIdx ? " active" : "");
+            btn.textContent = p.emoji + " " + p.name;
+            btn.addEventListener("click", function() { startColoring(idx); });
+            picker.appendChild(btn);
+        });
+    }
 }
 
 function drawColoringBook(ctx, canvas) {
