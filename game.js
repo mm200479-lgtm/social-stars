@@ -73,7 +73,8 @@ function freshState(name) {
         weeklyComplete: false,
         weeklyProgress: {},
         weeklyId: "",
-        replayCount: 0
+        replayCount: 0,
+        levelsDone: { em: 1, tone: 1, persp: 1, hf: 1 }
     };
 }
 
@@ -517,11 +518,20 @@ $("#replay-btn").addEventListener("click", function() { startCategory(game.curre
 $("#new-topic-btn").addEventListener("click", function() { renderCategories(); showScreen("category-screen"); });
 
 
-// ===== Emotion Match =====
-var emState = { items: [], index: 0, stars: 0, answered: false };
+// ===== Emotion Match (with levels) =====
+var emState = { items: [], index: 0, stars: 0, answered: false, level: 1 };
 
 function startEmotionMatch() {
-    emState.items = shuffleArray(EMOTION_MATCH.slice());
+    var maxLevel = (state.levelsDone || {}).em || 1;
+    // Show level picker
+    var lvl = maxLevel;
+    if (maxLevel > 1) {
+        var choice = prompt("Choose level (1-" + maxLevel + "):", maxLevel);
+        if (choice) lvl = Math.max(1, Math.min(maxLevel, parseInt(choice) || 1));
+    }
+    emState.level = lvl;
+    var data = (EMOTION_MATCH_LEVELS && EMOTION_MATCH_LEVELS[lvl]) ? EMOTION_MATCH_LEVELS[lvl] : EMOTION_MATCH;
+    emState.items = shuffleArray(data.slice());
     emState.index = 0; emState.stars = 0; emState.answered = false;
     updateStars(); showEmRound(); showScreen("emotion-match-screen");
 }
@@ -566,7 +576,15 @@ function handleEmChoice(opt, selBtn) {
 $("#em-next-btn").addEventListener("click", function() {
     emState.index++;
     if (emState.index >= emState.items.length) {
-        state.emotionMatchDone = true; saveProfile(); checkBadges();
+        state.emotionMatchDone = true;
+        // Level completion: unlock next level, bonus stars based on level
+        if (!state.levelsDone) state.levelsDone = {};
+        if (emState.level >= (state.levelsDone.em || 1)) {
+            state.levelsDone.em = Math.min(3, emState.level + 1);
+        }
+        var levelBonus = emState.level * 2; // Lv1=2, Lv2=4, Lv3=6
+        state.totalStars += levelBonus;
+        saveProfile(); checkBadges();
         var total = emState.items.length, stars = emState.stars;
         $("#results-emoji").textContent = "\u{1F3AD}";
         $("#results-title").textContent = "Emotion Match Complete!";
@@ -578,11 +596,19 @@ $("#em-next-btn").addEventListener("click", function() {
     } else { showEmRound(); }
 });
 
-// ===== How Would You Feel =====
-var hfState = { items: [], index: 0, answered: false };
+// ===== How Would You Feel (with levels) =====
+var hfState = { items: [], index: 0, answered: false, level: 1 };
 
 function startHowFeel() {
-    hfState.items = shuffleArray(HOW_WOULD_YOU_FEEL.slice());
+    var maxLevel = (state.levelsDone || {}).hf || 1;
+    var lvl = maxLevel;
+    if (maxLevel > 1) {
+        var choice = prompt("Choose level (1-" + maxLevel + "):", maxLevel);
+        if (choice) lvl = Math.max(1, Math.min(maxLevel, parseInt(choice) || 1));
+    }
+    hfState.level = lvl;
+    var data = (HOWFEEL_LEVELS && HOWFEEL_LEVELS[lvl]) ? HOWFEEL_LEVELS[lvl] : HOW_WOULD_YOU_FEEL;
+    hfState.items = shuffleArray(data.slice());
     hfState.index = 0; hfState.answered = false;
     showHfRound(); showScreen("howfeel-screen");
 }
@@ -615,7 +641,17 @@ function handleHfChoice(feeling, selBtn) {
 
 $("#hf-next-btn").addEventListener("click", function() {
     hfState.index++;
-    if (hfState.index >= hfState.items.length) { checkBadges(); showScreen("menu-screen"); }
+    if (hfState.index >= hfState.items.length) {
+        if (!state.levelsDone) state.levelsDone = {};
+        if (hfState.level >= (state.levelsDone.hf || 1)) {
+            state.levelsDone.hf = Math.min(3, hfState.level + 1);
+        }
+        state.totalStars += hfState.level * 2;
+        if (!state.weeklyProgress) state.weeklyProgress = {};
+        state.weeklyProgress.hfDone = true;
+        saveProfile(); updateStars(); checkBadges();
+        showScreen("menu-screen");
+    }
     else { showHfRound(); }
 });
 
@@ -1125,11 +1161,19 @@ function checkDailyBonus() {
     }
 }
 
-// ===== TONE OF VOICE =====
-var toneState = { items: [], index: 0, stars: 0, answered: false };
+// ===== TONE OF VOICE (with levels) =====
+var toneState = { items: [], index: 0, stars: 0, answered: false, level: 1 };
 
 function startTone() {
-    toneState.items = shuffleArray(TONE_OF_VOICE.slice());
+    var maxLevel = (state.levelsDone || {}).tone || 1;
+    var lvl = maxLevel;
+    if (maxLevel > 1) {
+        var choice = prompt("Choose level (1-" + maxLevel + "):", maxLevel);
+        if (choice) lvl = Math.max(1, Math.min(maxLevel, parseInt(choice) || 1));
+    }
+    toneState.level = lvl;
+    var data = (TONE_LEVELS && TONE_LEVELS[lvl]) ? TONE_LEVELS[lvl] : TONE_OF_VOICE;
+    toneState.items = shuffleArray(data.slice());
     toneState.index = 0; toneState.stars = 0; toneState.answered = false;
     showToneRound(); showScreen("tone-screen");
 }
@@ -1179,7 +1223,14 @@ function handleToneChoice(opt, selBtn) {
 $("#tone-next-btn").addEventListener("click", function() {
     toneState.index++;
     if (toneState.index >= toneState.items.length) {
-        state.toneDone = true; saveProfile();
+        state.toneDone = true;
+        if (!state.levelsDone) state.levelsDone = {};
+        if (toneState.level >= (state.levelsDone.tone || 1)) {
+            state.levelsDone.tone = Math.min(3, toneState.level + 1);
+        }
+        state.totalStars += toneState.level * 2;
+        state.weeklyProgress.toneDone = true;
+        saveProfile();
         playComplete(); fireConfetti();
         $("#results-emoji").textContent = "\u{1F5E3}\uFE0F";
         $("#results-title").textContent = "Tone Expert!";
@@ -1196,11 +1247,19 @@ $("#tone-audio-btn").addEventListener("click", function() {
     speak($("#tone-quote").textContent + ". " + $("#tone-context").textContent);
 });
 
-// ===== PERSPECTIVE TAKING =====
-var perspState = { items: [], index: 0, stars: 0, answered: false };
+// ===== PERSPECTIVE TAKING (with levels) =====
+var perspState = { items: [], index: 0, stars: 0, answered: false, level: 1 };
 
 function startPerspective() {
-    perspState.items = shuffleArray(PERSPECTIVE_TAKING.slice());
+    var maxLevel = (state.levelsDone || {}).persp || 1;
+    var lvl = maxLevel;
+    if (maxLevel > 1) {
+        var choice = prompt("Choose level (1-" + maxLevel + "):", maxLevel);
+        if (choice) lvl = Math.max(1, Math.min(maxLevel, parseInt(choice) || 1));
+    }
+    perspState.level = lvl;
+    var data = (PERSPECTIVE_LEVELS && PERSPECTIVE_LEVELS[lvl]) ? PERSPECTIVE_LEVELS[lvl] : PERSPECTIVE_TAKING;
+    perspState.items = shuffleArray(data.slice());
     perspState.index = 0; perspState.stars = 0; perspState.answered = false;
     showPerspRound(); showScreen("perspective-screen");
 }
@@ -1250,7 +1309,15 @@ function handlePerspChoice(choice, selBtn) {
 $("#persp-next-btn").addEventListener("click", function() {
     perspState.index++;
     if (perspState.index >= perspState.items.length) {
-        state.perspDone = true; saveProfile();
+        state.perspDone = true;
+        if (!state.levelsDone) state.levelsDone = {};
+        if (perspState.level >= (state.levelsDone.persp || 1)) {
+            state.levelsDone.persp = Math.min(3, perspState.level + 1);
+        }
+        state.totalStars += perspState.level * 2;
+        if (!state.weeklyProgress) state.weeklyProgress = {};
+        state.weeklyProgress.perspDone = true;
+        saveProfile();
         playComplete(); fireConfetti();
         $("#results-emoji").textContent = "\u{1F440}";
         $("#results-title").textContent = "Empathy Star!";

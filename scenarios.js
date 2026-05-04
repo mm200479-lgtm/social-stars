@@ -213,6 +213,14 @@ const BADGES = [
     { id: "chores-done", emoji: "\u{2705}", name: "Helper Star", desc: "Complete all chores in one day", condition: (s) => s.choresDayComplete },
     { id: "weekly-done", emoji: "\u{1F4C5}", name: "Weekly Winner", desc: "Complete a weekly challenge", condition: (s) => s.weeklyComplete },
     { id: "replay-5", emoji: "\u{1F504}", name: "Practice Pro", desc: "Replay activities 5 times", condition: (s) => (s.replayCount || 0) >= 5 },
+    { id: "em-lv2", emoji: "\u{1F3AD}", name: "Emotion Match Lv2", desc: "Complete Emotion Match Level 2", condition: (s) => (s.levelsDone || {}).em >= 2 },
+    { id: "em-lv3", emoji: "\u{1F3AD}", name: "Emotion Match Lv3", desc: "Complete Emotion Match Level 3", condition: (s) => (s.levelsDone || {}).em >= 3 },
+    { id: "tone-lv2", emoji: "\u{1F5E3}\uFE0F", name: "Tone Expert Lv2", desc: "Complete Tone of Voice Level 2", condition: (s) => (s.levelsDone || {}).tone >= 2 },
+    { id: "tone-lv3", emoji: "\u{1F5E3}\uFE0F", name: "Tone Master Lv3", desc: "Complete Tone of Voice Level 3", condition: (s) => (s.levelsDone || {}).tone >= 3 },
+    { id: "persp-lv2", emoji: "\u{1F440}", name: "Empathy Lv2", desc: "Complete Perspective Taking Level 2", condition: (s) => (s.levelsDone || {}).persp >= 2 },
+    { id: "persp-lv3", emoji: "\u{1F440}", name: "Empathy Master Lv3", desc: "Complete Perspective Taking Level 3", condition: (s) => (s.levelsDone || {}).persp >= 3 },
+    { id: "hf-lv2", emoji: "\u{1FA9E}", name: "Self-Aware Lv2", desc: "Complete How Would You Feel Level 2", condition: (s) => (s.levelsDone || {}).hf >= 2 },
+    { id: "hf-lv3", emoji: "\u{1FA9E}", name: "Self-Aware Master Lv3", desc: "Complete How Would You Feel Level 3", condition: (s) => (s.levelsDone || {}).hf >= 3 },
     { id: "all-badges", emoji: "\u{1F3C5}", name: "Badge Collector", desc: "Earn 20 other badges", condition: (s) => (s.earnedBadges || []).length >= 20 }
 ];
 
@@ -552,3 +560,80 @@ SCENARIOS["feelings-check"].push(
     { difficulty:2, emoji:"\u{1F4A4}", text:"You can't fall asleep because your mind keeps thinking about things. What could help?", choices:[{text:"Watch videos on your phone",correct:false},{text:"Try slow breathing, imagine a calm place, or write your thoughts in a journal",correct:true},{text:"Just lie there and worry more",correct:false}], correctFeedback:"Great strategies! Slow breathing, visualisation, and journaling are all proven ways to calm a busy mind before sleep.", encourageFeedback:"A busy mind at bedtime is common! Try slow breathing, imagining a peaceful place, or writing your thoughts down to get them out of your head." },
     { difficulty:3, emoji:"\u{1F494}", text:"Someone you care about said something that really hurt your feelings, but you don't think they meant to. What should you do?", choices:[{text:"Never speak to them again",correct:false},{text:"Wait until you're calm, then tell them: \"When you said [that], it hurt my feelings. I don't think you meant to, but I wanted you to know.\"",correct:true},{text:"Say something hurtful back",correct:false}], correctFeedback:"That's incredibly mature! Waiting until you're calm and using \"When you said... it made me feel...\" is the gold standard of communication.", encourageFeedback:"When someone hurts you accidentally, the best approach is to wait until you're calm, then explain how their words made you feel. Most people will apologise." }
 );
+
+
+/* ===== LEVELLED EMOTION MATCH ===== */
+var EMOTION_MATCH_LEVELS = {
+    1: [
+        { face:"\u{1F604}", answer:"Happy", options:["Happy","Sad","Angry","Scared"] },
+        { face:"\u{1F622}", answer:"Sad", options:["Excited","Sad","Surprised","Bored"] },
+        { face:"\u{1F621}", answer:"Angry", options:["Happy","Shy","Angry","Tired"] },
+        { face:"\u{1F628}", answer:"Scared", options:["Proud","Scared","Silly","Calm"] },
+        { face:"\u{1F632}", answer:"Surprised", options:["Surprised","Angry","Sad","Nervous"] },
+        { face:"\u{1F634}", answer:"Tired", options:["Excited","Tired","Happy","Angry"] }
+    ],
+    2: [
+        { face:"\u{1F60A}", answer:"Proud", options:["Worried","Bored","Proud","Confused","Shy"] },
+        { face:"\u{1F61E}", answer:"Disappointed", options:["Disappointed","Scared","Silly","Proud","Calm"] },
+        { face:"\u{1F60D}", answer:"Loving", options:["Angry","Loving","Bored","Nervous","Tired"] },
+        { face:"\u{1F914}", answer:"Confused", options:["Happy","Sad","Confused","Excited","Proud"] },
+        { face:"\u{1F633}", answer:"Embarrassed", options:["Embarrassed","Proud","Angry","Calm","Bored"] },
+        { face:"\u{1F60E}", answer:"Confident", options:["Shy","Confident","Worried","Sad","Nervous"] },
+        { face:"\u{1F624}", answer:"Frustrated", options:["Happy","Frustrated","Tired","Calm","Proud"] }
+    ],
+    3: [
+        { face:"\u{1F972}", answer:"Bittersweet", options:["Happy","Sad","Bittersweet","Angry","Confused","Proud"] },
+        { face:"\u{1F635}", answer:"Overwhelmed", options:["Tired","Overwhelmed","Bored","Calm","Frustrated","Shy"] },
+        { face:"\u{1F630}", answer:"Anxious", options:["Excited","Anxious","Angry","Proud","Confused","Embarrassed"] },
+        { face:"\u{1F625}", answer:"Guilty", options:["Sad","Guilty","Disappointed","Scared","Lonely","Frustrated"] },
+        { face:"\u{1F97A}", answer:"Vulnerable", options:["Shy","Vulnerable","Tired","Confused","Nervous","Calm"] },
+        { face:"\u{1F929}", answer:"Ecstatic", options:["Happy","Ecstatic","Proud","Surprised","Confident","Grateful"] },
+        { face:"\u{1F614}", answer:"Lonely", options:["Sad","Lonely","Tired","Bored","Disappointed","Guilty"] },
+        { face:"\u{1F60C}", answer:"Content", options:["Happy","Content","Calm","Proud","Relieved","Grateful"] }
+    ]
+};
+
+/* ===== LEVELLED TONE OF VOICE ===== */
+var TONE_LEVELS = {
+    1: [
+        { emoji:"\u{1F602}", quote:"\"You're SO slow, you'd lose a race to a snail!\"", context:"Your best friend says this while laughing.", answer:"Joking", options:["Mean","Joking","Serious"], correctFeedback:"Your friend is teasing playfully. The laughing and silly exaggeration tell us it's a joke!", encourageFeedback:"When a friend says something silly while laughing, they're usually joking!" },
+        { emoji:"\u{1F6D1}", quote:"\"Please don't touch that. It's very fragile.\"", context:"A museum guide says this calmly.", answer:"Serious", options:["Joking","Serious","Sarcastic"], correctFeedback:"The museum guide is being serious \u2014 they genuinely don't want you to touch it.", encourageFeedback:"When someone speaks calmly and clearly about something important, they're being serious." },
+        { emoji:"\u{1F611}", quote:"\"Sure, I LOVE waiting in line for an hour.\"", context:"Your mum says this while sighing in a long queue.", answer:"Sarcastic", options:["Serious","Happy","Sarcastic"], correctFeedback:"Mum doesn't actually love waiting. The sigh and emphasis on \"LOVE\" are sarcasm clues.", encourageFeedback:"When someone emphasises a word strongly and their body language doesn't match, they're usually being sarcastic." },
+        { emoji:"\u{1F468}\u200D\u2695\uFE0F", quote:"\"You need to take this medicine twice a day.\"", context:"A doctor says this while writing a prescription.", answer:"Serious", options:["Joking","Sarcastic","Serious"], correctFeedback:"The doctor is giving important health instructions. This is serious.", encourageFeedback:"Doctors give serious instructions about health. Clear, direct words = serious." }
+    ],
+    2: [
+        { emoji:"\u{1F60F}", quote:"\"Oh great, another test. Just what I wanted.\"", context:"A student says this after the teacher announces a surprise test. They roll their eyes.", answer:"Sarcastic", options:["Serious","Sarcastic","Joking","Excited"], correctFeedback:"They don't actually want a test. The eye roll tells us they mean the opposite!", encourageFeedback:"When someone says something positive but their face shows the opposite, that's sarcasm." },
+        { emoji:"\u{1F923}", quote:"\"I'm basically a professional chef now!\"", context:"Your friend says this proudly after making toast for the first time.", answer:"Joking", options:["Serious","Sarcastic","Bragging","Joking"], correctFeedback:"They know toast doesn't make them a chef \u2014 they're being funny about a small achievement!", encourageFeedback:"When someone exaggerates something small in a fun way, they're joking!" },
+        { emoji:"\u{1F612}", quote:"\"Oh wonderful, my phone just died. Perfect timing.\"", context:"Your sister says this when her phone dies before an important call.", answer:"Sarcastic", options:["Happy","Sarcastic","Joking","Confused"], correctFeedback:"She's frustrated, not happy. Positive words about a negative situation = sarcasm.", encourageFeedback:"Using positive words (wonderful, perfect) about a negative situation while sounding annoyed is sarcasm." },
+        { emoji:"\u{1F609}", quote:"\"Watch out, I might eat ALL the pizza!\"", context:"Your dad says this with a wink while serving pizza to everyone.", answer:"Joking", options:["Serious","Threatening","Joking","Sarcastic"], correctFeedback:"Dad's wink and serving everyone tells us he's joking!", encourageFeedback:"A wink is a big clue that someone is joking!" }
+    ],
+    3: [
+        { emoji:"\u{1F928}", quote:"\"Nice of you to finally show up.\"", context:"Your friend says this when you arrive 5 minutes late. They're half-smiling.", answer:"Sarcastic but friendly", options:["Angry","Sarcastic but friendly","Serious complaint","Joking"], correctFeedback:"This is friendly sarcasm \u2014 they're teasing you about being late but the half-smile shows they're not really upset.", encourageFeedback:"Sometimes sarcasm is friendly teasing. The half-smile is the clue that they're not actually angry." },
+        { emoji:"\u{1F9D0}", quote:"\"That's... interesting.\"", context:"Someone says this slowly after seeing your unusual art project, with raised eyebrows.", answer:"Politely unsure", options:["Genuinely impressed","Politely unsure","Sarcastic","Excited"], correctFeedback:"\"Interesting\" said slowly with raised eyebrows often means someone doesn't know what to think but is being polite.", encourageFeedback:"When someone says \"interesting\" slowly with raised eyebrows, they're usually being polite but aren't sure what to think." },
+        { emoji:"\u{1F3AD}", quote:"\"Oh sure, because THAT always works out well.\"", context:"Your older sibling says this when you suggest a plan that failed last time.", answer:"Sarcastic with a warning", options:["Encouraging","Sarcastic with a warning","Joking","Serious advice"], correctFeedback:"They're using sarcasm to remind you that this plan didn't work before. It's a warning wrapped in sarcasm.", encourageFeedback:"Sometimes sarcasm carries a message. Here they're warning you that this plan has failed before." },
+        { emoji:"\u{1F60F}", quote:"\"Well, SOMEONE'S in a good mood today.\"", context:"A classmate says this to another kid who's been grumpy all morning.", answer:"Sarcastic observation", options:["Genuine compliment","Sarcastic observation","Joking","Confused"], correctFeedback:"They're pointing out that the person is NOT in a good mood. It's sarcasm used to make an observation.", encourageFeedback:"Saying someone's in a good mood when they're clearly grumpy is sarcastic \u2014 they mean the opposite." }
+    ]
+};
+
+/* ===== LEVELLED PERSPECTIVE TAKING ===== */
+var PERSPECTIVE_LEVELS = {
+    1: PERSPECTIVE_TAKING.slice(0, 3),
+    2: PERSPECTIVE_TAKING.slice(3, 6),
+    3: [
+        { emoji:"\u{1F469}\u200D\u{1F3EB}", text:"Your teacher seems short-tempered today and snapped at the class. Later you overhear she got some bad news this morning. How might you see her behaviour differently now?", choices:[{text:"She's a mean teacher",correct:false},{text:"She's human \u2014 the bad news affected her mood. It wasn't about us.",correct:true},{text:"She shouldn't be a teacher if she can't control herself",correct:false}], correctFeedback:"That's really empathetic! Teachers are people too, and bad news can affect anyone's mood. Understanding this shows real maturity.", encourageFeedback:"Everyone has bad days, including teachers. When we know someone got bad news, it helps us understand why they might seem different." },
+        { emoji:"\u{1F466}\u{1F3FB}", text:"A kid in your class always eats lunch alone and never joins group activities. Some kids think he's weird. But what might be going on from HIS perspective?", choices:[{text:"He's definitely weird",correct:false},{text:"He might be shy, anxious, or dealing with something at home. He might WANT to join but not know how.",correct:true},{text:"He doesn't like anyone",correct:false}], correctFeedback:"Wonderful empathy! People who seem distant often want connection but struggle with anxiety or shyness. A kind invitation could change everything for them.", encourageFeedback:"When someone is always alone, it's rarely because they want to be. They might be shy, anxious, or going through something difficult." },
+        { emoji:"\u{1F475}", text:"Your grandma keeps telling the same stories over and over. Your cousin rolls their eyes, but how might grandma be feeling?", choices:[{text:"She's trying to annoy everyone",correct:false},{text:"Those stories are precious memories to her, and sharing them is how she connects with family",correct:true},{text:"She has nothing else to talk about",correct:false}], correctFeedback:"That's beautiful insight! For older people, sharing stories is how they connect and pass on family history. Those stories matter deeply to them.", encourageFeedback:"Grandparents' stories are their way of sharing what matters to them and connecting with family. Being patient and listening is a gift to them." }
+    ]
+};
+
+/* ===== LEVELLED HOW WOULD YOU FEEL ===== */
+var HOWFEEL_LEVELS = {
+    1: HOW_WOULD_YOU_FEEL.slice(0, 4),
+    2: HOW_WOULD_YOU_FEEL.slice(4, 8),
+    3: [
+        { emoji:"\u{1F3EB}", text:"Your best friend is moving to another country next month.", feelings:["Sad","Angry","Scared","Happy for them"], responses:{"Sad":"Of course you'd feel sad! Losing a close friend nearby is a big deal.","Angry":"Feeling angry is understandable \u2014 it feels unfair when things change.","Scared":"It's scary to think about not having your best friend nearby.","Happy for them":"Being happy for them while also feeling sad shows real emotional depth."} },
+        { emoji:"\u{1F3C6}", text:"You worked really hard on a project but someone else won the prize.", feelings:["Disappointed","Jealous","Proud of my effort","Angry"], responses:{"Disappointed":"Disappointment is natural when effort doesn't get recognised.","Jealous":"A little jealousy is human \u2014 it shows you cared about winning.","Proud of my effort":"That's really mature! Being proud of your effort regardless of the outcome is a powerful mindset.","Angry":"Feeling angry when things seem unfair is completely normal."} },
+        { emoji:"\u{1F46A}", text:"Your parents are arguing and you can hear them from your room.", feelings:["Scared","Worried","Sad","Angry"], responses:{"Scared":"It's scary to hear parents argue. Remember: their argument is not your fault.","Worried":"Worrying about your parents is natural. Most arguments get resolved.","Sad":"Feeling sad when people you love argue makes complete sense.","Angry":"Feeling angry that they're disrupting your peace is valid."} },
+        { emoji:"\u{1F393}", text:"You're about to start secondary school / middle school next year.", feelings:["Excited","Nervous","Scared","Curious"], responses:{"Excited":"New beginnings can be exciting! There's so much to look forward to.","Nervous":"Almost everyone feels nervous about big transitions. That's completely normal!","Scared":"It's okay to feel scared about such a big change. It shows you care.","Curious":"Being curious about what's ahead is a great mindset for new experiences!"} }
+    ]
+};
